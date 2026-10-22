@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> 과학실 예약 시스템 — Lab Reservation</title>
+<style>
+  /* ========== 기본 리셋 & 변수 ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-0: #0a1428;
+    --bg-1: #0f1e3d;
+    --bg-2: #152a52;
+    --panel: rgba(20, 38, 74, 0.75);
+    --panel-border: rgba(100, 220, 255, 0.25);
+    --text: #e6f1ff;
+    --text-dim: #8fa7c8;
+    --accent: #39f5b0;
+    --accent-2: #4dd0ff;
+    --warn: #ffb347;
+    --danger: #ff5c7a;
+    --ok: #7cf29c;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --radius: 14px;
+  }
+  html, body {
+    font-family: 'Pretendend', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-0);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* 배경: 원자 궤도 애니메이션 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(57, 245, 176, 0.12), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(77, 208, 255, 0.12), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(21, 42, 82, 0.6), transparent 70%);
+    z-index: -2;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(100, 220, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100, 220, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* ========== 헤더 ========== */
+  header {
+    padding: 22px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+    background: rgba(10, 20, 40, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-icon {
+    width: 48px; height: 48px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon .nucleus {
+    width: 14px; height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+  }
+  .logo-icon .orbit {
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid var(--accent-2);
+    border-radius: 50%;
+    animation: spin 6s linear infinite;
+  }
+  .logo-icon .orbit:nth-child(2) {
+    transform: rotate(60deg);
+    animation-duration: 8s;
+    border-color: var(--accent);
+  }
+  .logo-icon .orbit:nth-child(3) {
+    transform: rotate(120deg);
+    animation-duration: 10s;
+    border-color: rgba(255,255,255,0.5);
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .logo-text h1 {
+    font-size: 20px;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .logo-text p {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .header-info .today {
+    padding: 6px 14px;
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    background: rgba(57, 245, 176, 0.08);
+    color: var(--accent);
+    font-family: 'Courier New', monospace;
+  }
+
+  /* ========== 탭 네비게이션 ========== */
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+    padding: 14px 36px 0;
+    border-bottom: 1px solid var(--panel-border);
+    background: rgba(10, 20, 40, 0.4);
+  }
+  nav.tabs button {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 12px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 10px 10px 0 0;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  nav.tabs button:hover {
+    color: var(--text);
+    background: rgba(100, 220, 255, 0.06);
+  }
+  nav.tabs button.active {
+    color: var(--accent);
+    background: rgba(57, 245, 176, 0.1);
+    border-bottom: 2px solid var(--accent);
+  }
+  nav.tabs button .ico { font-size: 16px; }
+
+  /* ========== 메인 레이아웃 ========== */
+  main {
+    padding: 28px 36px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+  }
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--panel-border);
+  }
+  .panel-title .tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(57, 245, 176, 0.15);
+    color: var(--accent);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* ========== 예약 화면 (2열) ========== */
+  .reservation-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 960px) {
+    .reservation-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ========== 달력 ========== */
+  .calendar-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .calendar-head h3 {
+    font-size: 17px;
+    font-family: 'Courier New', monospace;
+  }
+  .calendar-head .nav-btns { display: flex; gap: 6px; }
+  .calendar-head button {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: rgba(100, 220, 255, 0.08);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+  .calendar-head button:hover {
+    background: rgba(57, 245, 176, 0.15);
+    border-color: var(--accent);
+  }
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .calendar .dow {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 6px 0;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+  }
+  .calendar .day {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    font-family: 'Courier New', monospace;
+  }
+  .calendar .day.empty { visibility: hidden; }
+  .calendar .day:hover:not(.empty):not(.disabled) {
+    background: rgba(100, 220, 255, 0.1);
+    border-color: var(--accent-2);
+  }
+  .calendar .day.today {
+    border-color: var(--accent-2);
+    color: var(--accent-2);
+  }
+  .calendar .day.selected {
+    background: var(--accent);
+    color: var(--bg-0);
+    font-weight: 700;
+    box-shadow: 0 0 12px rgba(57, 245, 176, 0.5);
+  }
+  .calendar .day.available::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+  .calendar .day.has-reservation::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--warn);
+  }
+  .calendar .day.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .calendar .day.past {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  /* 교사 필터 */
+  .teacher-filter {
+    margin-top: 16px;
+    padding: 14px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    border: 1px solid var(--panel-border);
+  }
+  .teacher-filter h4 {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .teacher-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .teacher-chip {
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: rgba(100, 220, 255, 0.08);

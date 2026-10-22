@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>뇌의 반응속도 러닝</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', sans-serif; background: linear-gradient(135deg,#0f2027,#203a43,#2c5364); color: white; padding: 15px; min-height: 100vh; }
+  h1 { font-size: 26px; text-align: center; margin-bottom: 8px; background: linear-gradient(90deg,#FFD700,#FF6347,#FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .subtitle { text-align: center; font-size: 12px; color: #bbb; margin-bottom: 12px; }
+  .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+  .tab-btn { padding: 10px 20px; border: 2px solid rgba(255,215,0,.3); border-radius: 10px; background: rgba(255,255,255,.08); color: #ccc; cursor: pointer; font-size: 13px; font-weight: bold; transition: all .2s; }
+  .tab-btn.active { background: linear-gradient(135deg,#FF9800,#FF5722); color: white; border-color: #FFD700; }
+  .tab-content { display: none; } .tab-content.active { display: block; }
+  .container { max-width: 1000px; margin: 0 auto; background: rgba(0,0,0,.6); border-radius: 16px; padding: 15px; border: 2px solid rgba(255,215,0,.3); }
+  .mode-selector { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 12px; }
+  .mode-btn { padding: 10px; border: 3px solid transparent; border-radius: 10px; cursor: pointer; transition: all .3s; color: white; font-weight: bold; text-align: center; font-size: 12px; }
+  .mode-btn:hover { transform: translateY(-2px); }
+  .mode-btn.active { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,.5); }
+  .mode-btn .icon { font-size: 24px; display: block; margin-bottom: 3px; }
+  .mode-normal { background: linear-gradient(135deg,#4CAF50,#2E7D32); }
+  .mode-sleep { background: linear-gradient(135deg,#FFC107,#FF8F00); }
+  .mode-drunk { background: linear-gradient(135deg,#E91E63,#880E4F); }
+  .mode-phone { background: linear-gradient(135deg,#2196F3,#0D47A1); }
+  .game-wrapper { position: relative; margin-bottom: 12px; border: 3px solid #FFD700; border-radius: 12px; overflow: hidden; }
+  .game-wrapper.shake { animation: shake .15s infinite; }
+  @keyframes shake { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-3px,2px)} 75%{transform:translate(3px,-2px)} }
+  .game-wrapper.drunk-vision { filter: blur(1px) saturate(1.3); }
+  canvas { display: block; width: 100%; height: 360px; }
+  .hud { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; pointer-events: none; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,.8); z-index: 3; }
+  .hud-box { background: rgba(0,0,0,.6); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,215,0,.5); font-size: 12px; }
+  .hud-box span { color: #FFD700; font-size: 14px; }
+  .status-indicator { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.7); padding: 4px 12px; border-radius: 16px; font-size: 10px; border: 1px solid rgba(255,215,0,.5); z-index: 5; }
+  .delay-badge { display: inline-block; padding: 1px 5px; border-radius: 8px; font-weight: bold; margin-left: 3px; font-size: 9px; }
+  .d0 { background:#4CAF50; } .d300 { background:#FFC107; color:#000; } .d450 { background:#E91E63; } .d250 { background:#2196F3; }
+  .overlay { position: absolute; inset: 0; background: rgba(0,0,0,.85); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 15px; z-index: 10; }
+  .overlay.show { display: flex; }
+  .overlay h2 { font-size: 28px; margin-bottom: 10px; color: #FFD700; }
+  .overlay p { font-size: 13px; line-height: 1.6; margin-bottom: 8px; }
+  .btn { padding: 10px 24px; font-size: 14px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; color: white; margin: 4px; transition: all .2s; }
+  .btn:hover { transform: scale(1.05); }
+  .btn-start { background: linear-gradient(135deg,#4CAF50,#2E7D32); }
+  .btn-restart { background: linear-gradient(135deg,#FF9800,#F57C00); }
+  .controls-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .ctrl-box { background: rgba(255,255,255,.08); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15); font-size: 12px; }
+  .ctrl-box b { color: #FFD700; }
+  .kbd { display: inline-block; padding: 2px 8px; background:#333; border:1px solid #666; border-radius:4px; color:#FFD700; font-size:11px; margin:0 2px; }
+  .legend { text-align: center; font-size: 11px; color: #aaa; padding: 6px; background: rgba(0,0,0,.3); border-radius: 6px; line-height: 1.6; }
+  .reaction-test { text-align: center; padding: 15px; }
+  .reaction-box { width:100%; max-width:450px; height:220px; margin:12px auto; border-radius:12px; display:flex; justify-content:center; align-items:center; font-size:18px; font-weight:bold; cursor:pointer; transition:background .3s; border:3px solid #FFD700; }
+  .reaction-waiting { background:#E91E63; } .reaction-ready { background:#4CAF50; } .reaction-result { background:#2196F3; color:white; }
+  .reaction-box p { padding:15px; line-height:1.5; }
+  .reaction-result-big { font-size:40px; color:#FFD700; display:block; margin:10px 0; }
+  .history-chart { background:rgba(0,0,0,.4); border-radius:10px; padding:12px; margin-top:12px; }
+  .history-chart h4 { color:#FFD700; margin-bottom:8px; font-size:14px; }
+  .bar-row { display:flex; align-items:center; margin:5px 0; font-size:11px; }
+  .bar-label { width:70px; text-align:right; padding-right:6px; font-weight:bold; }
+  .bar-track { flex:1; background:rgba(255,255,255,.1); border-radius:5px; height:22px; }
+  .bar-fill { height:100%; border-radius:5px; display:flex; align-items:center; justify-content:flex-end; padding-right:6px; font-size:10px; font-weight:bold; animation:grow .8s ease-out; }
+  @keyframes grow { from { width:0 !important; } }
+  .compare-section { padding:10px; }
+  .compare-section h3 { color:#FFD700; text-align:center; margin-bottom:15px; font-size:18px; }
+  .compare-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:15px; }
+  .compare-card { background:rgba(0,0,0,.4); border-radius:10px; padding:14px; border-left:4px solid #FFD700; }
+  .compare-card h4 { color:#FFD700; margin-bottom:6px; font-size:14px; }
+  .compare-card .big-num { font-size:26px; font-weight:bold; color:#FFD700; margin:5px 0; }
+  .compare-card .desc { font-size:12px; color:#ccc; line-height:1.6; }
+  .compare-card .warn { color:#FF5722; font-weight:bold; }
+  .survival-chart { background:rgba(0,0,0,.4); border-radius:10px; padding:14px; margin-bottom:12px; }
+  .survival-chart h4 { color:#FFD700; text-align:center; margin-bottom:10px; font-size:14px; }
+  .survival-bar { display:flex; align-items:center; margin:6px 0; font-size:12px; }
+  .survival-label { width:110px; font-weight:bold; }
+  .survival-track { flex:1; background:rgba(255,255,255,.1); border-radius:5px; height:26px; }
+  .survival-fill { height:100%; border-radius:5px; display:flex; align-items:center; padding-left:10px; font-weight:bold; color:white; transition:width 1s; font-size:11px; }
+  .conclusion-box { background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(156,39,176,.2)); border:2px solid #FFD700; border-radius:12px; padding:18px; text-align:center; margin-top:15px; }
+  .conclusion-box .big-quote { font-size:14px; line-height:1.9; color:#FFD700; font-weight:bold; margin:10px 0; }
+</style>
+</head>
+<body>
+<h1>🧠 뇌의 반응속도 러닝 🏃</h1>
+<div class="subtitle">"당신의 뇌, 지금 정상입니까?" — 14가지 장애물, 12가지 패턴, 최대 3.5배 속도!</div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('game',this)">🎮 1. 생존 게임</button>
+  <button class="tab-btn" onclick="switchTab('reaction',this)">⚡ 2. 반응속도</button>
+  <button class="tab-btn" onclick="switchTab('compare',this)">📊 3. 모드 비교</button>
+</div>
+<div id="tab-game" class="tab-content active">
+<div class="container">
+  <div class="mode-selector">
+    <div class="mode-btn mode-normal active" onclick="setMode('normal')"><span class="icon">🟢</span><div>정상</div><div style="font-size:10px">0ms</div></div>
+    <div class="mode-btn mode-sleep" onclick="setMode('sleep')"><span class="icon">🟡</span><div>수면부족</div><div style="font-size:10px">300ms + 깜빡임</div></div>
+    <div class="mode-btn mode-drunk" onclick="setMode('drunk')"><span class="icon">🔴</span><div>음주</div><div style="font-size:10px">450ms + 흔들림</div></div>
+    <div class="mode-btn mode-phone" onclick="setMode('phone')"><span class="icon">📱</span><div>스마트폰</div><div style="font-size:10px">250ms + 강한점프</div></div>
+  </div>
+  <div class="game-wrapper" id="gameWrapper">
+    <canvas id="game" width="960" height="360"></canvas>
+    <div class="hud">
+      <div class="hud-box">🏆 <span id="score">0</span></div>
+      <div class="hud-box">⏱️ <span id="time">0.0</span>초</div>
+      <div class="hud-box">⚡ <span id="speed">1.00</span>x</div>
+    </div>
+    <div class="status-indicator" id="statusIndicator">🟢 정상 · <span class="delay-badge d0">0ms</span></div>
+    <div class="overlay show" id="startOverlay">
+      <h2>🧠 뇌의 반응속도 테스트</h2>
+      <p>14가지 장애물 · 12가지 패턴 · 점점 빨라지는 속도!<br>최대 <b style="color:#FFD700">3.5배</b> 속도까지 버텨보세요!</p>
+      <button class="btn btn-start" onclick="startGame()">🎮 게임 시작</button>
+    </div>
+    <div class="overlay" id="gameOverOverlay">
+      <h2 id="gameOverTitle">💥 GAME OVER</h2>
+      <p id="gameOverMsg"></p>
+      <div style="margin:10px 0;font-size:13px">
+        <div>생존: <b id="finalTime" style="color:#FFD700;font-size:18px">0.0</b>초</div>
+        <div>점수: <b id="finalScore" style="color:#FFD700;font-size:18px">0</b></div>
+        <div>피한 장애물: <b id="finalDodged" style="color:#FFD700;font-size:18px">0</b>개</div>
+      </div>
+      <button class="btn btn-restart" onclick="recordAndRestart()">📊 기록 저장 & 다시 도전</button>
+    </div>
+  </div>
+  <div class="controls-info">
+    <div class="ctrl-box"><b>⬆️ 점프</b> : <span class="kbd">SPACE</span> 또는 <span class="kbd">↑</span> (더블 점프)</div>
+    <div class="ctrl-box"><b>⬇️ 숙이기</b> : <span class="kbd">↓</span> 꾹 누르기</div>
+  </div>
+  <div class="legend">
+    <b style="color:#FFD700">점프형</b> 🌲🌳🪨🌵🍂🔥🪤🧱 &nbsp;|&nbsp; 
+    <b style="color:#FFD700">숙이기형</b> 🚧🌉⚠️ &nbsp;|&nbsp; 
+    <b style="color:#FFD700">공중형</b> 🦅🦇 &nbsp;|&nbsp; 
+    <b style="color:#FFD700">고속형</b> 🚗
+  </div>
+</div>
+</div>
+<div id="tab-reaction" class="tab-content">
+<div class="container">
+  <div class="reaction-test">
+    <h3 style="color:#FFD700;margin-bottom:10px">⚡ 단순 반응속도 테스트</h3>
+    <p style="font-size:12px;color:#ccc;margin-bottom:10px">빨간 화면에서 기다렸다가, <b style="color:#4CAF50">초록색</b>으로 바뀌는 순간 즉시 클릭!</p>
+    <div class="reaction-box reaction-waiting" id="reactionBox" onclick="handleReactionClick()">
+      <p>🎯 클릭하여 테스트 시작<br><span style="font-size:12px">빨간색 → 초록색 바뀌면 즉시 클릭!</span></p>
+    </div>
+    <div id="reactionFeedback" style="font-size:13px;color:#FFD700;margin-top:10px;min-height:20px"></div>
+    <div class="history-chart">
+      <h4>📊 내 반응속도 기록</h4>
+      <div id="reactionHistory"><span style="color:#888;font-size:12px">아직 기록이 없습니다.</span></div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="tab-compare" class="tab-content">
+<div class="container">
+  <div class="compare-section">
+    <h3>📊 4가지 모드 비교 분석</h3>
+    <div class="compare-grid">
+      <div class="compare-card"><h4>🟢 정상 상태</h4><div class="big-num">0ms</div><div class="desc">신경 전달 정상<br>예상 생존: <b>40~70초</b><br>전두엽·소뇌 정상 작동</div></div>
+      <div class="compare-card"><h4>🟡 수면 부족</h4><div class="big-num">300ms</div><div class="desc">주의력 40%↓, 눈 깜빡임<br>예상 생존: <b>12~25초</b><br><span class="warn">17시간 불침 ≈ 혈중알코올 0.05%</span></div></div>
+      <div class="compare-card"><h4>🔴 음주 상태</h4><div class="big-num">450ms</div><div class="desc">시야 흐림, 균형 감각 마비<br>예상 생존: <b>5~12초</b><br><span class="warn">60km/h에서 0.45초 = 7.5m</span></div></div>
+      <div class="compare-card"><h4>📱 스마트폰</h4><div class="big-num">250ms</div><div class="desc">그라데이션 시야 + 강한 점프<br>예상 생존: <b>15~30초</b><br><span class="warn">보며 걷기 = 음주 보행과 유사</span></div></div>
+    </div>
+    <div class="survival-chart">
+      <h4>🎯 내 실제 기록 비교</h4>
+      <div id="myRecordCompare"><span style="color:#888;font-size:12px">각 모드로 플레이하면 기록이 표시됩니다.</span></div>
+    </div>
+    <div class="conclusion-box">
+      <h3 style="color:#FFD700;margin-bottom:10px">💭 우리가 얻은 깨달음</h3>
+      <div class="big-quote">"수면 부족과 음주, 스마트폰 중독은<br>단순한 '부주의'가 아닙니다.<br>뇌의 신경 전달 속도를 <b>물리적으로 지연</b>시켜<br>위험 상황에서 대처하지 못하게 만드는<br><b>치명적인 과학적 원인</b>입니다."</div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+const BASE_SPEED   = 5.0;
+const MAX_SPEED    = 3.5;
+const SPEED_RATE   = 0.018;
+const PATTERN_GAP  = 380;
+const JUMP_GAP     = 250;
+const MIXED_GAP    = 350;
+const GAP_EXTRA    = 140;
+const PHONE_RADIUS = 230;
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  if (id === 'game') draw();
+}
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const GROUND_Y = H * 0.7;
+let game = {
+  mode:'normal', running:false, score:0, time:0, speed:1, dodged:0,
+  startTime:0, lastObstacleTime:0, nextInterval:2200, lastPatternIdx:-1
+};
+let player = {
+  x:100, y:GROUND_Y-60, width:40, height:60,
+  vy:0, onGround:true, jumpCount:0, ducking:false,
+  baseHeight:60, duckHeight:30, wobble:0
+};
+let obstacles = [];
+let myRecords = { normal:null, sleep:null, drunk:null, phone:null };
+const OBSTACLE_DEFS = {
+  smallTree:{ w:30, h:40, y:GROUND_Y-40,  emoji:'🌲', type:'jump', speedMul:1 },
+  bigTree:  { w:40, h:70, y:GROUND_Y-70,  emoji:'🌳', type:'jump', speedMul:1 },
+  rock:     { w:45, h:35, y:GROUND_Y-35,  emoji:'🪨', type:'jump', speedMul:1 },
+  cactus:   { w:30, h:55, y:GROUND_Y-55,  emoji:'🌵', type:'jump', speedMul:1 },
+  leaves:   { w:50, h:25, y:GROUND_Y-25,  emoji:'🍂', type:'jump', speedMul:1 },
+  fire:     { w:35, h:45, y:GROUND_Y-45,  emoji:'🔥', type:'jump', speedMul:1 },
+  trap:     { w:40, h:25, y:GROUND_Y-25,  emoji:'🪤', type:'jump', speedMul:1 },
+  bricks:   { w:55, h:40, y:GROUND_Y-40,  emoji:'🧱', type:'jump', speedMul:1 },
+  barrier:  { w:70, h:45, y:GROUND_Y-80,  emoji:'🚧', type:'duck', speedMul:1 },
+  branch:   { w:80, h:40, y:GROUND_Y-85,  emoji:'🌉', type:'duck', speedMul:1 },
+  sign:     { w:60, h:35, y:GROUND_Y-75,  emoji:'⚠️', type:'duck', speedMul:1 },
+  bird:     { w:40, h:30, y:GROUND_Y-100, emoji:'🦅', type:'air',  speedMul:1 },
+  bat:      { w:35, h:25, y:GROUND_Y-110, emoji:'🦇', type:'air',  speedMul:1 },
+  car:      { w:60, h:35, y:GROUND_Y-35,  emoji:'🚗', type:'fast', speedMul:1.5 }
+};
+function setMode(mode) {
+  game.mode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.mode-' + mode).classList.add('active');
+  const ind = document.getElementById('statusIndicator');
+  const wrap = document.getElementById('gameWrapper');
+  wrap.classList.remove('shake','drunk-vision');
+  if (mode === 'normal') ind.innerHTML = '🟢 정상 · <span class="delay-badge d0">0ms</span>';
+  else if (mode === 'sleep') ind.innerHTML = '🟡 수면부족 · <span class="delay-badge d300">300ms</span>';
+  else if (mode === 'drunk') {
+    ind.innerHTML = '🔴 음주 · <span class="delay-badge d450">450ms</span>';
+    wrap.classList.add('shake','drunk-vision');
+  } else ind.innerHTML = '📱 스마트폰 · <span class="delay-badge d250">250ms</span>';
+  draw();
+}
+function getInputDelay() { return { normal:0, sleep:300, drunk:450, phone:250 }[game.mode]; }
+function queueInput(action) {
+  const delay = getInputDelay();
+  if (delay === 0) executeInput(action);
+  else setTimeout(() => { if (game.running) executeInput(action); }, delay);
+}
+// 🆕 스마트폰 모드에서 점프 속도 증가
+function executeInput(action) {
+  if (action === 'jump' && player.jumpCount < 2) {
+    const jumpPower = game.mode === 'phone' ? -15 : -13;
+    player.vy = jumpPower;
+    player.onGround = false;
+    player.jumpCount++;
+    playSound('jump');
+  } else if (action === 'duck') {
+    player.ducking = true;
+    player.height = player.duckHeight;
+    player.y = GROUND_Y - player.duckHeight;
+  }
+}
+function releaseDuck() {
+  if (player.ducking && player.onGround) {
+    player.ducking = false;
+    player.height = player.baseHeight;
+    player.y = GROUND_Y - player.baseHeight;
+  }
+}
+document.addEventListener('keydown', e => {
+  if (!game.running) return;
+  if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); queueInput('jump'); }
+  else if (e.code === 'ArrowDown') { e.preventDefault(); queueInput('duck'); }
+});
+document.addEventListener('keyup', e => { if (e.code === 'ArrowDown') releaseDuck(); });
+function startGame() {
+  document.getElementById('startOverlay').classList.remove('show');
+  document.getElementById('gameOverOverlay').classList.remove('show');
+  Object.assign(game, {
+    running:true, score:0, time:0, speed:1, dodged:0,
+    startTime:performance.now(), lastObstacleTime:performance.now(),
+    nextInterval:2200, lastPatternIdx:-1
+  });
+  obstacles = [];
+  Object.assign(player, {
+    y:GROUND_Y-player.baseHeight, height:player.baseHeight,
+    vy:0, onGround:true, jumpCount:0, ducking:false, wobble:0
+  });
+  setMode(game.mode);
+  lastTime = 0;
+  requestAnimationFrame(loop);
+}
+function recordAndRestart() {
+  myRecords[game.mode] = { time:game.time, score:game.score, dodged:game.dodged };
+  updateMyRecordCompare();
+  startGame();
+}
+function updateMyRecordCompare() {
+  const el = document.getElementById('myRecordCompare');
+  const modes = [
+    {key:'normal', label:'🟢 정상', color:'#4CAF50'},
+    {key:'sleep', label:'🟡 수면부족', color:'#FFC107'},
+    {key:'phone', label:'📱 스마트폰', color:'#2196F3'},
+    {key:'drunk', label:'🔴 음주', color:'#E91E63'}
+  ];
+  const maxT = Math.max(...modes.map(m => myRecords[m.key]?.time || 0), 1);
+  let html = '';
+  modes.forEach(m => {
+    const r = myRecords[m.key];
+    const pct = r ? (r.time/maxT)*100 : 0;
+    html += `<div class="survival-bar"><div class="survival-label">${m.label}</div>
+      <div class="survival-track"><div class="survival-fill" style="width:${pct}%;background:${m.color}">${r ? r.time.toFixed(1)+'초' : '-'}</div></div></div>`;
+  });
+  el.innerHTML = html;
+}
+let spawnCursor = 0;
+function place(type) {
+  const d = OBSTACLE_DEFS[type];
+  obstacles.push({
+    type, x:spawnCursor, y:d.y, w:d.w, h:d.h,
+    emoji:d.emoji, obstType:d.type, speedMul:d.speedMul, passed:false
+  });
+  spawnCursor += d.w;
+}
+function gapJump() { 
+  const bonus = Math.min(80, game.speed * 25);
+  spawnCursor += JUMP_GAP + bonus + Math.random()*GAP_EXTRA; 
+}
+function gapMixed() { 
+  const bonus = Math.min(80, game.speed * 25);
+  spawnCursor += MIXED_GAP + bonus + Math.random()*GAP_EXTRA; 
+}
+function spawnObstaclePattern() {
+  let rightEdge = 0;
+  for (const ob of obstacles) rightEdge = Math.max(rightEdge, ob.x + ob.w);
+  spawnCursor = Math.max(W + 60, rightEdge + PATTERN_GAP + Math.random()*180);
+  const patterns = [
+    () => {
+      const pool = Object.keys(OBSTACLE_DEFS);
+      place(pool[Math.floor(Math.random()*pool.length)]);
+    },
+    () => {
+      const pool = ['smallTree','rock','leaves','fire','trap'];
+      const t = pool[Math.floor(Math.random()*pool.length)];
+      place(t); gapJump(); place(t);
+    },
+    () => {
+      const pool = ['smallTree','leaves','fire','trap'];
+      const t = pool[Math.floor(Math.random()*pool.length)];
+      place(t); gapJump(); place(t); gapJump(); place(t);
+    },
+    () => { place('barrier'); gapMixed(); place('bigTree'); },
+    () => { place('branch'); gapMixed(); place('rock'); },
+    () => { place('smallTree'); gapJump(); place('bigTree'); gapJump(); place('smallTree'); },
+    () => { place('bird'); gapMixed(); place('cactus'); },
+    () => {
+      const a = ['smallTree','rock','fire'];
+      const b = ['barrier','branch','sign'];
+      const c = ['bigTree','cactus','bricks'];
+      place(a[Math.floor(Math.random()*a.length)]);
+      gapMixed();
+      place(b[Math.floor(Math.random()*b.length)]);
+      gapMixed();
+      place(c[Math.floor(Math.random()*c.length)]);
+    },
+    () => {
+      place('fire'); gapJump(); place('fire'); gapJump(); place('fire');
+    },
+    () => {
+      place('car'); gapMixed(); place('bigTree');
+    },
+    () => {
+      place('trap'); gapMixed(); place('sign'); gapMixed(); place('bricks');
+    },
+    () => {
+      place('bat'); gapJump(); place('bat'); gapMixed(); place('rock');
+    }
+  ];
+  let idx, tries = 0;
+  do {
+    if (game.time < 10)      idx = Math.floor(Math.random()*3);
+    else if (game.time < 25) idx = Math.floor(Math.random()*6);
+    else if (game.time < 50) idx = Math.floor(Math.random()*9);
+    else                     idx = Math.floor(Math.random()*patterns.length);
+    tries++;
+  } while (idx === game.lastPatternIdx && tries < 5);
+  game.lastPatternIdx = idx;
+  patterns[idx]();
+}
+let lastTime = 0;
+function loop(ts) {
+  if (!game.running) return;
+  const dt = lastTime ? (ts-lastTime)/1000 : 0.016;
+  lastTime = ts;
+  update(dt, ts);
+  draw();
+  requestAnimationFrame(loop);
+}
+function update(dt, ts) {
+  game.time = (ts - game.startTime)/1000;
+  game.speed = Math.min(MAX_SPEED, 1 + game.time*SPEED_RATE);
+  if (!player.onGround) {
+    player.vy += 0.7;
+    player.y += player.vy;
+    if (player.y >= GROUND_Y - player.height) {
+      player.y = GROUND_Y - player.height;
+      player.vy = 0; player.onGround = true; player.jumpCount = 0;
+    }
+  }
+  if (game.mode === 'drunk')       player.wobble = Math.sin(ts/150)*8;
+  else if (game.mode === 'sleep')  player.wobble = Math.sin(ts/400)*2;
+  else if (game.mode === 'phone')  player.wobble = Math.sin(ts/300)*3;
+  else                             player.wobble = 0;
+  if (ts - game.lastObstacleTime > game.nextInterval) {
+    spawnObstaclePattern();
+    game.lastObstacleTime = ts;
+    game.nextInterval = (1700 + Math.random()*1100) / Math.sqrt(game.speed);
+  }
+  const baseMove = BASE_SPEED * game.speed;
+  for (let i = obstacles.length-1; i >= 0; i--) {
+    const ob = obstacles[i];
+    ob.x -= baseMove * ob.speedMul;
+    if (!ob.passed && ob.x + ob.w < player.x) {
+      ob.passed = true; game.score += 10; game.dodged++;
+    }
+    if (ob.x + ob.w < 0) { obstacles.splice(i,1); continue; }
+    if (checkCollision(player, ob)) { gameOver(ob); return; }
+  }
+  document.getElementById('score').textContent = game.score;
+  document.getElementById('time').textContent = game.time.toFixed(1);
+  document.getElementById('speed').textContent = game.speed.toFixed(2);
+}
+function checkCollision(p, ob) {
+  const px = p.x+8, py = p.y+5, pw = p.width-16, ph = p.height-10;
+  return px < ob.x+ob.w && px+pw > ob.x && py < ob.y+ob.h && py+ph > ob.y;
+}
+function gameOver(ob) {
+  game.running = false;
+  playSound('crash');
+  document.getElementById('finalTime').textContent = game.time.toFixed(1);
+  document.getElementById('finalScore').textContent = game.score;
+  document.getElementById('finalDodged').textContent = game.dodged;
+  const msgs = {
+    normal:{t:'💥 GAME OVER', m:'정상 상태에서도 충돌!<br>더 오래 살아남아 보세요!'},
+    sleep:{t:'😴 GAME OVER (수면부족)', m:'뇌 반응 <b style="color:#FFC107">300ms</b> 지연!<br>눈이 감겨 앞을 놓쳤습니다.'},
+    drunk:{t:'🥴 GAME OVER (음주)', m:'알코올이 뇌를 <b style="color:#E91E63">450ms</b> 지연!<br>60km/h에서 <b>7.5m</b>의 사고 거리입니다.'},
+    phone:{t:'📱 GAME OVER (스마트폰)', m:'그라데이션 시야 속 <b style="color:#2196F3">250ms</b> 지연!<br>주변 위험을 보지 못했습니다.'}
+  };
+  document.getElementById('gameOverTitle').textContent = msgs[game.mode].t;
+  document.getElementById('gameOverMsg').innerHTML = msgs[game.mode].m;
+  document.getElementById('gameOverOverlay').classList.add('show');
+}
+function lerpColor(c1,c2,t) {
+  const a = [1,3,5].map(i => parseInt(c1.slice(i,i+2),16));
+  const b = [1,3,5].map(i => parseInt(c2.slice(i,i+2),16));
+  return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`;
+}
+function drawBackground() {
+  const cyc = game.time % 80;
+  let top, bot, gt, gb;
+  if (cyc < 20) {
+    const t = cyc < 10 ? 0 : (cyc-10)/10;
+    top = lerpColor('#87CEEB','#FFB347',t);
+    bot = lerpColor('#B0E0E6','#FFD89B',t);
+    gt = '#8B4513'; gb = '#654321';
+  } else if (cyc < 40) {
+    const t = (cyc-20)/20;
+    top = lerpColor('#FFB347','#2C1654',t);
+    bot = lerpColor('#FFD89B','#4A148C',t);
+    gt = lerpColor('#8B4513','#3E2723',t);
+    gb = lerpColor('#654321','#1B0000',t);
+  } else if (cyc < 60) {
+    top='#2C1654'; bot='#4A148C'; gt='#3E2723'; gb='#1B0000';
+  } else {
+    const t = (cyc-60)/20;
+    top = lerpColor('#2C1654','#87CEEB',t);
+    bot = lerpColor('#4A148C','#B0E0E6',t);
+    gt = lerpColor('#3E2723','#8B4513',t);
+    gb = lerpColor('#1B0000','#654321',t);
+  }
+  const sky = ctx.createLinearGradient(0,0,0,GROUND_Y);
+  sky.addColorStop(0,top); sky.addColorStop(1,bot);
+  ctx.fillStyle = sky; ctx.fillRect(0,0,W,GROUND_Y);
+  if (cyc >= 20 && cyc < 70) {
+    const a = cyc < 40 ? (cyc-20)/20 : cyc < 60 ? 1 : (70-cyc)/10;
+    ctx.fillStyle = `rgba(255,255,255,${a*.8})`;
+    for (let i=0;i<30;i++) {
+      ctx.beginPath();
+      ctx.arc((i*137)%W, (i*53)%(GROUND_Y-50), (i%3)+1, 0, 6.29);
+      ctx.fill();
+    }
+  }
+  if (cyc < 30 || cyc > 65) {
+    ctx.fillStyle = 'rgba(255,255,255,.8)';
+    const off = (game.time*20)%W;
+    for (let i=0;i<3;i++) {
+      const cx = ((i*300)-off+W)%W;
+      ctx.beginPath();
+      ctx.arc(cx,60,25,0,6.29);
+      ctx.arc(cx+25,65,20,0,6.29);
+      ctx.arc(cx-25,65,18,0,6.29);
+      ctx.fill();
+    }
+  }
+  if (cyc < 30) {
+    const g = ctx.createRadialGradient(W-80,70,10,W-80,70,40);
+    g.addColorStop(0,'#FFFF00'); g.addColorStop(1,'rgba(255,200,0,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W-80,70,40,0,6.29); ctx.fill();
+  } else if (cyc >= 40 && cyc < 70) {
+    const g = ctx.createRadialGradient(W-80,70,10,W-80,70,30);
+    g.addColorStop(0,'#F5F5F5'); g.addColorStop(1,'rgba(200,200,220,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W-80,70,30,0,6.29); ctx.fill();
+  }
+  const ground = ctx.createLinearGradient(0,GROUND_Y,0,H);
+  ground.addColorStop(0,gt); ground.addColorStop(1,gb);
+  ctx.fillStyle=ground; ctx.fillRect(0,GROUND_Y,W,H-GROUND_Y);
+  ctx.strokeStyle='rgba(85,139,47,.5)'; ctx.lineWidth=1;
+  for (let i=0;i<W;i+=20) {
+    ctx.beginPath(); ctx.moveTo(i,GROUND_Y); ctx.lineTo(i+3,GROUND_Y-5); ctx.stroke();
+  }
+}
+function draw() {
+  drawBackground();
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  obstacles.forEach(ob => {
+    let y = ob.y + ob.h/2;
+    if (ob.type === 'air') {
+      const amp = ob.type === 'bat' ? 8 : 5;
+      const freq = ob.type === 'bat' ? 150 : 200;
+      y += Math.sin(performance.now()/freq + ob.x*.01)*amp;
+    }
+    ctx.font = ob.h + 'px serif';
+    ctx.fillText(ob.emoji, ob.x + ob.w/2, y);
+  });
+  drawPlayer();
+  if (game.mode === 'sleep' && game.running) {
+    const t = performance.now()/1000;
+    const ph = (t%2)/2;
+    ctx.font='bold 20px Malgun Gothic';
+    ctx.fillStyle = `rgba(255,193,7,${1-ph})`;
+    ctx.fillText('z', player.x+50+ph*10, player.y-10-ph*30);
+    ctx.font='bold 16px Malgun Gothic';
+    ctx.fillText('Z', player.x+60+ph*15, player.y-ph*20);
+    const blink = Math.sin(t*1.5)*.5+.5;
+    if (blink > .8) {
+      ctx.fillStyle = `rgba(0,0,0,${(blink-.8)*5*.85})`;
+      ctx.fillRect(0,0,W,H);
+    }
+  }
+  if (game.mode === 'phone' && game.running) {
+    const cx = player.x + player.width/2;
+    const cy = player.y + player.height/2;
+    const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, PHONE_RADIUS);
+    grd.addColorStop(0,    'rgba(0,0,0,0)');
+    grd.addColorStop(0.25, 'rgba(0,0,0,0.15)');
+    grd.addColorStop(0.5,  'rgba(0,0,0,0.5)');
+    grd.addColorStop(0.75, 'rgba(0,0,0,0.85)');
+    grd.addColorStop(1,    'rgba(0,0,0,0.98)');
+    
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+    if (Math.random() < .012) {
+      ctx.fillStyle='rgba(33,150,243,.95)';
+      ctx.fillRect(W-220,50,200,70);
+      ctx.fillStyle='white';
+      ctx.font='bold 13px Malgun Gothic';
+      ctx.textAlign='left';
+      ctx.fillText('📱 카카오톡 알림!', W-210,75);
+      ctx.font='11px Malgun Gothic';
+      ctx.fillText('친구: 오늘 뭐해? 😊', W-210,100);
+      ctx.textAlign='center';
+    }
+  }
+  if (game.mode === 'drunk' && game.running) {
+    ctx.globalAlpha=.2;
+    obstacles.forEach(ob => {
+      let y = ob.y + ob.h/2;
+      if (ob.type === 'air') y += Math.sin(performance.now()/200 + ob.x*.01)*5;
+      ctx.font = ob.h + 'px serif';
+      ctx.fillText(ob.emoji, ob.x + ob.w/2 + 15, y + 8);
+    });
+    ctx.globalAlpha=1;
+  }
+}
+function drawPlayer() {
+  const px = player.x + player.wobble, py = player.y;
+  const w = player.width, h = player.height;
+  ctx.save();
+  if (game.mode === 'drunk') {
+    ctx.translate(px+w/2,py+h/2);
+    ctx.rotate(Math.sin(performance.now()/200)*.2);
+    ctx.translate(-(px+w/2),-(py+h/2));
+  } else if (game.mode === 'sleep' || game.mode === 'phone') {
+    ctx.translate(px+w/2,py+h/2);
+    ctx.rotate(.08);
+    ctx.translate(-(px+w/2),-(py+h/2));
+  }
+  const color = {normal:'#4CAF50',sleep:'#FFC107',drunk:'#E91E63',phone:'#2196F3'}[game.mode];
+  ctx.fillStyle=color; ctx.fillRect(px+5,py+20,w-10,h-25);
+  ctx.fillStyle='#FFDBAC';
+  ctx.beginPath(); ctx.arc(px+w/2,py+12,12,0,6.29); ctx.fill();
+  ctx.fillStyle='#000';
+  if (game.mode === 'normal') {
+    ctx.beginPath();
+    ctx.arc(px+w/2-4,py+10,1.5,0,6.29);
+    ctx.arc(px+w/2+4,py+10,1.5,0,6.29);
+    ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(px+w/2,py+14,4,0,Math.PI); ctx.stroke();
+  } else if (game.mode === 'sleep') {
+    ctx.strokeStyle='#000'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(px+w/2-6,py+10); ctx.lineTo(px+w/2-2,py+10); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px+w/2+2,py+10); ctx.lineTo(px+w/2+6,py+10); ctx.stroke();
+    ctx.beginPath(); ctx.arc(px+w/2,py+17,3,Math.PI,0); ctx.stroke();
+  } else if (game.mode === 'drunk') {
+    ctx.fillStyle='rgba(255,100,100,.5)';
+    ctx.beginPath(); ctx.arc(px+w/2,py+12,12,0,6.29); ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1.5;
+    const t=performance.now()/200;
+    ctx.beginPath(); ctx.arc(px+w/2-4,py+10,3,t,t+4); ctx.stroke();
+    ctx.beginPath(); ctx.arc(px+w/2+4,py+10,3,-t,-t+4); ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.arc(px+w/2-4,py+12,1.5,0,6.29);
+    ctx.arc(px+w/2+4,py+12,1.5,0,6.29);
+    ctx.fill();
+    ctx.fillStyle='#333'; ctx.fillRect(px+w-5,py+25,8,12);
+    ctx.fillStyle='#4FC3F7'; ctx.fillRect(px+w-4,py+26,6,10);
+  }
+  ctx.fillStyle='#1565C0';
+  ctx.fillRect(px+8,py+h-10,8,10);
+  ctx.fillRect(px+w-16,py+h-10,8,10);
+  ctx.restore();
+}
+function playSound(type) {
+  try {
+    const a = new (window.AudioContext || window.webkitAudioContext)();
+    const o = a.createOscillator(), g = a.createGain();
+    o.connect(g); g.connect(a.destination);
+    if (type === 'jump') {
+      o.frequency.value=500;
+      o.frequency.exponentialRampToValueAtTime(800,a.currentTime+.1);
+      g.gain.setValueAtTime(.15,a.currentTime);
+      g.gain.exponentialRampToValueAtTime(.01,a.currentTime+.1);
+      o.start(); o.stop(a.currentTime+.1);
+    } else {
+      o.frequency.value=200;
+      o.frequency.exponentialRampToValueAtTime(50,a.currentTime+.4);
+      g.gain.setValueAtTime(.3,a.currentTime);
+      g.gain.exponentialRampToValueAtTime(.01,a.currentTime+.4);
+      o.start(); o.stop(a.currentTime+.4);
+    }
+  } catch(e) {}
+}
+let reactionState='waiting', reactionStart=0, reactionTimeout=null, reactionHistory=[];
+function handleReactionClick() {
+  const box=document.getElementById('reactionBox');
+  const fb=document.getElementById('reactionFeedback');
+  if (reactionState === 'waiting') {
+    box.className='reaction-box reaction-waiting';
+    box.innerHTML='<p>⏳ 초록색이 되면<br>즉시 클릭!</p>';
+    reactionState='ready';
+    reactionTimeout=setTimeout(() => {
+      box.className='reaction-box reaction-ready';
+      box.innerHTML='<p>🎯 지금 클릭!</p>';
+      reactionStart=performance.now();
+      reactionState='click';
+    }, 1500 + Math.random()*3000);
+  } else if (reactionState === 'ready') {
+    clearTimeout(reactionTimeout);
+    box.className='reaction-box reaction-waiting';
+    box.innerHTML='<p>❌ 너무 빨랐어요!<br>클릭하여 다시 시도</p>';
+    fb.textContent='';
+    reactionState='waiting';
+  } else if (reactionState === 'click') {
+    const rt=performance.now()-reactionStart;
+    reactionHistory.push(rt);
+    box.className='reaction-box reaction-result';
+    box.innerHTML = `<p>당신의 반응속도<span class="reaction-result-big">${Math.round(rt)}ms</span>클릭하여 다시 테스트</p>`;
+    fb.textContent = rt<200 ? '🏆 우수! 정상적인 뇌 반응입니다.'
+      : rt<300 ? '👍 평균 수준입니다.'
+      : rt<450 ? '⚠️ 수면 부족 상태와 유사합니다.'
+      : '🚨 음주 상태와 유사합니다!';
+    updateReactionHistory();
+    reactionState='waiting';
+  }
+}
+function updateReactionHistory() {
+  const el=document.getElementById('reactionHistory');
+  const last5=reactionHistory.slice(-5);
+  const avg=Math.round(reactionHistory.reduce((a,b)=>a+b,0)/reactionHistory.length);
+  let html = `<div style="margin-bottom:8px;font-size:12px">평균 반응속도: <b style="color:#FFD700;font-size:16px">${avg}ms</b> · 총 ${reactionHistory.length}회</div>`;
+  const maxRt=Math.max(...last5,500);
+  last5.forEach((rt,i) => {
+    const color = rt>450 ? '#E91E63' : rt>300 ? '#FFC107' : '#4CAF50';
+    html+=`<div class="bar-row"><div class="bar-label">#${reactionHistory.length-last5.length+i+1}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(rt/maxRt)*100}%;background:${color}">${Math.round(rt)}ms</div></div></div>`;
+  });
+  el.innerHTML=html;
+}
+draw();
+updateMyRecordCompare();
+</script>
+</body>
+</html>
