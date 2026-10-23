@@ -19,7 +19,10 @@
            border:1px solid var(--line); border-radius:14px; color:inherit; text-decoration:none; transition:border-color .15s, transform .15s; }
   a.card:hover { border-color:var(--accent); transform:translateY(-1px); }
   .title { font-weight:600; font-size:17px; }
-  .name { color:var(--muted); font-size:14px; margin-top:4px; }
+  .name { color:var(--muted); font-size:14px; margin-top:4px; line-height:1.5; }
+  .name b { color:var(--text); font-weight:600; }
+  .team { color:var(--accent); font-size:13px; font-weight:600; margin-bottom:4px; }
+  .card.pending { display:flex; padding:20px; background:var(--card); border:1px dashed var(--line); border-radius:14px; opacity:.7; }
   .arrow { color:var(--accent); font-size:20px; }
 </style>
 </head>
@@ -28,9 +31,10 @@
   <h1>2026 공개수업</h1>
   <p class="sub">학생 작품 모음</p>
   <ul>
-    <li><a class="card" href="박서현.html"><div><div class="title">내 냉장고 한 끼 추천</div><div class="name">박서현</div></div><span class="arrow">→</span></a></li>
-    <li><a class="card" href="박현주.html"><div><div class="title">뇌의 반응속도 러닝</div><div class="name">박현주</div></div><span class="arrow">→</span></a></li>
-    <li><a class="card" href="신연재.html"><div><div class="title">과학실 예약 시스템</div><div class="name">신연재</div></div><span class="arrow">→</span></a></li>
+    <li><a class="card" href="신연재.html"><div><div class="team">1모둠</div><div class="title">과학실 예약 시스템</div><div class="name"><b>신연재</b> · 한성윤 · 김도연 · 노민아 · 이지원 · 정아연</div></div><span class="arrow">→</span></a></li>
+    <li><a class="card" href="박현주.html"><div><div class="team">2모둠</div><div class="title">뇌의 반응속도 러닝</div><div class="name"><b>박현주</b> · 오인영 · 김수현 · 여채원 · 이지민</div></div><span class="arrow">→</span></a></li>
+    <li><a class="card" href="박서현.html"><div><div class="team">3모둠</div><div class="title">내 냉장고 한 끼 추천</div><div class="name"><b>박서현</b> · 김시윤 · 박서진 · 시윤서 · 이보미</div></div><span class="arrow">→</span></a></li>
+    <li><div class="card pending"><div><div class="team">4모둠</div><div class="title">준비 중</div><div class="name"><b>김우경</b> · 손정희 · 김윤슬 · 양소원 · 채윤아</div></div></div></li>
   </ul>
 </main>
 </body>
