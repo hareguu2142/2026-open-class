@@ -326,3 +326,1361 @@
     padding: 6px 12px;
     border-radius: 16px;
     background: rgba(100, 220, 255, 0.08);
+    border: 1px solid var(--panel-border);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .teacher-chip .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .teacher-chip.active {
+    background: rgba(57, 245, 176, 0.18);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .legend {
+    margin-top: 14px;
+    display: flex;
+    gap: 14px;
+    font-size: 11px;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .legend i {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* ========== 예약 폼 ========== */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(0,0,0,0.45);
+    box-shadow: 0 0 0 3px rgba(57, 245, 176, 0.12);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .time-slots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .time-slot {
+    padding: 8px;
+    text-align: center;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    transition: all 0.15s;
+  }
+  .time-slot:hover:not(.booked) {
+    border-color: var(--accent-2);
+  }
+  .time-slot.selected {
+    background: var(--accent-2);
+    color: var(--bg-0);
+    border-color: var(--accent-2);
+    font-weight: 700;
+  }
+  .time-slot.booked {
+    background: rgba(255, 92, 122, 0.15);
+    border-color: var(--danger);
+    color: var(--danger);
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+
+  /* 준비물 선택 */
+  .items-selector {
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 8px;
+  }
+  .items-selector::-webkit-scrollbar { width: 6px; }
+  .items-selector::-webkit-scrollbar-thumb {
+    background: var(--panel-border);
+    border-radius: 3px;
+  }
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .item-row:hover { background: rgba(100, 220, 255, 0.06); }
+  .item-row input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .item-row .item-info { flex: 1; }
+  .item-row .item-name { font-size: 13px; }
+  .item-row .item-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Courier New', monospace;
+  }
+  .item-row .stock {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+  }
+  .stock.ok { background: rgba(124, 242, 156, 0.15); color: var(--ok); }
+  .stock.low { background: rgba(255, 179, 71, 0.18); color: var(--warn); }
+  .stock.out { background: rgba(255, 92, 122, 0.18); color: var(--danger); }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #2fd89a);
+    color: var(--bg-0);
+    box-shadow: 0 4px 16px rgba(57, 245, 176, 0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(57, 245, 176, 0.45);
+  }
+  .btn-secondary {
+    background: rgba(100, 220, 255, 0.1);
+    color: var(--accent-2);
+    border: 1px solid var(--accent-2);
+  }
+  .btn-secondary:hover {
+    background: rgba(100, 220, 255, 0.2);
+  }
+  .btn-danger {
+    background: rgba(255, 92, 122, 0.15);
+    color: var(--danger);
+    border: 1px solid var(--danger);
+  }
+  .btn-block { width: 100%; justify-content: center; }
+
+  /* ========== 모달 ========== */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--bg-1);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    max-width: 520px;
+    width: 100%;
+    padding: 28px;
+    box-shadow: 0 0 40px rgba(57, 245, 176, 0.25);
+    animation: pop 0.25s ease;
+  }
+  @keyframes pop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal h3 {
+    font-size: 18px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal .checklist {
+    margin: 16px 0;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 14px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.08);
+    font-size: 13px;
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .checklist-item input { accent-color: var(--accent); }
+  .checklist-item.done { color: var(--text-dim); text-decoration: line-through; }
+
+  /* ========== 탭 컨텐츠 ========== */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fade 0.3s; }
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========== 예약 현황 ========== */
+  .status-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .status-filters button {
+    padding: 7px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .status-filters button.active {
+    background: rgba(57, 245, 176, 0.15);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .reservation-list {
+    display: grid;
+    gap: 12px;
+  }
+  .reservation-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--panel-border);
+    border-left: 4px solid var(--accent-2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+    transition: all 0.2s;
+  }
+  .reservation-card:hover {
+    border-left-color: var(--accent);
+    transform: translateX(2px);
+  }
+  .reservation-card .topic {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .reservation-card .meta {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+  .reservation-card .meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .reservation-card .actions {
+    display: flex;
+    gap: 6px;
+  }
+  .reservation-card .actions button {
+    padding: 6px 12px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  /* ========== 물품 검색 ========== */
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .search-bar input {
+    flex: 1;
+    padding: 11px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .search-bar input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .category-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .category-pills button {
+    padding: 6px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .category-pills button.active {
+    background: var(--accent-2);
+    color: var(--bg-0);
+    border-color: var(--accent-2);
+  }
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .item-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .item-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .item-card:hover::before { transform: scaleX(1); }
+  .item-card:hover {
+    border-color: var(--accent-2);
+    transform: translateY(-2px);
+  }
+  .item-card .icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  .item-card .name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .item-card .category {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    font-family: 'Courier New', monospace;
+  }
+  .item-card .stock-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .item-card .stock-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.4s;
+  }
+  .item-card .stock-fill.low { background: linear-gradient(90deg, var(--warn), #ff8c42); }
+  .item-card .stock-fill.out { background: var(--danger); }
+  .item-card .stock-text {
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    justify-content: space-between;
+  }
+  .item-card .location {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 4px 8px;
+    background: rgba(100, 220, 255, 0.08);
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* ========== 통계 ========== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card .label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: 'Courier New', monospace;
+    color: var(--accent);
+  }
+  .stat-card .sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .chart-panel {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+  .chart-panel h4 {
+    font-size: 14px;
+    margin-bottom: 14px;
+    color: var(--text-dim);
+  }
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 180px;
+    padding: 10px 0;
+  }
+  .bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent));
+    border-radius: 6px 6px 0 0;
+    min-height: 4px;
+    position: relative;
+    transition: all 0.4s;
+    cursor: pointer;
+  }
+  .bar:hover { filter: brightness(1.2); }
+  .bar .bar-label {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'Courier New', monospace;
+  }
+  .bar .bar-value {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--accent);
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+  }
+  .top-list {
+    display: grid;
+    gap: 8px;
+  }
+  .top-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+  }
+  .top-item .rank {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(57, 245, 176, 0.15);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+  }
+  .top-item .rank.top-1 { background: linear-gradient(135deg, #ffd700, #ffb347); color: #000; }
+  .top-item .rank.top-2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #000; }
+  .top-item .rank.top-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+  .top-item .name { flex: 1; font-size: 13px; }
+  .top-item .count {
+    font-family: 'Courier New', monospace;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ========== 토스트 ========== */
+  .toast-container {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .toast {
+    padding: 12px 18px;
+    background: var(--bg-1);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 13px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 260px;
+    animation: slideIn 0.3s;
+  }
+  .toast.error { border-color: var(--danger); }
+  .toast.warn { border-color: var(--warn); }
+  @keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ========== 반응형 ========== */
+  @media (max-width: 720px) {
+    header { padding: 16px 18px; }
+    nav.tabs { padding: 10px 18px 0; overflow-x: auto; }
+    nav.tabs button { padding: 10px 14px; font-size: 13px; white-space: nowrap; }
+    main { padding: 18px; }
+    .form-row { grid-template-columns: 1fr; }
+    .time-slots { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <div class="orbit"></div>
+      <div class="orbit"></div>
+      <div class="orbit"></div>
+      <div class="nucleus"></div>
+    </div>
+    <div class="logo-text">
+      <h1>SCIENCE LAB · 예약 시스템</h1>
+      <p>Reservation · Inventory · Analytics</p>
+    </div>
+  </div>
+  <div class="header-info">
+    <span> 담당: 최선희 · 배태식 · 이정우 · 임승표</span>
+    <span class="today" id="todayDate">2026-10-16 FRI</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="reserve"><span class="ico"></span>예약하기</button>
+  <button class="tab-btn" data-tab="status"><span class="ico"></span>예약 현황</button>
+  <button class="tab-btn" data-tab="inventory"><span class="ico"></span>물품 검색</button>
+  <button class="tab-btn" data-tab="stats"><span class="ico"></span>통계</button>
+</nav>
+
+<main>
+
+  <!-- ============== 예약하기 ============== -->
+  <section class="tab-content active" id="tab-reserve">
+    <div class="reservation-grid">
+
+      <!-- 좌측: 달력 + 교사 -->
+      <div class="panel">
+        <div class="panel-title">
+           예약 가능 일정 <span class="tag">CALENDAR</span>
+        </div>
+        <div class="calendar-head">
+          <button onclick="changeMonth(-1)">‹</button>
+          <h3 id="calTitle">2026년 10월</h3>
+          <button onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="calendar" id="calendar"></div>
+
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>담당 교사 가능</span>
+          <span><i style="background:var(--warn)"></i>예약 있음</span>
+          <span><i style="background:var(--accent-2);border:1px solid var(--accent-2)"></i>오늘</span>
+        </div>
+
+        <div class="teacher-filter">
+          <h4> 담당 교사 선택 (가능 날짜 필터)</h4>
+          <div class="teacher-chips" id="teacherChips"></div>
+        </div>
+      </div>
+
+      <!-- 우측: 예약 폼 -->
+      <div class="panel">
+        <div class="panel-title">
+           예약 신청 <span class="tag">NEW RESERVATION</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>학번</label>
+            <input type="text" id="studentId" placeholder="예: 2023001">
+          </div>
+          <div class="form-group">
+            <label>신청자 이름</label>
+            <input type="text" id="studentName" placeholder="홍길동">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>실험 제목 (주제)</label>
+          <input type="text" id="topic" placeholder="예: 산-염기 중화반응 실험">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>선택 날짜</label>
+            <input type="text" id="selectedDate" readonly placeholder="달력에서 날짜를 선택하세요">
+          </div>
+          <div class="form-group">
+            <label>담당 교사</label>
+            <select id="teacherSelect">
+              <option value="">-- 교사를 선택하세요 --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>사용 시간</label>
+          <div class="time-slots" id="timeSlots"></div>
+        </div>
+
+        <div class="form-group">
+          <label>필요 준비물 (재고 확인 · 클릭하여 선택)</label>
+          <div class="items-selector" id="itemsSelector"></div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="submitReservation()">
+           예약 신청하기
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== 예약 현황 ============== -->
+  <section class="tab-content" id="tab-status">
+    <div class="panel">
+      <div class="panel-title">
+         예약 현황 <span class="tag">ALL RESERVATIONS</span>
+      </div>
+      <div class="status-filters" id="statusFilters">
+        <button class="active" data-filter="all">전체</button>
+      </div>
+      <div class="reservation-list" id="reservationList"></div>
+    </div>
+  </section>
+
+  <!-- ============== 물품 검색 ============== -->
+  <section class="tab-content" id="tab-inventory">
+    <div class="panel">
+      <div class="panel-title">
+         실험 물품 현황 <span class="tag">INVENTORY</span>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder=" 물품 이름을 검색하세요...">
+      </div>
+      <div class="category-pills" id="categoryPills"></div>
+      <div class="items-grid" id="itemsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============== 통계 ============== -->
+  <section class="tab-content" id="tab-stats">
+    <div class="stats-grid" id="statsCards"></div>
+
+    <div class="chart-panel">
+      <h4> 요일별 예약 현황</h4>
+      <div class="bar-chart" id="weekdayChart"></div>
+    </div>
+
+    <div class="reservation-grid">
+      <div class="chart-panel">
+        <h4> 인기 실험 주제 TOP 5</h4>
+        <div class="top-list" id="topTopics"></div>
+      </div>
+      <div class="chart-panel">
+        <h4> 많이 사용된 준비물 TOP 5</h4>
+        <div class="top-list" id="topItems"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 체크리스트 모달 -->
+<div class="modal-backdrop" id="checklistModal">
+  <div class="modal">
+    <h3> 실험 준비 체크리스트</h3>
+    <p style="color:var(--text-dim);font-size:13px;">실험 시작 전 아래 준비물을 하나씩 확인하세요.</p>
+    <div style="margin:12px 0;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;font-family:'Courier New',monospace;font-size:12px;">
+      <div id="checklistInfo"></div>
+    </div>
+    <div class="checklist" id="checklistBody"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="printChecklist()"> 출력하기</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ===================== 데이터 ===================== */
+const TEACHERS = [
+  { name: '최선희', color: '#39f5b0', available: ['2026-10-19','2026-10-20','2026-10-22','2026-10-26','2026-10-27','2026-10-29','2026-11-03','2026-11-05','2026-11-10','2026-11-12'] },
+  { name: '배태식', color: '#4dd0ff', available: ['2026-10-20','2026-10-21','2026-10-23','2026-10-27','2026-10-28','2026-10-30','2026-11-04','2026-11-06','2026-11-11','2026-11-13'] },
+  { name: '이정우', color: '#ffb347', available: ['2026-10-19','2026-10-21','2026-10-23','2026-10-26','2026-10-28','2026-10-30','2026-11-02','2026-11-05','2026-11-09','2026-11-12'] },
+  { name: '임승표', color: '#ff7eb9', available: ['2026-10-22','2026-10-23','2026-10-27','2026-10-29','2026-10-30','2026-11-03','2026-11-04','2026-11-06','2026-11-10','2026-11-13'] }
+];
+
+const TIME_SLOTS = [
+  '09:00~10:00','10:00~11:00','11:00~12:00',
+  '13:00~14:00','14:00~15:00','15:00~16:00',
+  '16:00~17:00','17:00~18:00','18:00~19:00'
+];
+
+const ITEMS = [
+  { id: 1,  name: '비커 100mL',     icon: '', category: '유리기구',   stock: 24, max: 30, location: 'A-01' },
+  { id: 2,  name: '비커 250mL',     icon: '', category: '유리기구',   stock: 18, max: 20, location: 'A-01' },
+  { id: 3,  name: '삼각플라스크',    icon: '', category: '유리기구',   stock: 12, max: 15, location: 'A-02' },
+  { id: 4,  name: '시험관',         icon: '', category: '유리기구',   stock: 40, max: 50, location: 'A-03' },
+  { id: 5,  name: '메스실린더 50mL', icon: '', category: '계량기구',   stock: 8,  max: 10, location: 'B-01' },
+  { id: 6,  name: '전자저울',        icon: '', category: '계량기구',   stock: 4,  max: 5,  location: 'B-02' },
+  { id: 7,  name: '광학현미경',      icon: '', category: '관측기기',   stock: 3,  max: 6,  location: 'C-01' },
+  { id: 8,  name: '돋보기',         icon: '', category: '관측기기',   stock: 10, max: 15, location: 'C-02' },
+  { id: 9,  name: ' 온도계',         icon: '', category: '측정기구',   stock: 7,  max: 10, location: 'D-01' },
+  { id: 10, name: 'pH 시험지',      icon: '', category: '시약/소모품', stock: 5,  max: 20, location: 'E-01' },
+  { id: 11, name: '리트머스 종이',   icon: '', category: '시약/소모품', stock: 0,  max: 15, location: 'E-01' },
+  { id: 12, name: '벤젠 버너',       icon: '', category: '가열기구',   stock: 6,  max: 8,  location: 'F-01' },
+  { id: 13, name: '삼각대',         icon: '', category: '가열기구',   stock: 9,  max: 10, location: 'F-02' },
+  { id: 14, name: '석면철망',        icon: '', category: '가열기구',   stock: 8,  max: 10, location: 'F-03' },
+  { id: 15, name: '보호안경',        icon: '', category: '안전용품',   stock: 25, max: 30, location: 'G-01' },
+  { id: 16, name: '장갑 (니트릴)',   icon: '', category: '안전용품',   stock: 2,  max: 50, location: 'G-02' },
+  { id: 17, name: '스포이트',        icon: '', category: '기타',      stock: 15, max: 20, location: 'H-01' },
+  { id: 18, name: '유리막대',        icon: '', category: '기타',      stock: 14, max: 20, location: 'H-02' }
+];
+
+// 시뮬레이션용 기존 예약
+const INITIAL_RESERVATIONS = [
+  { id: 1, date: '2026-10-20', time: '10:00~11:00', teacher: '최선희', studentId: '2023012', name: '김민준', topic: '광합성 관찰 실험', items: [7, 4, 8], createdAt: '2026-10-10' },
+  { id: 2, date: '2026-10-20', time: '14:00~15:00', teacher: '배태식', studentId: '2023045', name: '이서연', topic: '산-염기 중화반응', items: [1, 5, 10, 11], createdAt: '2026-10-11' },
+  { id: 3, date: '2026-10-22', time: '09:00~10:00', teacher: '임승표', studentId: '2023078', name: '박지호', topic: '금속의 산화 실험', items: [12, 13, 14, 1], createdAt: '2026-10-12' },
+  { id: 4, date: '2026-10-27', time: '13:00~14:00', teacher: '이정우', studentId: '2023023', name: '최유진', topic: '빛의 굴절 실험', items: [8, 18], createdAt: '2026-10-13' },
+  { id: 5, date: '2026-10-29', time: '15:00~16:00', teacher: '최선희', studentId: '2023091', name: '정하늘', topic: '효소의 작용 실험', items: [3, 9, 4, 17], createdAt: '2026-10-14' }
+];
+
+/* ===================== 상태 ===================== */
+let state = {
+  currentYear: 2026,
+  currentMonth: 10,
+  selectedDate: null,
+  selectedTime: null,
+  selectedTeacher: null,
+  selectedItems: new Set(),
+  reservations: JSON.parse(localStorage.getItem('lab_reservations') || 'null') || INITIAL_RESERVATIONS,
+  activeTeacherFilter: null,
+  inventoryCategory: '전체',
+  inventorySearch: ''
+};
+
+function saveReservations() {
+  localStorage.setItem('lab_reservations', JSON.stringify(state.reservations));
+}
+
+/* ===================== 유틸 ===================== */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const fmtDate = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
+const DOW = ['일','월','화','수','목','금','토'];
+
+function toast(msg, type = 'ok') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type === 'error' ? 'error' : type === 'warn' ? 'warn' : '');
+  const icon = type === 'error' ? '' : type === 'warn' ? '' : '';
+  t.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  $('toastContainer').appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'slideIn 0.3s reverse';
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
+}
+
+/* ===================== 달력 ===================== */
+function renderCalendar() {
+  const y = state.currentYear, m = state.currentMonth;
+  $('calTitle').textContent = `${y}년 ${m}월`;
+
+  const firstDay = new Date(y, m - 1, 1).getDay();
+  const lastDate = new Date(y, m, 0).getDate();
+  const today = new Date(2026, 9, 16); // 2026-10-16
+
+  // 해당 월의 가능 날짜 + 예약 날짜 수집
+  const availSet = new Set();
+  const reservSet = new Set();
+  TEACHERS.forEach(t => {
+    if (state.activeTeacherFilter && t.name !== state.activeTeacherFilter) return;
+    t.available.forEach(d => {
+      const [dy, dm] = d.split('-').map(Number);
+      if (dy === y && dm === m) availSet.add(d);
+    });
+  });
+  state.reservations.forEach(r => {
+    const [ry, rm] = r.date.split('-').map(Number);
+    if (ry === y && rm === m) reservSet.add(r.date);
+  });
+
+  let html = '';
+  DOW.forEach(d => html += `<div class="dow">${d}</div>`);
+  for (let i = 0; i < firstDay; i++) html += `<div class="day empty"></div>`;
+
+  for (let d = 1; d <= lastDate; d++) {
+    const dateStr = fmtDate(y, m, d);
+    const dateObj = new Date(y, m - 1, d);
+    const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const isToday = dateStr === '2026-10-16';
+    const isAvail = availSet.has(dateStr);
+    const hasRes = reservSet.has(dateStr);
+    const isSelected = state.selectedDate === dateStr;
+
+    let cls = 'day';
+    if (isPast) cls += ' past';
+    else if (!isAvail && state.activeTeacherFilter) cls += ' disabled';
+    if (isToday) cls += ' today';
+    if (isAvail) cls += ' available';
+    if (hasRes) cls += ' has-reservation';
+    if (isSelected) cls += ' selected';
+
+    html += `<div class="${cls}" data-date="${dateStr}" onclick="selectDate('${dateStr}')">${d}</div>`;
+  }
+  $('calendar').innerHTML = html;
+}
+
+function changeMonth(delta) {
+  state.currentMonth += delta;
+  if (state.currentMonth > 12) { state.currentMonth = 1; state.currentYear++; }
+  if (state.currentMonth < 1) { state.currentMonth = 12; state.currentYear--; }
+  renderCalendar();
+}
+
+function selectDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dateObj = new Date(y, m - 1, d);
+  const today = new Date(2026, 9, 16);
+  if (dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+    toast('과거 날짜는 예약할 수 없습니다.', 'error');
+    return;
+  }
+
+  // 선택한 날짜가 현재 필터 교사의 가능 날짜인지 확인
+  if (state.activeTeacherFilter) {
+    const t = TEACHERS.find(t => t.name === state.activeTeacherFilter);
+    if (!t.available.includes(dateStr)) {
+      toast(`${t.name} 선생님은 ${dateStr}에 가능하지 않습니다.`, 'warn');
+      return;
+    }
+  }
+
+  state.selectedDate = dateStr;
+  $('selectedDate').value = dateStr;
+
+  // 해당 날짜 가능한 교사 목록 업데이트
+  updateTeacherSelect(dateStr);
+
+  renderCalendar();
+  renderTimeSlots();
+}
+
+function updateTeacherSelect(dateStr) {
+  const sel = $('teacherSelect');
+  const availableTeachers = TEACHERS.filter(t => t.available.includes(dateStr));
+  sel.innerHTML = '<option value="">-- 교사를 선택하세요 --</option>';
+  availableTeachers.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.name;
+    opt.textContent = `${t.name} 선생님`;
+    opt.style.color = t.color;
+    sel.appendChild(opt);
+  });
+  if (state.activeTeacherFilter && availableTeachers.find(t => t.name === state.activeTeacherFilter)) {
+    sel.value = state.activeTeacherFilter;
+    state.selectedTeacher = state.activeTeacherFilter;
+  } else {
+    state.selectedTeacher = null;
+  }
+  renderTimeSlots();
+}
+
+/* ===================== 교사 필터 ===================== */
+function renderTeacherChips() {
+  const html = TEACHERS.map(t => `
+    <div class="teacher-chip ${state.activeTeacherFilter === t.name ? 'active' : ''}"
+         onclick="toggleTeacherFilter('${t.name}')"
+         style="${state.activeTeacherFilter === t.name ? `border-color:${t.color};color:${t.color};background:${t.color}22` : ''}">
+      <span class="dot" style="background:${t.color}"></span>
+      ${t.name}
+    </div>
+  `).join('');
+  $('teacherChips').innerHTML = html;
+}
+
+function toggleTeacherFilter(name) {
+  state.activeTeacherFilter = state.activeTeacherFilter === name ? null : name;
+  renderTeacherChips();
+  renderCalendar();
+  if (state.selectedDate) updateTeacherSelect(state.selectedDate);
+}
+
+/* ===================== 시간 슬롯 ===================== */
+function renderTimeSlots() {
+  const container = $('timeSlots');
+  if (!state.selectedDate || !state.selectedTeacher) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);font-size:12px;padding:14px;">날짜와 교사를 먼저 선택하세요</div>';
+    return;
+  }
+  const booked = state.reservations
+    .filter(r => r.date === state.selectedDate && r.teacher === state.selectedTeacher)
+    .map(r => r.time);
+
+  container.innerHTML = TIME_SLOTS.map(t => {
+    const isBooked = booked.includes(t);
+    const isSelected = state.selectedTime === t;
+    return `<div class="time-slot ${isBooked ? 'booked' : ''} ${isSelected ? 'selected' : ''}"
+                 onclick="${isBooked ? '' : `selectTime('${t}')`}">${t}</div>`;
+  }).join('');
+}
+
+function selectTime(t) {
+  state.selectedTime = t;
+  renderTimeSlots();
+}
+
+$('teacherSelect').addEventListener('change', e => {
+  state.selectedTeacher = e.target.value || null;
+  renderTimeSlots();
+});
+
+/* ===================== 준비물 선택 ===================== */
+function renderItemsSelector() {
+  $('itemsSelector').innerHTML = ITEMS.map(item => {
+    const stockCls = item.stock === 0 ? 'out' : item.stock <= 3 ? 'low' : 'ok';
+    const stockTxt = item.stock === 0 ? '품절' : `재고 ${item.stock}개`;
+    const checked = state.selectedItems.has(item.id) ? 'checked' : '';
+    return `
+      <label class="item-row">
+        <input type="checkbox" ${checked} onchange="toggleItem(${item.id})">
+        <span style="font-size:20px;">${item.icon}</span>
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">${item.category} · ${item.location}</div>
+        </div>
+        <span class="stock ${stockCls}">${stockTxt}</span>
+      </label>
+    `;
+  }).join('');
+}
+
+function toggleItem(id) {
+  if (state.selectedItems.has(id)) state.selectedItems.delete(id);
+  else state.selectedItems.add(id);
+}
+
+/* ===================== 예약 제출 ===================== */
+function submitReservation() {
+  const studentId = $('studentId').value.trim();
+  const name = $('studentName').value.trim();
+  const topic = $('topic').value.trim();
+
+  if (!studentId || !name || !topic) return toast('학번, 이름, 실험 제목을 모두 입력하세요.', 'error');
+  if (!state.selectedDate) return toast('달력에서 날짜를 선택하세요.', 'error');
+  if (!state.selectedTeacher) return toast('담당 교사를 선택하세요.', 'error');
+  if (!state.selectedTime) return toast('사용 시간을 선택하세요.', 'error');
+
+  // 중복 체크
+  const dup = state.reservations.find(r =>
+    r.date === state.selectedDate &&
+    r.time === state.selectedTime &&
+    r.teacher === state.selectedTeacher
+  );
+  if (dup) return toast('해당 시간에는 이미 예약이 있습니다.', 'error');
+
+  // 재고 체크
+  const outOfStock = [];
+  state.selectedItems.forEach(id => {
+    const item = ITEMS.find(i => i.id === id);
+    if (item.stock === 0) outOfStock.push(item.name);
+  });
+  if (outOfStock.length > 0) {
+    return toast(`품절된 물품: ${outOfStock.join(', ')}`, 'error');
+  }
+
+  const newRes = {
+    id: Date.now(),
+    date: state.selectedDate,
+    time: state.selectedTime,
+    teacher: state.selectedTeacher,
+    studentId, name, topic,
+    items: [...state.selectedItems],
+    createdAt: '2026-10-16'
+  };
+  state.reservations.push(newRes);
+  saveReservations();
+
+  toast('예약이 완료되었습니다! ');
+  showChecklist(newRes);
+
+  // 폼 초기화
+  $('studentId').value = '';
+  $('studentName').value = '';
+  $('topic').value = '';
+  state.selectedItems.clear();
+  state.selectedTime = null;
+  renderItemsSelector();
+  renderCalendar();
+  renderTimeSlots();
+}
+
+/* ===================== 체크리스트 모달 ===================== */
+function showChecklist(res) {
+  const teacher = TEACHERS.find(t => t.name === res.teacher);
+  $('checklistInfo').innerHTML = `
+    <div> ${res.date} · ${res.time}</div>
+    <div> ${res.teacher} 선생님</div>
+    <div> ${res.name} (${res.studentId})</div>
+    <div> ${res.topic}</div>
+  `;
+  const body = $('checklistBody');
+  if (res.items.length === 0) {
+    body.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;">선택한 준비물이 없습니다.</div>';
+  } else {
+    body.innerHTML = res.items.map(id => {
+      const item = ITEMS.find(i => i.id === id);
+      if (!item) return '';
+      return `
+        <div class="checklist-item">
+          <input type="checkbox" id="chk-${res.id}-${id}" onchange="toggleCheckItem(this)">
+          <span style="font-size:18px;">${item.icon}</span>
+          <span style="flex:1;">${item.name} <span style="color:var(--text-dim);font-size:11px;">(${item.location})</span></span>
+          <span style="color:var(--accent);font-family:'Courier New',monospace;font-size:11px;">× 1</span>
+        </div>
+      `;
+    }).join('');
+  }
+  $('checklistModal').classList.add('show');
+}
+
+function toggleCheckItem(el) {
+  el.closest('.checklist-item').classList.toggle('done', el.checked);
+}
+
+function closeModal() {
+  $('checklistModal').classList.remove('show');
+}
+
+function printChecklist() {
+  const info = $('checklistInfo').innerHTML;
+  const body = $('checklistBody').innerHTML;
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <html><head><title>실험 준비 체크리스트</title>
+    <style>
+      body { font-family: 'Noto Sans KR', sans-serif; padding: 30px; }
+      h1 { border-bottom: 2px solid #333; padding-bottom: 10px; }
+      .info { background: #f5f5f5; padding: 12px; border-radius: 6px; margin: 14px 0; font-size: 14px; line-height: 1.8; }
+      .item { padding: 10px; border-bottom: 1px dashed #ccc; display: flex; gap: 10px; align-items: center; }
+      .checkbox { width: 18px; height: 18px; border: 2px solid #333; display: inline-block; }
+    </style></head><body>
+    <h1> 과학실 실험 준비 체크리스트</h1>
+    <div class="info">${info}</div>
+    <h3>준비물 목록</h3>
+    ${body.replace(/type="checkbox"[^>]*>/g, '<span class="checkbox"></span>')}
+    <p style="margin-top:30px;font-size:12px;color:#666;">* 실험 종료 후 물품을 제자리에 반납해주세요.</p>
+    </body></html>
+  `);
+  w.document.close();
+  w.print();
+}
+
+/* ===================== 예약 현황 ===================== */
+function renderStatusFilters() {
+  const container = $('statusFilters');
+  const teachers = ['all', ...TEACHERS.map(t => t.name)];
+  container.innerHTML = teachers.map(t => `
+    <button class="${(state.statusFilter || 'all') === t ? 'active' : ''}"
+            data-filter="${t}"
+            onclick="setStatusFilter('${t}')">${t === 'all' ? '전체' : t + ' 선생님'}</button>
+  `).join('');
+}
+state.statusFilter = 'all';
+function setStatusFilter(f) {
+  state.statusFilter = f;
+  renderStatusFilters();
+  renderReservationList();
+}
+
+function renderReservationList() {
+  const list = state.reservations
+    .filter(r => state.statusFilter === 'all' || r.teacher === state.statusFilter)
+    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+  if (list.length === 0) {
+    $('reservationList').innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:40px;">예약 내역이 없습니다.</div>';
+    return;
+  }
+  $('reservationList').innerHTML = list.map(r => {
+    const teacher = TEACHERS.find(t => t.name === r.teacher);
+    const itemCount = r.items.length;
+    return `
+      <div class="reservation-card" style="border-left-color:${teacher?.color || 'var(--accent-2)'}">
+        <div>
+          <div class="topic"> ${r.topic}</div>
+          <div class="meta">
+            <span> ${r.date}</span>
+            <span> ${r.time}</span>
+            <span style="color:${teacher?.color}"> ${r.teacher}</span>
+            <span> ${r.name} (${r.studentId})</span>
+            <span> 준비물 ${itemCount}종</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-secondary" onclick='showChecklist(${JSON.stringify(r).replace(/'/g,"&#39;")})'> 체크리스트</button>
+          <button class="btn btn-danger" onclick="deleteReservation(${r.id})">삭제</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function deleteReservation(id) {
+  if (!confirm('정말 이 예약을 삭제하시겠습니까?')) return;
+  state.reservations = state.reservations.filter(r => r.id !== id);
+  saveReservations();
+  renderReservationList();
+  renderCalendar();
+  toast('예약이 삭제되었습니다.');
+}
+
+/* ===================== 물품 검색 ===================== */
+function renderCategoryPills() {
+  const cats = ['전체', ...new Set(ITEMS.map(i => i.category))];
+  $('categoryPills').innerHTML = cats.map(c => `
+    <button class="${state.inventoryCategory === c ? 'active' : ''}"
+            onclick="setCategory('${c}')">${c}</button>
+  `).join('');
+}
+function setCategory(c) {
+  state.inventoryCategory = c;
+  renderCategoryPills();
+  renderItemsGrid();
+}
+
+function renderItemsGrid() {
+  let list = ITEMS;
+  if (state.inventoryCategory !== '전체') list = list.filter(i => i.category === state.inventoryCategory);
+  if (state.inventorySearch) list = list.filter(i => i.name.includes(state.inventorySearch));
+
+  if (list.length === 0) {
+    $('itemsGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:40px;">검색 결과가 없습니다.</div>';
+    return;
+  }
+  $('itemsGrid').innerHTML = list.map(item => {
+    const pct = (item.stock / item.max) * 100;
+    const fillCls = item.stock === 0 ? 'out' : item.stock <= 3 ? 'low' : '';
+    const stockTxt = item.stock === 0 ? '품절' : `${item.stock} / ${item.max}`;
+    return `
+      <div class="item-card">
+        <div class="icon">${item.icon}</div>
+        <div class="name">${item.name}</div>
+        <div class="category">${item.category}</div>
+        <div class="stock-bar"><div class="stock-fill ${fillCls}" style="width:${pct}%"></div></div>
+        <div class="stock-text">
+          <span>재고</span>
+          <span style="color:${item.stock===0?'var(--danger)':item.stock<=3?'var(--warn)':'var(--accent)'}">${stockTxt}</span>
+        </div>
+        <div class="location"> ${item.location}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+$('searchInput').addEventListener('input', e => {
+  state.inventorySearch = e.target.value;
+  renderItemsGrid();
+});
+
+/* ===================== 통계 ===================== */
+function renderStats() {
+  const total = state.reservations.length;
+  const thisMonth = state.reservations.filter(r => r.date.startsWith('2026-10')).length;
+  const totalItems = state.reservations.reduce((sum, r) => sum + r.items.length, 0);
+  const uniqueStudents = new Set(state.reservations.map(r => r.studentId)).size;
+
+  $('statsCards').innerHTML = `
+    <div class="stat-card">
+      <div class="label">총 예약 수</div>
+      <div class="value">${total}</div>
+      <div class="sub">누적 예약 건수</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">이번 달 예약</div>
+      <div class="value">${thisMonth}</div>
+      <div class="sub">2026년 10월 기준</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">대여 물품 연인원</div>
+      <div class="value">${totalItems}</div>
+      <div class="sub">총 대여 횟수</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">이용 학생 수</div>
+      <div class="value">${uniqueStudents}</div>
+      <div class="sub">중복 제외</div>
+    </div>
+  `;
+
+  // 요일별
+  const weekdayCount = [0,0,0,0,0,0,0];
+  state.reservations.forEach(r => {
+    const d = new Date(r.date).getDay();
+    weekdayCount[d]++;
+  });
+  const maxW = Math.max(...weekdayCount, 1);
+  $('weekdayChart').innerHTML = weekdayCount.map((c, i) => `
+    <div class="bar" style="height:${(c/maxW)*100}%">
+      <div class="bar-value">${c}</div>
+      <div class="bar-label">${DOW[i]}</div>
+    </div>
+  `).join('');
+
+  // 인기 주제
+  const topicMap = {};
+  state.reservations.forEach(r => topicMap[r.topic] = (topicMap[r.topic] || 0) + 1);
+  const topTopics = Object.entries(topicMap).sort((a,b) => b[1]-a[1]).slice(0,5);
+  $('topTopics').innerHTML = topTopics.map((t, i) => `
+    <div class="top-item">
+      <div class="rank ${i===0?'top-1':i===1?'top-2':i===2?'top-3':''}">${i+1}</div>
+      <div class="name">${t[0]}</div>
+      <div class="count">${t[1]}회</div>
+    </div>
+  `).join('') || '<div style="color:var(--text-dim);text-align:center;padding:20px;">데이터 없음</div>';
+
+  // 인기 물품
+  const itemMap = {};
+  state.reservations.forEach(r => r.items.forEach(id => itemMap[id] = (itemMap[id] || 0) + 1));
+  const topItems = Object.entries(itemMap).sort((a,b) => b[1]-a[1]).slice(0,5);
+  $('topItems').innerHTML = topItems.map((t, i) => {
+    const item = ITEMS.find(x => x.id == t[0]);
+    return `
+      <div class="top-item">
+        <div class="rank ${i===0?'top-1':i===1?'top-2':i===2?'top-3':''}">${i+1}</div>
+        <div class="name">${item?.icon} ${item?.name || '알수없음'}</div>
+        <div class="count">${t[1]}회</div>
+      </div>
+    `;
+  }).join('') || '<div style="color:var(--text-dim);text-align:center;padding:20px;">데이터 없음</div>';
+}
+
+/* ===================== 탭 전환 ===================== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'status') { renderStatusFilters(); renderReservationList(); }
+    if (btn.dataset.tab === 'inventory') { renderCategoryPills(); renderItemsGrid(); }
+    if (btn.dataset.tab === 'stats') renderStats();
+  });
+});
+
+/* ===================== 모달 배경 클릭 닫기 ===================== */
+$('checklistModal').addEventListener('click', e => {
+  if (e.target.id === 'checklistModal') closeModal();
+});
+
+/* ===================== 초기화 ===================== */
+renderCalendar();
+renderTeacherChips();
+renderItemsSelector();
+renderTimeSlots();
+
+// 오늘 날짜 표시
+const today = new Date(2026, 9, 16);
+$('todayDate').textContent = `2026-10-16 ${['SUN','MON','TUE','WED','THU','FRI','SAT'][today.getDay()]}`;
+</script>
+
+</body>
+</html>
