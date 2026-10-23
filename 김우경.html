@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍽️ 오늘의 메뉴 추천 Pro</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+  }
+  .container { max-width: 1000px; margin: 0 auto; }
+  header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  header h1 { color: #d35400; font-size: 2em; }
+  header p { color: #666; margin-top: 6px; }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .card h2 { color: #d35400; margin-bottom: 16px; border-bottom: 2px solid #ffecd2; padding-bottom: 8px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  input[type="text"], select {
+    padding: 10px 14px;
+    border: 2px solid #ffecd2;
+    border-radius: 10px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color .2s;
+    background: #fff;
+  }
+  input[type="text"]:focus, select:focus { border-color: #d35400; }
+  button {
+    padding: 10px 20px;
+    background: #d35400;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: transform .15s, background .2s;
+  }
+  button:hover { background: #e67e22; transform: translateY(-2px); }
+  button.secondary { background: #7f8c8d; }
+  button.secondary:hover { background: #95a5a6; }
+  button.diet-toggle { background: #27ae60; }
+  button.diet-toggle.active { background: #16a085; box-shadow: 0 0 0 3px rgba(39,174,96,0.3); }
+
+  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .chip {
+    padding: 6px 12px;
+    background: #fff8f0;
+    border: 1px solid #ffecd2;
+    border-radius: 20px;
+    font-size: .85em;
+    cursor: pointer;
+    user-select: none;
+    transition: all .2s;
+  }
+  .chip:hover { background: #ffecd2; }
+  .chip.active { background: #d35400; color: #fff; border-color: #d35400; }
+
+  .menu-card {
+    background: linear-gradient(135deg, #fff 0%, #fff8f0 100%);
+    border: 2px solid #ffecd2;
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+  .menu-name { font-size: 1.6em; color: #d35400; margin-bottom: 8px; }
+  .menu-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .8em;
+  }
+  .tag.cat { background: #ffecd2; color: #d35400; }
+  .tag.sub { background: #e8f5e9; color: #27ae60; }
+  .tag.diet { background: #e3f2fd; color: #1976d2; }
+
+  .nutrition { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+  .nutrition div {
+    background: #fff8f0;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #ffecd2;
+  }
+  .nutrition .label { font-size: .8em; color: #888; }
+  .nutrition .value { font-size: 1.2em; font-weight: bold; color: #d35400; }
+  .nutrition.lowcal .value { color: #27ae60; }
+  .nutrition.highcal .value { color: #c0392b; }
+
+  .stars { font-size: 1.8em; cursor: pointer; user-select: none; display: inline-block; }
+  .star { color: #ddd; transition: color .2s; }
+  .star.active { color: #f39c12; }
+
+  #map {
+    width: 100%;
+    height: 380px;
+    border-radius: 12px;
+    margin-top: 14px;
+    border: 2px solid #ffecd2;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+  }
+
+  .shops { margin-top: 14px; }
+  .shop-item {
+    background: #fff8f0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border-left: 4px solid #d35400;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .shop-item:hover { background: #ffecd2; }
+  .shop-name { font-weight: bold; }
+  .shop-info { font-size: .9em; color: #666; }
+
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  .history-item:last-child { border-bottom: none; }
+  .rating-badge {
+    background: #f39c12;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .85em;
+  }
+  .empty { text-align: center; color: #999; padding: 20px; }
+  .notice { background: #fff3cd; border-left: 4px solid #f39c12; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: .9em; }
+  .notice.info { background: #e3f2fd; border-left-color: #1976d2; }
+  .notice.diet { background: #e8f5e9; border-left-color: #27ae60; }
+
+  .api-key-box {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    border: 1px dashed #ccc;
+    font-size: .9em;
+  }
+  .api-key-box input { width: 100%; margin-top: 6px; }
+  .api-key-box small { color: #888; display: block; margin-top: 4px; }
+
+  .mode-indicator {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: .85em;
+    margin-left: 8px;
+  }
+  .mode-indicator.diet { background: #e8f5e9; color: #27ae60; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>🍽️ 오늘의 메뉴 추천 Pro</h1>
+    <p>지도 연동 + 다이어트 모드 + 세분화 카테고리</p>
+  </header>
+
+  <!-- API 키 설정 -->
+  <div class="card">
+    <h2>🔑 카카오맵 API 설정</h2>
+    <div class="api-key-box">
+      <strong>JavaScript 키 입력</strong>
+      <small>👉 <a href="https://developers.kakao.com" target="_blank">developers.kakao.com</a>에서 앱을 생성하고 JavaScript 키를 발급받아 입력하세요.</small>
+      <input type="text" id="apiKeyInput" placeholder="카카오 JavaScript API 키를 입력하세요">
+      <button onclick="saveApiKey()" style="margin-top:8px;">💾 키 저장 및 지도 로드</button>
+      <span id="apiKeyStatus" style="margin-left:10px;color:#888;"></span>
+    </div>
+  </div>
+
+  <!-- 추천 영역 -->
+  <div class="card">
+    <h2>🎯 메뉴 추천 받기 <span id="modeBadge"></span></h2>
+    <div class="controls">
+      <select id="categoryFilter">
+        <option value="">전체 카테고리</option>
+        <optgroup label="한식">
+          <option value="한식-찌개/탕">찌개/탕</option>
+          <option value="한식-구이/고기">구이/고기</option>
+          <option value="한식-밥/면">밥/면</option>
+        </optgroup>
+        <optgroup label="중식">
+          <option value="중식-면/밥">면/밥</option>
+          <option value="중식-마라/훠궈">마라/훠궈</option>
+        </optgroup>
+        <optgroup label="일식">
+          <option value="일식-초밥/회">초밥/회</option>
+          <option value="일식-면/돈카츠">면/돈카츠</option>
+        </optgroup>
+        <optgroup label="양식">
+          <option value="양식-파스타/피자">파스타/피자</option>
+          <option value="양식-스테이크">스테이크</option>
+        </optgroup>
+        <optgroup label="분식">
+          <option value="분식-떡볶이/김밥">떡볶이/김밥</option>
+        </optgroup>
+        <optgroup label="건강식">
+          <option value="건강식-샐러드/볼">샐러드/볼</option>
+          <option value="건강식-저칼로리">저칼로리</option>
+        </optgroup>
+      </select>
+      <input type="text" id="locationInput" placeholder="위치 입력 (예: 서울 강남구)" style="flex:1; min-width:200px;">
+      <button onclick="recommendMenu()">🎲 추천 받기</button>
+      <button class="diet-toggle" id="dietToggle" onclick="toggleDietMode()">🥗 다이어트 모드</button>
+      <button class="secondary" onclick="clearHistory()">🗑️ 기록 초기화</button>
+    </div>
+
+    <div class="filter-row">
+      <strong style="font-size:.9em;">칼로리 필터:</strong>
+      <span class="chip active" data-cal="all" onclick="setCalFilter('all')">전체</span>
+      <span class="chip" data-cal="low" onclick="setCalFilter('low')">🔥 저칼로리 (≤400)</span>
+      <span class="chip" data-cal="mid" onclick="setCalFilter('mid')">보통 (400~650)</span>
+      <span class="chip" data-cal="high" onclick="setCalFilter('high')">🍖 고칼로리 (≥650)</span>
+    </div>
+
+    <div id="recommendationArea"></div>
+  </div>
+
+  <!-- 추천 히스토리 -->
+  <div class="card">
+    <h2>📜 추천 히스토리</h2>
+    <div id="historyArea"><div class="empty">아직 추천 기록이 없어요</div></div>
+  </div>
+
+  <!-- 메뉴 통계 -->
+  <div class="card">
+    <h2>📊 나의 메뉴 취향</h2>
+    <div id="statsArea"><div class="empty">평점을 남겨주시면 취향을 분석해드려요</div></div>
+  </div>
+
+</div>
+
+<script>
+/* ============ 메뉴 DB (확장 버전) ============ */
+const MENUS = [
+  // 한식 - 찌개/탕
+  { id: 1, name: "김치찌개", category: "한식", sub: "찌개/탕", kcal: 420, protein: 18, carb: 35, fat: 22, diet: false },
+  { id: 2, name: "된장찌개", category: "한식", sub: "찌개/탕", kcal: 380, protein: 15, carb: 30, fat: 20, diet: false },
+  { id: 3, name: "순두부찌개", category: "한식", sub: "찌개/탕", kcal: 340, protein: 16, carb: 22, fat: 18, diet: true },
+  { id: 4, name: "미역국", category: "한식", sub: "찌개/탕", kcal: 280, protein: 12, carb: 25, fat: 12, diet: true },
+  // 한식 - 구이/고기
+  { id: 5, name: "불고기", category: "한식", sub: "구이/고기", kcal: 620, protein: 32, carb: 28, fat: 42, diet: false },
+  { id: 6, name: "삼겹살", category: "한식", sub: "구이/고기", kcal: 780, protein: 28, carb: 5, fat: 68, diet: false },
+  { id: 7, name: "닭가슴살 구이", category: "한식", sub: "구이/고기", kcal: 320, protein: 45, carb: 5, fat: 12, diet: true },
+  // 한식 - 밥/면
+  { id: 8, name: "비빔밥", category: "한식", sub: "밥/면", kcal: 510, protein: 14, carb: 75, fat: 16, diet: false },
+  { id: 9, name: "곤약치킨덮밥", category: "한식", sub: "밥/면", kcal: 380, protein: 28, carb: 30, fat: 14, diet: true },
+  { id: 10, name: "냉면", category: "한식", sub: "밥/면", kcal: 480, protein: 15, carb: 70, fat: 14, diet: false },
+  // 중식 - 면/밥
+  { id: 11, name: "짜장면", category: "중식", sub: "면/밥", kcal: 680, protein: 16, carb: 95, fat: 24, diet: false },
+  { id: 12, name: "짬뽕", category: "중식", sub: "면/밥", kcal: 620, protein: 22, carb: 78, fat: 22, diet: false },
+  { id: 13, name: "탕수육", category: "중식", sub: "면/밥", kcal: 540, protein: 20, carb: 55, fat: 28, diet: false },
+  { id: 14, name: "유기방짜짬뽕(저염)", category: "중식", sub: "면/밥", kcal: 450, protein: 20, carb: 60, fat: 14, diet: true },
+  // 중식 - 마라/훠궈
+  { id: 15, name: "마라탕", category: "중식", sub: "마라/훠궈", kcal: 720, protein: 25, carb: 60, fat: 42, diet: false },
+  { id: 16, name: "마라샹궈", category: "중식", sub: "마라/훠궈", kcal: 820, protein: 30, carb: 55, fat: 55, diet: false },
+  // 일식 - 초밥/회
+  { id: 17, name: "초밥 모듬", category: "일식", sub: "초밥/회", kcal: 450, protein: 24, carb: 60, fat: 12, diet: false },
+  { id: 18, name: "연어 포케볼", category: "일식", sub: "초밥/회", kcal: 480, protein: 28, carb: 50, fat: 16, diet: true },
+  { id: 19, name: "회덮밥", category: "일식", sub: "초밥/회", kcal: 520, protein: 26, carb: 65, fat: 14, diet: false },
+  // 일식 - 면/돈카츠
+  { id: 20, name: "라멘", category: "일식", sub: "면/돈카츠", kcal: 680, protein: 22, carb: 80, fat: 30, diet: false },
+  { id: 21, name: "우동", category: "일식", sub: "면/돈카츠", kcal: 420, protein: 14, carb: 70, fat: 8, diet: true },
+  { id: 22, name: "돈카츠", category: "일식", sub: "면/돈카츠", kcal: 720, protein: 30, carb: 65, fat: 38, diet: false },
+  // 양식 - 파스타/피자
+  { id: 23, name: "토마토 파스타", category: "양식", sub: "파스타/피자", kcal: 520, protein: 16, carb: 70, fat: 18, diet: false },
+  { id: 24, name: "알리오 올리오", category: "양식", sub: "파스타/피자", kcal: 580, protein: 14, carb: 72, fat: 24, diet: false },
+  { id: 25, name: "피자(1인분)", category: "양식", sub: "파스타/피자", kcal: 680, protein: 22, carb: 75, fat: 30, diet: false },
+  // 양식 - 스테이크
+  { id: 26, name: "스테이크", category: "양식", sub: "스테이크", kcal: 750, protein: 45, carb: 10, fat: 58, diet: false },
+  { id: 27, name: "치킨 샐러드 스테이크", category: "양식", sub: "스테이크", kcal: 420, protein: 38, carb: 15, fat: 22, diet: true },
+  // 분식
+  { id: 28, name: "떡볶이", category: "분식", sub: "떡볶이/김밥", kcal: 480, protein: 8, carb: 85, fat: 10, diet: false },
+  { id: 29, name: "김밥", category: "분식", sub: "떡볶이/김밥", kcal: 320, protein: 10, carb: 50, fat: 10, diet: true },
+  { id: 30, name: "현미 김밥", category: "분식", sub: "떡볶이/김밥", kcal: 340, protein: 12, carb: 55, fat: 8, diet: true },
+  // 건강식
+  { id: 31, name: "그릭요거트 볼", category: "건강식", sub: "샐러드/볼", kcal: 320, protein: 18, carb: 35, fat: 12, diet: true },
+  { id: 32, name: "퀴노아 샐러드 볼", category: "건강식", sub: "샐러드/볼", kcal: 380, protein: 14, carb: 45, fat: 16, diet: true },
+  { id: 33, name: "연어 아보카도 볼", category: "건강식", sub: "샐러드/볼", kcal: 450, protein: 26, carb: 30, fat: 24, diet: true },
+  { id: 34, name: "닭가슴살 샐러드", category: "건강식", sub: "저칼로리", kcal: 280, protein: 35, carb: 15, fat: 10, diet: true },
+  { id: 35, name: "곤약면 샐러드", category: "건강식", sub: "저칼로리", kcal: 180, protein: 12, carb: 20, fat: 6, diet: true },
+  { id: 36, name: "두부 샐러드", category: "건강식", sub: "저칼로리", kcal: 240, protein: 18, carb: 18, fat: 10, diet: true },
+];
+
+/* ============ 가게 DB (위도/경도 포함) ============ */
+const SHOPS = [
+  // 서울 강남
+  { name: "전통김치찌개 강남본점", menuIds: [1], region: "서울 강남", lat: 37.4979, lng: 127.0276 },
+  { name: "마라샹궈 강남점", menuIds: [15, 16], region: "서울 강남", lat: 37.5013, lng: 127.0396 },
+  { name: "스시히로 청담점", menuIds: [17, 18, 19], region: "서울 강남", lat: 37.5163, lng: 127.0436 },
+  { name: "그린볼 샐러드 강남점", menuIds: [31, 32, 33, 34, 35, 36], region: "서울 강남", lat: 37.5005, lng: 127.0345 },
+  { name: "鸡胸肉 다이어트Kitchen", menuIds: [7, 27, 34], region: "서울 강남", lat: 37.4950, lng: 127.0285 },
+  // 서울 홍대/합정
+  { name: "시골된장 홍대점", menuIds: [2, 4], region: "서울 마포", lat: 37.5563, lng: 126.9237 },
+  { name: "돈마루 합정점", menuIds: [6, 5], region: "서울 마포", lat: 37.5495, lng: 126.9139 },
+  { name: "후라이팬 라멘", menuIds: [20], region: "서울 마포", lat: 37.5570, lng: 126.9150 },
+  { name: "카츠야 홍대점", menuIds: [22], region: "서울 마포", lat: 37.5565, lng: 126.9240 },
+  // 서울 종로/명동
+  { name: "전주중앙회관 명동점", menuIds: [8], region: "서울 중구", lat: 37.5636, lng: 126.9827 },
+  { name: "을지면옥", menuIds: [5], region: "서울 중구", lat: 37.5664, lng: 126.9920 },
+  // 서울 기타
+  { name: "신당동 떡볶이 골목", menuIds: [28, 30], region: "서울 중구", lat: 37.5594, lng: 127.0126 },
+  { name: "이태리 이태원점", menuIds: [23, 24], region: "서울 용산", lat: 37.5345, lng: 126.9946 },
+  { name: "알볼로 성수점", menuIds: [23], region: "서울 성동", lat: 37.5449, lng: 127.0560 },
+  // 부산
+  { name: "부산김치촌 서면점", menuIds: [1, 2], region: "부산 부산진", lat: 35.1548, lng: 129.0545 },
+  { name: "해운대삼겹살", menuIds: [6], region: "부산 해운대", lat: 35.1587, lng: 129.1604 },
+  // 대전
+  { name: "대전된장마을 둔산점", menuIds: [2, 4], region: "대전 서구", lat: 36.3504, lng: 127.3820 },
+  // 전주
+  { name: "한국당 전주본점", menuIds: [8], region: "전주 완산", lat: 35.8150, lng: 127.1400 },
+];
+
+/* ============ 위치 좌표 DB (매칭용) ============ */
+const REGION_COORDS = {
+  "서울 강남": { lat: 37.4979, lng: 127.0276 },
+  "서울 마포": { lat: 37.5563, lng: 126.9237 },
+  "서울 중구": { lat: 37.5636, lng: 126.9827 },
+  "서울 용산": { lat: 37.5345, lng: 126.9946 },
+  "서울 성동": { lat: 37.5449, lng: 127.0560 },
+  "부산 부산진": { lat: 35.1548, lng: 129.0545 },
+  "부산 해운대": { lat: 35.1587, lng: 129.1604 },
+  "대전 서구": { lat: 36.3504, lng: 127.3820 },
+  "전주 완산": { lat: 35.8150, lng: 127.1400 },
+};
+
+/* ============ 상태 관리 ============ */
+const STORAGE_KEY = 'menuRecommender_v2';
+let state = loadState();
+let calFilter = 'all';
+let dietMode = false;
+let currentMenu = null;
+let currentShops = [];
+let map = null;
+let markers = [];
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) return JSON.parse(raw);
+  return {
+    ratings: {},
+    history: [],
+    recentIds: [],
+    apiKey: ''
+  };
+}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+/* ============ API 키 관리 ============ */
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) { alert('API 키를 입력해주세요'); return; }
+  state.apiKey = key;
+  saveState();
+  loadKakaoMap(key);
+}
+
+function loadKakaoMap(key) {
+  document.getElementById('apiKeyStatus').innerHTML = '⏳ 지도 로딩 중...';
+  // 이미 스크립트가 로드되어 있는지 확인
+  if (window.kakao && window.kakao.maps) {
+    document.getElementById('apiKeyStatus').innerHTML = '✅ 지도 로드 완료!';
+    initMap();
+    if (currentShops.length > 0) renderMap();
+    return;
+  }
+  const script = document.createElement('script');
+  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${key}&autoload=false`;
+  script.onload = () => {
+    window.kakao.maps.load(() => {
+      document.getElementById('apiKeyStatus').innerHTML = '✅ 지도 로드 완료!';
+      initMap();
+      if (currentShops.length > 0) renderMap();
+    });
+  };
+  script.onerror = () => {
+    document.getElementById('apiKeyStatus').innerHTML = '❌ 키가 잘못되었거나 로드 실패';
+  };
+  document.head.appendChild(script);
+}
+
+function initMap() {
+  const mapContainer = document.getElementById('map');
+  if (!window.kakao || !window.kakao.maps) return;
+  // 지도 영역은 추천 결과가 나와야 생기므로, 없으면 나중에 만든다
+  if (!mapContainer) return;
+  map = new window.kakao.maps.Map(mapContainer, {
+    center: new window.kakao.maps.LatLng(37.5665, 126.9780),
+    level: 6
+  });
+}
+
+/* ============ 추천 로직 ============ */
+function recommendMenu() {
+  const category = document.getElementById('categoryFilter').value;
+  const location = document.getElementById('locationInput').value.trim();
+
+  let candidates = MENUS.filter(m => {
+    // 카테고리 필터
+    if (category) {
+      const [mainCat, subCat] = category.split('-');
+      if (m.category !== mainCat) return false;
+      if (subCat && m.sub !== subCat) return false;
+    }
+    // 칼로리 필터
+    if (calFilter === 'low' && m.kcal > 400) return false;
+    if (calFilter === 'mid' && (m.kcal < 400 || m.kcal > 650)) return false;
+    if (calFilter === 'high' && m.kcal < 650) return false;
+    // 다이어트 모드
+    if (dietMode && !m.diet && m.kcal > 450) return false;
+    return true;
+  });
+
+  // 최근 추천 제외
+  candidates = candidates.filter(m => !state.recentIds.includes(m.id));
+  if (candidates.length === 0) {
+    candidates = MENUS.filter(m => {
+      if (category) {
+        const [mainCat, subCat] = category.split('-');
+        if (m.category !== mainCat) return false;
+        if (subCat && m.sub !== subCat) return false;
+      }
+      return true;
+    });
+    state.recentIds = [];
+  }
+
+  // 가중치 계산
+  const weighted = candidates.map(m => {
+    const ratings = state.ratings[m.id] || [];
+    let base = ratings.length ? ratings.reduce((a,b)=>a+b,0)/ratings.length : 3;
+    // 다이어트 모드: 저칼로리 보너스
+    if (dietMode) {
+      base += (600 - m.kcal) / 100;
+    }
+    return { menu: m, weight: base + Math.random() * 1.5 };
+  });
+
+  weighted.sort((a,b) => b.weight - a.weight);
+  const picked = weighted[0].menu;
+
+  state.recentIds.push(picked.id);
+  if (state.recentIds.length > 5) state.recentIds.shift();
+
+  state.history.unshift({
+    id: picked.id, name: picked.name, category: picked.category, sub: picked.sub,
+    kcal: picked.kcal, date: new Date().toLocaleString('ko-KR'), rating: null
+  });
+  if (state.history.length > 30) state.history.pop();
+  saveState();
+
+  renderRecommendation(picked, location);
+  renderHistory();
+  renderStats();
+}
+
+/* ============ 렌더링 ============ */
+function renderRecommendation(menu, location) {
+  currentMenu = menu;
+  const area = document.getElementById('recommendationArea');
+  currentShops = findShops(menu, location);
+  const ratings = state.ratings[menu.id] || [];
+  const avgRating = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '-';
+
+  const calClass = menu.kcal <= 400 ? 'lowcal' : (menu.kcal >= 650 ? 'highcal' : '');
+
+  area.innerHTML = `
+    <div class="menu-card">
+      <div class="menu-tags">
+        <span class="tag cat">${menu.category}</span>
+        <span class="tag sub">${menu.sub}</span>
+        ${menu.diet ? '<span class="tag diet">🥗 다이어트 추천</span>' : ''}
+      </div>
+      <div class="menu-name">${menu.name}</div>
+      <div class="nutrition">
+        <div class="${calClass}"><div class="label">칼로리</div><div class="value">${menu.kcal}kcal</div></div>
+        <div><div class="label">단백질</div><div class="value">${menu.protein}g</div></div>
+        <div><div class="label">탄수화물</div><div class="value">${menu.carb}g</div></div>
+        <div><div class="label">지방</div><div class="value">${menu.fat}g</div></div>
+      </div>
+      <div>
+        <strong>평균 평점:</strong> <span class="rating-badge">⭐ ${avgRating} (${ratings.length}명)</span>
+        <div style="margin-top:10px;">
+          <span>나의 평점: </span>
+          <span class="stars" id="starRating">
+            ${[1,2,3,4,5].map(n => `<span class="star" data-val="${n}">★</span>`).join('')}
+          </span>
+          <button onclick="submitRating(${menu.id})" style="margin-left:10px;">평가 등록</button>
+        </div>
+      </div>
+      <div class="shops">
+        <strong>📍 주변 가게 (${currentShops.length}곳)</strong>
+        ${currentShops.length ? currentShops.map((s, i) => `
+          <div class="shop-item" onclick="focusShop(${i})">
+            <div class="shop-name">${s.name}</div>
+            <div class="shop-info">${s.region} · 클릭하면 지도에서 강조</div>
+          </div>
+        `).join('') : '<div class="empty">해당 지역의 등록된 가게가 없어요</div>'}
+      </div>
+      <div id="map"></div>
+      ${menu.diet ? '<div class="notice diet">🥗 다이어트 친화적 메뉴예요! 단백질이 풍부하고 칼로리가 낮아요.</div>' : ''}
+      <div class="notice info">💡 가게 항목을 클릭하면 지도에서 해당 위치로 이동합니다.</div>
+    </div>
+  `;
+
+  // 별점 이벤트
+  document.querySelectorAll('#starRating .star').forEach(star => {
+    star.addEventListener('click', () => {
+      const val = parseInt(star.dataset.val);
+      document.querySelectorAll('#starRating .star').forEach(s => {
+        s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+      });
+      document.getElementById('starRating').dataset.current = val;
+    });
+  });
+
+  // 지도 렌더
+  if (map) {
+    renderMap();
+  } else if (state.apiKey) {
+    loadKakaoMap(state.apiKey);
+  } else {
+    document.getElementById('map').innerHTML = '<div style="text-align:center;padding:20px;">🔑 상단에서 카카오맵 API 키를 입력하면 지도가 표시됩니다.</div>';
+  }
+}
+
+function renderMap() {
+  if (!map || !window.kakao) return;
+  // 기존 마커 제거
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+
+  if (currentShops.length === 0) {
+    document.getElementById('map').innerHTML = '<div style="text-align:center;padding:20px;">📍 표시할 가게가 없어요</div>';
+    return;
+  }
+
+  // 지도 컨테이너 복원 (innerHTML로 덮어써졌을 수 있음)
+  const mapEl = document.getElementById('map');
+  if (!mapEl.querySelector('div[class*="map"]') && mapEl.childElementCount === 0) {
+    // 지도 재생성 필요
+    map = new window.kakao.maps.Map(mapEl, {
+      center: new window.kakao.maps.LatLng(currentShops[0].lat, currentShops[0].lng),
+      level: 5
+    });
+  }
+
+  const bounds = new window.kakao.maps.LatLngBounds();
+  currentShops.forEach((shop, i) => {
+    const position = new window.kakao.maps.LatLng(shop.lat, shop.lng);
+    const marker = new window.kakao.maps.Marker({
+      map: map,
+      position: position,
+      title: shop.name
+    });
+    const infowindow = new window.kakao.maps.InfoWindow({
+      content: `<div style="padding:6px 10px;font-size:.9em;white-space:nowrap;"><strong>${shop.name}</strong><br><span style="color:#666;">${shop.region}</span></div>`
+    });
+    window.kakao.maps.event.addListener(marker, 'click', () => {
+      infowindow.open(map, marker);
+    });
+    markers.push(marker);
+    markers[i]._infowindow = infowindow;
+    bounds.extend(position);
+  });
+  map.setBounds(bounds);
+}
+
+function focusShop(idx) {
+  if (!map || !markers[idx]) return;
+  const shop = currentShops[idx];
+  const position = new window.kakao.maps.LatLng(shop.lat, shop.lng);
+  map.setCenter(position);
+  map.setLevel(3);
+  if (markers[idx]._infowindow) {
+    markers[idx]._infowindow.open(map, markers[idx]);
+  }
+}
+
+function findShops(menu, location) {
+  const result = [];
+  const loc = location || '';
+  SHOPS.forEach(shop => {
+    if (!shop.menuIds.includes(menu.id)) return;
+    if (!loc) {
+      result.push(shop);
+    } else {
+      // 위치 문자열 매칭 (포함 관계)
+      if (shop.region.includes(loc) || loc.includes(shop.region) ||
+          shop.region.split(' ').some(part => loc.includes(part))) {
+        result.push(shop);
+      }
+    }
+  });
+  // 위치 미입력 시 최대 5개만
+  if (!loc) return result.slice(0, 5);
+  return result;
+}
+
+function submitRating(menuId) {
+  const val = parseInt(document.getElementById('starRating').dataset.current);
+  if (!val) { alert('별점을 선택해주세요'); return; }
+  if (!state.ratings[menuId]) state.ratings[menuId] = [];
+  state.ratings[menuId].push(val);
+  const latest = state.history.find(h => h.id === menuId && h.rating === null);
+  if (latest) latest.rating = val;
+  saveState();
+  alert(`⭐ ${val}점 평가가 등록되었어요! 다음 추천에 반영됩니다.`);
+  renderHistory();
+  renderStats();
+}
+
+function renderHistory() {
+  const area = document.getElementById('historyArea');
+  if (state.history.length === 0) {
+    area.innerHTML = '<div class="empty">아직 추천 기록이 없어요</div>';
+    return;
+  }
+  area.innerHTML = state.history.map(h => `
+    <div class="history-item">
+      <div>
+        <strong>${h.name}</strong>
+        <div style="font-size:.85em;color:#888;">${h.category} · ${h.sub} · ${h.kcal}kcal · ${h.date}</div>
+      </div>
+      <div>
+        ${h.rating ? `<span class="rating-badge">⭐ ${h.rating}점</span>` : '<span style="color:#bbb;">미평가</span>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderStats() {
+  const area = document.getElementById('statsArea');
+  const categoryStats = {};
+  MENUS.forEach(m => {
+    const ratings = state.ratings[m.id] || [];
+    if (ratings.length === 0) return;
+    if (!categoryStats[m.category]) categoryStats[m.category] = { total: 0, count: 0 };
+    categoryStats[m.category].total += ratings.reduce((a,b)=>a+b,0);
+    categoryStats[m.category].count += ratings.length;
+  });
+
+  if (Object.keys(categoryStats).length === 0) {
+    area.innerHTML = '<div class="empty">평점을 남겨주시면 취향을 분석해드려요</div>';
+    return;
+  }
+
+  const sorted = Object.entries(categoryStats)
+    .map(([cat, v]) => ({ cat, avg: (v.total/v.count).toFixed(2), count: v.count }))
+    .sort((a,b) => b.avg - a.avg);
+
+  const totalKcal = state.history.reduce((sum, h) => sum + (h.kcal || 0), 0);
+  const avgKcal = state.history.length ? Math.round(totalKcal / state.history.length) : 0;
+
+  area.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+      ${sorted.map(s => `
+        <div style="background:#fff8f0;padding:14px;border-radius:10px;text-align:center;border:1px solid #ffecd2;">
+          <div style="font-size:.9em;color:#888;">${s.cat}</div>
+          <div style="font-size:1.5em;color:#d35400;font-weight:bold;">⭐ ${s.avg}</div>
+          <div style="font-size:.8em;color:#aaa;">${s.count}회 평가</div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:14px;padding:12px;background:#fff8f0;border-radius:10px;">
+      <strong>📊 평균 섭취 칼로리:</strong> <span style="color:#d35400;font-weight:bold;font-size:1.2em;">${avgKcal} kcal</span>
+      <span style="color:#888;font-size:.85em;">/ 추천 1회당</span>
+    </div>
+    <div class="notice" style="margin-top:14px;">
+      💡 <strong>${sorted[0].cat}</strong> 카테고리를 가장 선호하시는군요!
+    </div>
+  `;
+}
+
+/* ============ 필터/모드 ============ */
+function setCalFilter(val) {
+  calFilter = val;
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.cal === val);
+  });
+}
+
+function toggleDietMode() {
+  dietMode = !dietMode;
+  const btn = document.getElementById('dietToggle');
+  btn.classList.toggle('active', dietMode);
+  const badge = document.getElementById('modeBadge');
+  badge.innerHTML = dietMode ? '<span class="mode-indicator diet">🥗 다이어트 모드 ON</span>' : '';
+}
+
+function clearHistory() {
+  if (!confirm('모든 추천 기록과 평점을 초기화할까요?')) return;
+  const apiKey = state.apiKey;
+  state = { ratings: {}, history: [], recentIds: [], apiKey };
+  saveState();
+  renderHistory();
+  renderStats();
+  document.getElementById('recommendationArea').innerHTML = '';
+  alert('초기화 완료!');
+}
+
+/* ============ 초기화 ============ */
+window.addEventListener('DOMContentLoaded', () => {
+  if (state.apiKey) {
+    document.getElementById('apiKeyInput').value = state.apiKey;
+    loadKakaoMap(state.apiKey);
+  }
+  renderHistory();
+  renderStats();
+});
+</script>
+</body>
+</html>
