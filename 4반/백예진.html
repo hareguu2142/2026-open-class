@@ -1,0 +1,1440 @@
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>해골 💀 | 해결해주고 골라드립니다</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  :root {
+    --bg: #0a0a12;
+    --bg-2: #12121c;
+    --card: #1a1a28;
+    --text: #f0f0f5;
+    --muted: #8a8aa0;
+    --accent-1: #a855f7;
+    --accent-2: #ec4899;
+    --accent-3: #6366f1;
+    --border: rgba(255,255,255,0.08);
+  }
+ 
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+ 
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(168,85,247,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(236,72,153,0.12) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+ 
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+ 
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,18,0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+  }
+  .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+  .logo {
+    font-size: 24px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-skull { font-size: 28px; -webkit-text-fill-color: initial; filter: drop-shadow(0 0 8px rgba(168,85,247,0.6)); }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .settings-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .settings-btn:hover { background: rgba(255,255,255,0.12); }
+ 
+  .hero {
+    padding: 100px 0 60px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(168,85,247,0.15);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--accent-1);
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 80px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 50%, var(--accent-3) 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 40px;
+  }
+  .hero-cta {
+    display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  }
+  .btn {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: white;
+    box-shadow: 0 8px 24px rgba(168,85,247,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(168,85,247,0.4); }
+  .btn-ghost {
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+ 
+  .address-section { padding: 40px 0 20px; }
+  .address-card {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .address-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  }
+  .address-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .address-header .tool-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(236,72,153,0.2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 0;
+  }
+  .address-header h3 { font-size: 18px; font-weight: 700; }
+  .address-header p { color: var(--muted); font-size: 13px; }
+  .address-input-row { display: flex; gap: 8px; }
+  .address-input-row input {
+    flex: 1;
+    padding: 14px 16px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .address-input-row input:focus { border-color: var(--accent-1); }
+  .address-input-row input::placeholder { color: var(--muted); }
+  .address-status {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .address-status.saved { color: #10b981; }
+  .address-status .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+ 
+  section { padding: 60px 0; }
+  .section-header { text-align: center; margin-bottom: 56px; }
+  .section-header h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .section-header p { color: var(--muted); font-size: 16px; }
+ 
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .tool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .tool-card:hover { transform: translateY(-4px); border-color: rgba(168,85,247,0.3); }
+  .tool-card:hover::before { opacity: 1; }
+  .tool-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(236,72,153,0.2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin-bottom: 18px;
+  }
+  .tool-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .tool-card > p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+ 
+  .tool-body { margin-top: 16px; }
+  .result-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+    gap: 12px;
+  }
+  .result-box.active {
+    border-color: var(--accent-1);
+    box-shadow: 0 0 20px rgba(168,85,247,0.2);
+  }
+  .result-box .placeholder { color: var(--muted); font-weight: 400; font-size: 14px; }
+ 
+  .restaurant-card {
+    background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(236,72,153,0.1));
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 12px;
+    text-align: left;
+    width: 100%;
+  }
+  .restaurant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+  .restaurant-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .restaurant-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #fbbf24;
+    font-weight: 600;
+  }
+  .restaurant-info {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .restaurant-info div { margin-bottom: 4px; }
+  .restaurant-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .restaurant-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+  .restaurant-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+  .restaurant-btn.kakao { background: #FEE500; color: #3C1E1E; }
+  .restaurant-btn.naver { background: #03C75A; color: white; }
+  .restaurant-btn.google { background: #4285F4; color: white; }
+ 
+  .mode-indicator {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(251,191,36,0.15);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 999px;
+    font-size: 11px;
+    color: #fbbf24;
+    margin-top: 8px;
+  }
+  .mode-indicator.live {
+    background: rgba(16,185,129,0.15);
+    border-color: rgba(16,185,129,0.3);
+    color: #10b981;
+  }
+ 
+  /* 고민 분석 결과 표시 */
+  .worry-analysis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .analysis-tag {
+    padding: 4px 10px;
+    background: rgba(168,85,247,0.15);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 999px;
+    font-size: 11px;
+    color: var(--accent-1);
+    font-weight: 600;
+  }
+ 
+  .input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .input-row input, .input-row select, textarea {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-row input:focus, textarea:focus { border-color: var(--accent-1); }
+  textarea { resize: vertical; min-height: 80px; width: 100%; }
+ 
+  .btn-sm {
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-sm:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(168,85,247,0.3); }
+  .btn-sm.full { width: 100%; justify-content: center; display: flex; }
+ 
+  .roulette-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .roulette {
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    position: relative;
+    background: conic-gradient(
+      #a855f7 0deg 60deg,
+      #ec4899 60deg 120deg,
+      #6366f1 120deg 180deg,
+      #f59e0b 180deg 240deg,
+      #10b981 240deg 300deg,
+      #ef4444 300deg 360deg
+    );
+    transition: transform 4s cubic-bezier(0.17, 0.67, 0.21, 0.99);
+    box-shadow: 0 0 40px rgba(168,85,247,0.3), inset 0 0 20px rgba(0,0,0,0.3);
+  }
+  .roulette::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 50px; height: 50px;
+    background: var(--card);
+    border: 3px solid var(--text);
+    border-radius: 50%;
+  }
+  .roulette-pointer {
+    position: absolute;
+    top: -10px; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 20px solid var(--text);
+    z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  }
+  .roulette-container { position: relative; display: inline-block; }
+ 
+  .item-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .tag {
+    padding: 4px 10px;
+    background: rgba(168,85,247,0.15);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 999px;
+    font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .tag button {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 14px; line-height: 1;
+  }
+  .tag button:hover { color: var(--accent-2); }
+ 
+  .yesno-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .yesno-btn {
+    padding: 20px;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    color: white;
+  }
+  .yes-btn { background: linear-gradient(135deg, #10b981, #059669); }
+  .no-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  .yesno-btn:hover { transform: scale(1.03); }
+ 
+  .situation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .situation-btn {
+    padding: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .situation-btn:hover { background: rgba(168,85,247,0.15); border-color: var(--accent-1); }
+  .situation-btn.active { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); border-color: transparent; }
+ 
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal.active { display: flex; }
+  .modal-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .modal-header h2 { font-size: 22px; font-weight: 700; }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-body {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .modal-body label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .modal-body input {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 16px;
+  }
+  .modal-body input:focus { border-color: var(--accent-1); }
+  .modal-body .help-text {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: -12px;
+    margin-bottom: 16px;
+  }
+  .modal-body a {
+    color: var(--accent-1);
+    text-decoration: none;
+  }
+  .modal-body a:hover { text-decoration: underline; }
+ 
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  footer .logo { justify-content: center; margin-bottom: 12px; }
+ 
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hero { padding: 60px 0 40px; }
+    section { padding: 50px 0; }
+    .tool-card { padding: 22px; }
+    .roulette { width: 200px; height: 200px; }
+    .address-input-row { flex-direction: column; }
+  }
+ 
+  @keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .pop { animation: pop 0.4s; }
+ 
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent-1);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <div class="logo">
+      <span class="logo-skull">💀</span>
+      <span>해골</span>
+    </div>
+    <div class="nav-links">
+      <a href="#address">주소</a>
+      <a href="#tools">도구</a>
+      <a href="#about">소개</a>
+      <button class="settings-btn" onclick="openSettings()">⚙️ 설정</button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">💀 해결해주고 골라드립니다</div>
+    <h1>
+      고민은 그만,<br>
+      <span class="gradient">해골에게 맡겨.</span>
+    </h1>
+    <p>
+      오늘 뭐 먹지? 이거 살까 말까? 도저히 결정 못하겠을 때,<br>
+      해골이 대신 골라드립니다. 당신의 고민을 읽고 딱 맞는 조언을 드려요.
+    </p>
+    <div class="hero-cta">
+      <a href="#address" class="btn btn-primary">📍 주소 먼저 설정</a>
+      <a href="#tools" class="btn btn-ghost">🎯 도구 바로 쓰기</a>
+    </div>
+  </div>
+</section>
+
+<section id="address" class="address-section">
+  <div class="container">
+    <div class="address-card">
+      <div class="address-header">
+        <div class="tool-icon">📍</div>
+        <div>
+          <h3>내 위치 설정</h3>
+          <p>주소를 입력하면 근처 맛집을 평점 기반으로 추천해드려요</p>
+        </div>
+      </div>
+      <div class="address-input-row">
+        <input type="text" id="addressInput" placeholder="예: 서울특별시 마포구 와우산로 179">
+        <button class="btn-sm" onclick="saveAddress()">저장</button>
+        <button class="btn-sm" style="background: rgba(255,255,255,0.08);" onclick="clearAddress()">지우기</button>
+      </div>
+      <div class="address-status" id="addressStatus">
+        <span class="dot"></span>
+        <span>아직 저장된 주소가 없습니다</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tools">
+  <div class="container">
+    <div class="section-header">
+      <h2>🛠️ 골라주는 도구들</h2>
+      <p>상황에 맞는 도구를 선택하세요. 해골이 알아서 합니다.</p>
+    </div>
+   
+    <div class="tools-grid">
+     
+      <div class="tool-card">
+        <div class="tool-icon">🍽️</div>
+        <h3>오늘 뭐 먹지?</h3>
+        <p>상황에 맞춰 메뉴를 추천해드려요.</p>
+        <div class="tool-body">
+          <div class="situation-grid" id="situationGrid">
+            <button class="situation-btn active" data-cat="any">아무거나</button>
+            <button class="situation-btn" data-cat="korean">한식</button>
+            <button class="situation-btn" data-cat="western">양식</button>
+            <button class="situation-btn" data-cat="japanese">일식</button>
+            <button class="situation-btn" data-cat="chinese">중식</button>
+            <button class="situation-btn" data-cat="snack">분식</button>
+            <button class="situation-btn" data-cat="healthy">건강식</button>
+            <button class="situation-btn" data-cat="late">야식</button>
+          </div>
+          <div class="result-box" id="menuResult">
+            <span class="placeholder">위에서 상황을 고르고 버튼을 눌러주세요</span>
+          </div>
+          <button class="btn-sm full" onclick="pickMenu()">🎲 메뉴 뽑기</button>
+        </div>
+      </div>
+     
+      <div class="tool-card">
+        <div class="tool-icon">🎡</div>
+        <h3>커스텀 룰렛</h3>
+        <p>직접 항목을 넣고 룰렛을 돌려보세요.</p>
+        <div class="tool-body">
+          <div class="input-row">
+            <input type="text" id="rouletteInput" placeholder="항목 입력 후 Enter" onkeypress="if(event.key==='Enter') addRouletteItem()">
+            <button class="btn-sm" onclick="addRouletteItem()">추가</button>
+          </div>
+          <div class="item-tags" id="itemTags"></div>
+          <div class="roulette-wrap">
+            <div class="roulette-container">
+              <div class="roulette-pointer"></div>
+              <div class="roulette" id="roulette"></div>
+            </div>
+            <div class="result-box" id="rouletteResult" style="width:100%;">
+              <span class="placeholder">항목을 2개 이상 추가해주세요</span>
+            </div>
+            <button class="btn-sm full" onclick="spinRoulette()">🌀 룰렛 돌리기</button>
+          </div>
+        </div>
+      </div>
+     
+      <div class="tool-card">
+        <div class="tool-icon">🤔</div>
+        <h3>할까 말까?</h3>
+        <p>결정 못 하는 건 해골이 정해드려요.</p>
+        <div class="tool-body">
+          <textarea id="yesnoQuestion" placeholder="고민을 적어보세요&#10;예: 지금 사표 쓸까?"></textarea>
+          <div style="height:12px;"></div>
+          <div class="result-box" id="yesnoResult">
+            <span class="placeholder">아래 버튼을 누르면 해골이 답합니다</span>
+          </div>
+          <div class="yesno-buttons">
+            <button class="yesno-btn yes-btn" onclick="decideYesNo('yes')">👍 할래</button>
+            <button class="yesno-btn no-btn" onclick="decideYesNo('no')">👎 말래</button>
+          </div>
+        </div>
+      </div>
+     
+      <div class="tool-card">
+        <div class="tool-icon">🔢</div>
+        <h3>랜덤 숫자</h3>
+        <p>범위를 정하면 해골이 숫자를 골라요.</p>
+        <div class="tool-body">
+          <div class="input-row">
+            <input type="number" id="numMin" placeholder="최소" value="1">
+            <input type="number" id="numMax" placeholder="최대" value="100">
+          </div>
+          <div class="result-box" id="numResult">
+            <span class="placeholder">범위를 정하고 뽑아보세요</span>
+          </div>
+          <button class="btn-sm full" onclick="pickNumber()">🎲 숫자 뽑기</button>
+        </div>
+      </div>
+     
+      <div class="tool-card">
+        <div class="tool-icon">🔮</div>
+        <h3>고민 해결사</h3>
+        <p>해골이 당신의 고민을 읽고 조언해드려요.</p>
+        <div class="tool-body">
+          <textarea id="worryInput" placeholder="고민을 적어주세요...&#10;(예: 회사 때려치고 싶어요, 짝사랑하는 사람 있는데 고백할까...)"></textarea>
+          <div style="height:12px;"></div>
+          <div class="result-box" id="worryResult" style="min-height:100px;">
+            <span class="placeholder">해골이 당신의 고민을 듣고 있습니다...</span>
+          </div>
+          <button class="btn-sm full" onclick="solveWorry()">💀 해골에게 물어보기</button>
+        </div>
+      </div>
+     
+      <div class="tool-card">
+        <div class="tool-icon">⚖️</div>
+        <h3>A 아니면 B</h3>
+        <p>두 개 중 하나를 못 고르겠다면?</p>
+        <div class="tool-body">
+          <div class="input-row">
+            <input type="text" id="optionA" placeholder="A 옵션">
+            <input type="text" id="optionB" placeholder="B 옵션">
+          </div>
+          <div class="result-box" id="abResult">
+            <span class="placeholder">두 가지 옵션을 입력하세요</span>
+          </div>
+          <button class="btn-sm full" onclick="pickAB()">🎯 골라주기</button>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-header">
+      <h2>💀 해골이란?</h2>
+      <p>결정장애 시대를 위한 작은 위로와 유머</p>
+    </div>
+    <div style="max-width:720px; margin:0 auto; text-align:center; color:var(--muted); font-size:16px; line-height:1.8;">
+      <p>
+        "해골"은 <strong style="color:var(--text);">해</strong>결해주고 <strong style="color:var(--text);">골</strong>라드립니다의 줄임말입니다.<br>
+        식사 메뉴를 정할 때, 사야 할지 말아야 할지 고민될 때,<br>
+        제정신이 아닐 때(가장 유용함), 아무것도 결정하기 싫을 때.<br><br>
+        <span style="color:var(--text);">해골이 대신 골라드립니다.</span><br>
+        고민을 적으면 해골이 그 내용을 읽고 딱 맞는 조언을 드려요. 💀✨
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>⚙️ 설정</h2>
+      <button class="modal-close" onclick="closeSettings()">×</button>
+    </div>
+    <div class="modal-body">
+      <label for="apiKeyInput">카카오맵 API 키 (선택사항)</label>
+      <input type="text" id="apiKeyInput" placeholder="JavaScript용 앱 키 입력">
+      <p class="help-text">
+        API 키를 입력하면 실제 카카오맵 데이터를 가져와서 정확한 가게 정보를 보여줍니다.<br>
+        키가 없으면 시뮬레이션 모드로 동작합니다.<br><br>
+        👉 <a href="https://developers.kakao.com/console/app" target="_blank">카카오 개발자 센터에서 키 발급받기</a>
+      </p>
+      <button class="btn-sm full" onclick="saveApiKey()">저장</button>
+      <div style="height:12px;"></div>
+      <button class="btn-sm full" style="background: rgba(255,255,255,0.08);" onclick="clearApiKey()">API 키 지우기</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="logo">
+      <span class="logo-skull">💀</span>
+      <span>해골</span>
+    </div>
+    <p>해결해주고 골라드립니다 · Made with 💀 and randomness</p>
+    <p style="margin-top:8px; font-size:12px;">결정의 결과는 당신의 것이지만, 재미는 모두의 것입니다.</p>
+  </div>
+</footer>
+
+<script>
+  // ========== 설정 관리 ==========
+  let savedAddress = localStorage.getItem('haeskeleton_address') || '';
+  let kakaoApiKey = localStorage.getItem('haeskeleton_api_key') || '';
+  let kakaoLoaded = false;
+ 
+  function openSettings() {
+    document.getElementById('settingsModal').classList.add('active');
+    document.getElementById('apiKeyInput').value = kakaoApiKey;
+  }
+ 
+  function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('active');
+  }
+ 
+  function saveApiKey() {
+    const input = document.getElementById('apiKeyInput');
+    kakaoApiKey = input.value.trim();
+    localStorage.setItem('haeskeleton_api_key', kakaoApiKey);
+    if (kakaoApiKey) {
+      loadKakaoMaps();
+      alert('API 키가 저장되었습니다!');
+    } else {
+      alert('API 키가 지워졌습니다. 시뮬레이션 모드로 동작합니다.');
+    }
+    closeSettings();
+  }
+ 
+  function clearApiKey() {
+    kakaoApiKey = '';
+    localStorage.removeItem('haeskeleton_api_key');
+    alert('API 키가 지워졌습니다. 시뮬레이션 모드로 동작합니다.');
+    closeSettings();
+  }
+ 
+  function loadKakaoMaps() {
+    if (!kakaoApiKey || kakaoLoaded) return;
+   
+    const script = document.createElement('script');
+    script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + kakaoApiKey + '&libraries=services';
+    script.onload = () => {
+      kakao.maps.load(() => {
+        kakaoLoaded = true;
+        console.log('카카오맵 API 로드 완료');
+      });
+    };
+    document.head.appendChild(script);
+  }
+ 
+  // ========== 주소 관리 ==========
+  function initAddress() {
+    const input = document.getElementById('addressInput');
+    const status = document.getElementById('addressStatus');
+    if (savedAddress) {
+      input.value = savedAddress;
+      status.className = 'address-status saved';
+      status.innerHTML = '<span class="dot"></span><span>저장된 주소: <strong style="color:var(--text);">' + escapeHtml(savedAddress) + '</strong></span>';
+    }
+  }
+ 
+  function saveAddress() {
+    const input = document.getElementById('addressInput');
+    const val = input.value.trim();
+    const status = document.getElementById('addressStatus');
+    if (!val) { alert('주소를 입력해주세요!'); return; }
+    savedAddress = val;
+    localStorage.setItem('haeskeleton_address', val);
+    status.className = 'address-status saved';
+    status.innerHTML = '<span class="dot"></span><span>저장 완료! 주소: <strong style="color:var(--text);">' + escapeHtml(val) + '</strong></span>';
+  }
+ 
+  function clearAddress() {
+    const input = document.getElementById('addressInput');
+    const status = document.getElementById('addressStatus');
+    input.value = '';
+    savedAddress = '';
+    localStorage.removeItem('haeskeleton_address');
+    status.className = 'address-status';
+    status.innerHTML = '<span class="dot"></span><span>아직 저장된 주소가 없습니다</span>';
+  }
+ 
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+ 
+  // ========== 가게 검색 ==========
+  function searchRestaurants(address, food, callback) {
+    if (!kakaoLoaded || !kakaoApiKey) {
+      callback(getSimulatedRestaurants(food));
+      return;
+    }
+   
+    const ps = new kakao.maps.services.Places();
+    const query = address + ' ' + food;
+   
+    ps.keywordSearch(query, (data, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        const restaurants = data.slice(0, 5).map(place => ({
+          name: place.place_name,
+          rating: parseFloat(place.rating) || (3.5 + Math.random() * 1.5),
+          address: place.address_name,
+          roadAddress: place.road_address_name,
+          phone: place.phone,
+          url: place.place_url,
+          distance: place.distance
+        }));
+        restaurants.sort((a, b) => b.rating - a.rating);
+        callback(restaurants);
+      } else {
+        callback(getSimulatedRestaurants(food));
+      }
+    }, { size: 5 });
+  }
+ 
+  function getSimulatedRestaurants(food) {
+    const defaultRestaurants = [
+      { name: food + ' 전문점', rating: 4.5 + Math.random() * 0.5, address: savedAddress || '서울 마포구', phone: '02-1234-5678' },
+      { name: '맛있는 ' + food, rating: 4.3 + Math.random() * 0.5, address: savedAddress || '서울 마포구', phone: '02-2345-6789' },
+      { name: food + ' 맛집', rating: 4.1 + Math.random() * 0.5, address: savedAddress || '서울 마포구', phone: '02-3456-7890' }
+    ];
+    return defaultRestaurants;
+  }
+ 
+  function buildRestaurantCard(restaurant, food) {
+    const isLive = kakaoLoaded && kakaoApiKey;
+    const modeText = isLive ? '🟢 실제 데이터' : '🟡 시뮬레이션';
+    const modeClass = isLive ? 'live' : '';
+   
+    const nameQuery = encodeURIComponent(restaurant.name);
+   
+    let html = '<div class="restaurant-card">';
+    html += '<div class="restaurant-header">';
+    html += '<div>';
+    html += '<div class="restaurant-name">' + escapeHtml(restaurant.name) + '</div>';
+    html += '<div class="restaurant-rating">⭐ ' + restaurant.rating.toFixed(1) + '</div>';
+    html += '</div>';
+    html += '<div class="mode-indicator ' + modeClass + '">' + modeText + '</div>';
+    html += '</div>';
+   
+    html += '<div class="restaurant-info">';
+    if (restaurant.address) html += '<div>📍 ' + escapeHtml(restaurant.address) + '</div>';
+    if (restaurant.roadAddress && restaurant.roadAddress !== restaurant.address) html += '<div>🏢 ' + escapeHtml(restaurant.roadAddress) + '</div>';
+    if (restaurant.phone) html += '<div>📞 ' + escapeHtml(restaurant.phone) + '</div>';
+    if (restaurant.distance) html += '<div>🚶 ' + escapeHtml(restaurant.distance) + 'm</div>';
+    html += '</div>';
+   
+    html += '<div class="restaurant-actions">';
+    if (restaurant.url) html += '<a href="' + restaurant.url + '" target="_blank" class="restaurant-btn kakao">🟡 카카오맵</a>';
+    html += '<a href="https://map.kakao.com/link/search/' + nameQuery + '" target="_blank" class="restaurant-btn kakao">🔍 카카오에서 검색</a>';
+    html += '<a href="https://m.map.naver.com/search2/search.naver?query=' + nameQuery + '" target="_blank" class="restaurant-btn naver">🟢 네이버에서 검색</a>';
+    html += '<a href="https://www.google.com/maps/search/' + nameQuery + '" target="_blank" class="restaurant-btn google">🔵 구글에서 검색</a>';
+    html += '</div>';
+   
+    html += '</div>';
+    return html;
+  }
+ 
+  // ========== 1. 메뉴 추천 ==========
+  const menus = {
+    any: ['김치찌개','된장찌개','비빔밥','제육볶음','불고기','칼국수','쌀국수','파스타','피자','햄버거','초밥','라멘','탕수육','짜장면','떡볶이','김밥','샐러드','포케','치킨','족발','보쌈','마라탕','샤브샤브','곱창','순대국'],
+    korean: ['김치찌개','된장찌개','비빔밥','제육볶음','불고기','갈비탕','삼계탕','쌈밥','콩나물국밥','순대국','냉면','칼국수','닭갈비','곱창','감자탕'],
+    western: ['파스타','스테이크','피자','햄버거','리조또','샐러드','샌드위치','타코','포케','브리토'],
+    japanese: ['초밥','라멘','우동','돈카츠','카레','오코노미야키','타코야키','덮밥','야키토리','사시미'],
+    chinese: ['짜장면','짬뽕','탕수육','마라탕','양꼬치','딤섬','마라샹궈','훠궈','볶음밥','군만두'],
+    snack: ['떡볶이','김밥','순대','튀김','붕어빵','핫도그','라볶이','계란빵','떡꼬치','주먹밥'],
+    healthy: ['샐러드','포케','그릭요거트볼','퀴노아볼','가슴살 도시락','두부 요리','채소 스틱','오트밀','스무디볼','연어 샐러드'],
+    late: ['치킨','족발','보쌈','라면','떡볶이','곱창','야참빵','붕어빵','편의점 도시락','아이스크림']
+  };
+  let currentCat = 'any';
+ 
+  document.querySelectorAll('.situation-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.situation-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCat = btn.dataset.cat;
+    });
+  });
+ 
+  function pickMenu() {
+    const list = menus[currentCat];
+    const pick = list[Math.floor(Math.random() * list.length)];
+    const box = document.getElementById('menuResult');
+   
+    let html = '<span class="pop">🍽️ <strong>' + pick + '</strong>(으)로 결정!</span>';
+   
+    if (savedAddress) {
+      html += '<div style="font-size:12px; color:var(--muted); margin-top:4px;">📍 ' + escapeHtml(savedAddress.length > 25 ? savedAddress.substring(0, 25) + '...' : savedAddress) + ' 근처</div>';
+      html += '<div id="loadingIndicator" style="margin-top:12px;"><span class="loading"></span> <span style="font-size:13px; color:var(--muted);">근처 맛집 검색 중...</span></div>';
+      html += '<div id="restaurantContainer"></div>';
+    } else {
+      html += '<div style="font-size:12px; color:var(--muted); margin-top:8px;">💡 상단에서 주소를 설정하면 근처 맛집도 알려드려요</div>';
+    }
+   
+    box.innerHTML = html;
+    box.classList.add('active');
+   
+    if (savedAddress) {
+      searchRestaurants(savedAddress, pick, (restaurants) => {
+        const loading = document.getElementById('loadingIndicator');
+        if (loading) loading.remove();
+        const container = document.getElementById('restaurantContainer');
+        if (container && restaurants.length > 0) {
+          container.innerHTML = '<div style="font-size:14px; color:var(--text); margin-top:12px; font-weight:600;">🏆 평점 최고 가게</div>' + buildRestaurantCard(restaurants[0], pick);
+        }
+      });
+    }
+   
+    setTimeout(() => box.classList.remove('active'), 2500);
+  }
+ 
+  // ========== 2. 커스텀 룰렛 ==========
+  let rouletteItems = [];
+  let isSpinning = false;
+ 
+  function addRouletteItem() {
+    const input = document.getElementById('rouletteInput');
+    const val = input.value.trim();
+    if (!val) return;
+    if (rouletteItems.length >= 10) { alert('최대 10개까지 가능합니다!'); return; }
+    rouletteItems.push(val);
+    input.value = '';
+    renderTags();
+  }
+ 
+  function removeItem(idx) {
+    rouletteItems.splice(idx, 1);
+    renderTags();
+  }
+ 
+  function renderTags() {
+    const container = document.getElementById('itemTags');
+    container.innerHTML = rouletteItems.map((item, i) =>
+      '<span class="tag">' + escapeHtml(item) + '<button onclick="removeItem(' + i + ')">×</button></span>'
+    ).join('');
+    updateRouletteColors();
+  }
+ 
+  function updateRouletteColors() {
+    const roulette = document.getElementById('roulette');
+    if (rouletteItems.length === 0) {
+      roulette.style.background = 'conic-gradient(#333 0deg 360deg)';
+      return;
+    }
+    const colors = ['#a855f7','#ec4899','#6366f1','#f59e0b','#10b981','#ef4444','#3b82f6','#8b5cf6','#14b8a6','#f97316'];
+    const deg = 360 / rouletteItems.length;
+    const grad = rouletteItems.map((_, i) =>
+      colors[i % colors.length] + ' ' + (i*deg) + 'deg ' + ((i+1)*deg) + 'deg'
+    ).join(',');
+    roulette.style.background = 'conic-gradient(' + grad + ')';
+  }
+ 
+  function spinRoulette() {
+    if (isSpinning) return;
+    if (rouletteItems.length < 2) { alert('항목을 2개 이상 추가해주세요!'); return; }
+    isSpinning = true;
+    const roulette = document.getElementById('roulette');
+    const result = document.getElementById('rouletteResult');
+    result.innerHTML = '<span class="placeholder">두구두구...</span>';
+   
+    const currentTransform = window.getComputedStyle(roulette).transform;
+    let currentAngle = 0;
+    if (currentTransform && currentTransform !== 'none') {
+      const matrix = currentTransform.match(/matrix\(([^)]+)\)/);
+      if (matrix) {
+        const values = matrix[1].split(',').map(Number);
+        currentAngle = Math.round(Math.atan2(values[1], values[0]) * (180 / Math.PI));
+      }
+    }
+   
+    const extraTurns = 5 + Math.random() * 3;
+    const randomOffset = Math.random() * 360;
+    const finalAngle = currentAngle + (extraTurns * 360) + randomOffset;
+   
+    roulette.style.transform = 'rotate(' + finalAngle + 'deg)';
+   
+    setTimeout(() => {
+      const normalizedAngle = finalAngle % 360;
+      const pointerAngle = (360 - normalizedAngle + 360) % 360;
+      const segDeg = 360 / rouletteItems.length;
+      const winIdx = Math.floor(pointerAngle / segDeg) % rouletteItems.length;
+      const winner = rouletteItems[winIdx];
+     
+      let html = '<span class="pop">🎉 <strong>' + escapeHtml(winner) + '</strong> 당첨!</span>';
+     
+      if (savedAddress) {
+        html += '<div id="loadingIndicator" style="margin-top:12px;"><span class="loading"></span> <span style="font-size:13px; color:var(--muted);">근처 맛집 검색 중...</span></div>';
+        html += '<div id="restaurantContainer"></div>';
+      }
+     
+      result.innerHTML = html;
+      result.classList.add('active');
+     
+      if (savedAddress) {
+        searchRestaurants(savedAddress, winner, (restaurants) => {
+          const loading = document.getElementById('loadingIndicator');
+          if (loading) loading.remove();
+          const container = document.getElementById('restaurantContainer');
+          if (container && restaurants.length > 0) {
+            container.innerHTML = '<div style="font-size:14px; color:var(--text); margin-top:12px; font-weight:600;">🏆 평점 최고 가게</div>' + buildRestaurantCard(restaurants[0], winner);
+          }
+        });
+      }
+     
+      setTimeout(() => result.classList.remove('active'), 2500);
+      isSpinning = false;
+    }, 4100);
+  }
+ 
+  // ========== 3. 예/아니오 ==========
+  function decideYesNo(preference) {
+    const result = document.getElementById('yesnoResult');
+    const sayYes = Math.random() < 0.5;
+    const answer = sayYes ? 'YES! 해!' : 'NO! 하지 마!';
+   
+    result.innerHTML = '<span class="pop" style="font-size:24px;">' + answer + '</span>';
+    result.classList.add('active');
+    setTimeout(() => result.classList.remove('active'), 2500);
+  }
+ 
+  // ========== 4. 랜덤 숫자 ==========
+  function pickNumber() {
+    const min = parseInt(document.getElementById('numMin').value);
+    const max = parseInt(document.getElementById('numMax').value);
+    const result = document.getElementById('numResult');
+   
+    if (isNaN(min) || isNaN(max)) { alert('숫자를 입력해주세요!'); return; }
+    if (min > max) { alert('최소값이 최대값보다 큽니다!'); return; }
+   
+    let count = 0;
+    const interval = setInterval(() => {
+      const rand = Math.floor(Math.random() * (max - min + 1)) + min;
+      result.innerHTML = '<span>' + rand + '</span>';
+      count++;
+      if (count > 15) {
+        clearInterval(interval);
+        const final = Math.floor(Math.random() * (max - min + 1)) + min;
+        result.innerHTML = '<span class="pop" style="font-size:32px; font-weight:800;">' + final + '</span>';
+        result.classList.add('active');
+        setTimeout(() => result.classList.remove('active'), 2000);
+      }
+    }, 60);
+  }
+ 
+  // ========== 5. 고민 해결사 (키워드 분석 기반) ==========
+  // 카테고리별 키워드와 맞춤형 조언
+  const adviceDatabase = {
+    love: {
+      keywords: ['연애','사랑','짝사랑','이별','남자친구','여자친구','남친','여친','소개팅','썸','고백','결혼','재회','좋아하는','짝남','짝녀','헤어','사귀','차였','차인','고백할','밀당','연락','답장','썸남','썸녀','데이트','애인','전남친','전여친','첫사랑','상대'],
+      label: '💕 연애/사랑',
+      advices: [
+        '💀 "{worry}"라... 해골도 뼈만 남도록 사랑해본 적 있어. 답이 안 보인다면, 그건 이미 답이 정해져 있다는 뜻이야. 용기만 없는 거지.',
+        '💀 "{worry}"에 대해 말이지. 상대가 진짜라면, 네가 조금 더 솔직해도 돼. 뼈만 남은 나도 알어, 진심은 통한다는 거.',
+        '💀 "{worry}"... 10년 후의 너는 이 고민을 기억도 못할 거야. 그러니 지금 네가 덜 후회할 쪽으로 가.',
+        '💀 "{worry}"라. 해골이 보기엔 네가 이미 답을 알고 있어. 그냥 확인받고 싶은 거지? 그럼 동전을 던져봐. 떨어지는 동안 네 마음이 원하는 쪽이 보일 거야.',
+        '💀 "{worry}"... 사랑은 뼈를 깎는 거지만, 뼈만 남게 만들면 안 돼. 네가 너일 수 있는 관계인지 생각해봐.'
+      ]
+    },
+    work: {
+      keywords: ['회사','직장','상사','동료','퇴사','이직','사표','월급','연봉','야근','출근','퇴근','직장','상사','팀장','대표','인사','면접','이력서','승진','업무','프로젝트','업무','커리어','자기계발','직무','이직할','때려치','관두고','다니기','직장생활','해고','실직','실업'],
+      label: '💼 직장/커리어',
+      advices: [
+        '💀 "{worry}"라... 해골도 무덤 속에서 일해본 적 있어. 결론: 뼈 빠지게 일해도 남는 건 뼈뿐이야. 네가 정말 지쳤다면, 쉬는 것도 일이야.',
+        '💀 "{worry}"... 퇴사는 진심으로 두 번 고민한 사람만 하는 거야. 한 번만 고민했다면, 그건 그냥 화난 거지.',
+        '💀 "{worry}"에 대해 말이지. 상사도 한때는 너였어. 그리고 곧 너도 누군가의 상사가 될 거야. 그러니 지금의 감정에 너무 휩쓸리지 마.',
+        '💀 "{worry}"... 1년 후의 너에게 물어봐. 그 사람이 "그때 그랬어야 했어"라고 할 것 같은 쪽으로 가.',
+        '💀 "{worry}"라. 해골의 조언: 일단은 오늘까지만 생각하고, 내일 아침에 다시 판단해. 새벽의 감정은 거짓말쟁이가 많거든.'
+      ]
+    },
+    money: {
+      keywords: ['돈','재정','저축','소비','대출','빚','월세','전세','집','부동산','투자','주식','코인','비상금','카드','결제','사고','살까','지출','예산','통장','저축','재테크','경제','물가','가격','비싸','싸','할인','세일','비용','비용'],
+      label: '💰 돈/소비',
+      advices: [
+        '💀 "{worry}"... 해골은 뼈만 남았지만, 통장도 뼈만 남은 적 있어. 사지 마. 3일 뒤에도 사고 싶으면 그때 사. 대부분은 3일 뒤에 잊어버려.',
+        '💀 "{worry}"에 대해 말이지. 돈은 뼈처럼 쌓아두는 거야. 한 번 부러지면 붙이기 힘들어.',
+        '💀 "{worry}"라. 그 돈으로 네가 살 수 있는 가장 멋진 경험은 뭐야? 물건은 낡지만, 경험은 뼈에 새겨져.',
+        '💀 "{worry}"... 지금 당장 급한지, 진짜 필요한지, 아니면 그냥 갖고 싶은지 구분해봐. 해골은 셋 다 구분 안 되던 적 있어. 뼈만 남았지.',
+        '💀 "{worry}"... 통장에 0이 하나 더 생기면, 네 자유도 하나 더 늘어나. 그걸 기억해.'
+      ]
+    },
+    health: {
+      keywords: ['건강','다이어트','운동','수면','잠','불면','체중','살','뚱뚱','똥뚱','살빠','운동할','헬스',' PT',' PT',' PT','병원','아프','병','두통','몸','피로','피곤','스트레스','우울','불안','공황','メン탈','メン탈','メン탈','メン탈','メン탈'],
+      label: '💪 건강/몸',
+      advices: [
+        '💀 "{worry}"... 해골처럼 뼈만 남고 싶지 않다면, 지금 밥 먹고 자. 그게 답의 80%야.',
+        '💀 "{worry}"에 대해 말이지. 몸이 보내는 신호는 무시하면 안 돼. 나처럼 뼈만 되고 나서야 후회하게 될 테니까.',
+        '💀 "{worry}"라. 오늘 밤 11시에 자. 그것만으로 내일의 너는 완전히 다른 사람이 되어 있을 거야.',
+        '💀 "{worry}"... 네 몸은 네가 평생 쓸 유일한 집이야. 리모델링 좀 해줘.',
+        '💀 "{worry}"... 해골이 보기엔 네가 너무 오래 참았어. 전문가(의사, 상담사)에게 가는 건 패배가 아니라, 네 편을 하나 더 만드는 거야.'
+      ]
+    },
+    study: {
+      keywords: ['공부','시험','학업','성적','수능','대학','입시','대학원','과제','학점','졸업','진로','취업','자격증','토익','학원','공부할','합격','불합격','재수','편입','유학','학교','교수','교수님','선생님'],
+      label: '📚 학업/진로',
+      advices: [
+        '💀 "{worry}"... 해골도 한때는 학생이었어. (뼈로만 남았지만.) 결론: 오늘 30분만 해. 30분이 모이면 네 미래가 돼.',
+        '💀 "{worry}"에 대해 말이지. 진로는 한 번에 정해지는 게 아니야. 걸으면서 정하는 거야. 서성이지 말고 일단 걸어.',
+        '💀 "{worry}"라. 시험은 네 가치를 결정하지 않아. 하지만 네 노력은 네 미래를 결정해. 후자는 네가 통제할 수 있어.',
+        '💀 "{worry}"... 남의 속도와 비교하지 마. 해골은 1000년 넘게 같은 자리야. 그래도 난 행복해. (거짓말)',
+        '💀 "{worry}"... 지금 이 순간도 누군가는 공부하고 있어. 그 생각에 동기부여가 됐다면 성공이야.'
+      ]
+    },
+    family: {
+      keywords: ['가족','부모','엄마','아빠','아버지','어머니','형','누나','동생','오빠','언니','자식','아이','딸','아들','시부모','장인','시어머니','친정','댁','집안','명절','설','추석','부모님','가족관계','형제','자매'],
+      label: '👨 👩 👧 가족',
+      advices: [
+        '💀 "{worry}"... 가족은 뼈대 같은 거야. 부러지면 아프지만, 없으면 더 무너져. 가끔은 내려놓고 싶어도, 완전히 떼어내긴 어려운 법이지.',
+        '💀 "{worry}"에 대해 말이지. 부모님도 한때는 너였어. 그리고 서툴렀어. 너도 지금 서툴러도 돼.',
+        '💀 "{worry}"라. 해골도 살아있을 때 가족 때문에 뼈 아팠어. 시간 약이라는 말, 뼈저리게 실감해.',
+        '💀 "{worry}"... 가족에게도 경계는 필요해. 사랑하는 만큼 선을 그어도 돼. 그게 관계를 오래 가게 해.',
+        '💀 "{worry}"... 오늘 엄마, 아빠한테 전화해. 별 내용 없어도 돼. 그 전화가 나중엔 네 뼈를 따뜻하게 해줄 거야.'
+      ]
+    },
+    friend: {
+      keywords: ['친구','친한','우정','싸웠','갈등','인간관계','관계','사람','사람들','소통','대화','말','이야기','따돌림','왕따','배신','속았','믿음','신뢰','모임','약속','만남'],
+      label: '🤝 인간관계',
+      advices: [
+        '💀 "{worry}"... 친구는 뼈를 맞대고 사는 사이야. 가끔은 부딪혀도 돼. 하지만 계속 아프다면, 거리를 둬도 돼.',
+        '💀 "{worry}"에 대해 말이지. 네가 10명에게 사랑받을 필요 없어. 2명에게 진심으로 충분해.',
+        '💀 "{worry}"라. 해골의 조언: 관계는 에너지야. 네 배터리가 바닥나게 만드는 사람은, 아무리 오래 알아도 정리해도 돼.',
+        '💀 "{worry}"... 먼저 사과하는 게 강한 거야. 약한 사람은 자존심 때문에 못 해.',
+        '💀 "{worry}"... 사람 때문에 지쳤다면, 오늘은 혼자 있어. 해골도 1000년 동안 혼자 있는 법을 배웠어.'
+      ]
+    },
+    decision: {
+      keywords: ['결정','선택','고민','어떡','어떻게','뭐','뭘','어디','언제','갈등','망설','못정하','못 고르','못 정','못하','못 해','둘 중','A','B','어느 쪽'],
+      label: '🎯 결정/선택',
+      advices: [
+        '💀 "{worry}"... 결정이 어려운 건, 둘 다 좋은 옵션이기 때문이야. 그러니 어느 쪽을 골라도 넌 이겨.',
+        '💀 "{worry}"에 대해 말이지. 고른 걸 정답으로 만들면 그만이야. 결정 자체가 아니라, 결정 이후의 행동이 답을 만들어.',
+        '💀 "{worry}"라. 10초 안에 먼저 떠오른 게 있어? 그게 네 진짜 마음이야. 나머지는 계산이 만든噪声.',
+        '💀 "{worry}"... 결정이 늦어질수록 네 에너지는 닳아. 틀린 결정이 아니라, 안 하는 결정이 가장 비싸.',
+        '💀 "{worry}"... 동전을 던져봐. 답이 떨어지는 동안 네 마음이 바라는 쪽이 보일 거야.'
+      ]
+    },
+    emotion: {
+      keywords: ['힘들','지쳐','지쳤','외로','외롭','슬퍼','슬프','울','울고','화나','화나','짜증','스트레스','불안','우울','공허','허무','무기력','귀찮','싫어','하기싫','죽고','죽을','자살','포기','포기할','포기하고'],
+      label: '💭 감정/마음',
+      advices: [
+        '💀 "{worry}"... 해골도 뼈만 남도록 힘들었어. 그래도 여기까지 왔어. 너도 여기까지 와. 그것만으로 대단한 거야.',
+        '💀 "{worry}"에 대해 말이지. 오늘은 그냥 살아있는 것만으로도 충분해. 아무것도 안 해도 돼.',
+        '💀 "{worry}"라. 감정은 날씨야. 비가 오면 우산을 쓰면 되지, 비를 멈추게 하려 하지 마.',
+        '💀 "{worry}"... 네가 지금 느끼는 건 정상이야. 비정상인 건 이걸 참아야 하는 세상이지.',
+        '💀 "{worry}"... 만약 정말 너무 힘들다면, 전문가에게 말해봐. 해골도 뼈만 남기 전에 누군가에게 말했어야 했어.'
+      ]
+    },
+    travel: {
+      keywords: ['여행','휴가','vacation','trip','국내','국외','해외','숙소','호텔','항공','비행기','관광','맛집','카페','놀러','어디갈','어디 갈','어디로','여행갈','여행지','캠핑','등산','바다','산','제주','부산'],
+      label: '✈️ 여행',
+      advices: [
+        '💀 "{worry}"... 여행은 뼈를 움직이게 하는 최고의 약이야. 갈 곳이 정해졌다면, 이미 반은 온 거야.',
+        '💀 "{worry}"에 대해 말이지. 완벽한 타이밍은 없어. 가는 날이 장담이라고, 그냥 가.',
+        '💀 "{worry}"라. 해골은 1000년 동안 한 자리야. 너는 움직일 수 있어. 그걸 감사히 여겨.',
+        '💀 "{worry}"... 계획은 30%만 하고, 나머지는 현장에서決めて. 그게 최고의 여행이야.',
+        '💀 "{worry}"... 혼자여도, 친구와여도, 다 좋은 여행이야. 중요한 건 네가 거기 있다는 거지.'
+      ]
+    },
+    shopping: {
+      keywords: ['살까','살까말','사고','사고싶','사고 싶','쇼핑','구매','주문','결제','장바구니','옷','신발','가방','화장품','전자','폰','컴퓨터','아이폰','갤럭시','제품','물건','상품','브랜드','명품'],
+      label: '🛍️ 쇼핑',
+      advices: [
+        '💀 "{worry}"... 사. 단, 3일 뒤에 다시 물어봐. 그때도 같으면 그때 사. 대부분은 그때쯤 잊어버려.',
+        '💀 "{worry}"에 대해 말이지. 그 물건이 네 삶을 10% 더 행복하게 한다면, 살 만해. 아니라면, 뼈만 남을 거야.',
+        '💀 "{worry}"라. 해골은 뼈만 남았지만, 통장도 뼈만 남은 적 있어. 이번엔 통장을 살려줘.',
+        '💀 "{worry}"... 그 돈으로 먹을 수 있는 맛있는 것의 개수를 세봐. 그게 네 만족도일 가능성이 높아.',
+        '💀 "{worry}"... 지금 당장 필요한가? 한 달 뒤에도 필요할까? 둘 다 예면 사. 하나라도 아니오면, 패스.'
+      ]
+    },
+    time: {
+      keywords: ['시간','바빠','바쁘','시간없','시간 없','늦었','늦었','언제','언제까지','기한','deadline','데드라인','밀려','할일','해야','해야할','못했','못 했','미루','미루기','미루는','게으','게으름','생산성'],
+      label: '⏰ 시간/일정',
+      advices: [
+        '💀 "{worry}"... 시간은 뼈를 깎아가면서 흘러. 미룰수록 네 뼈는 닳아. 지금 5분만 해.',
+        '💀 "{worry}"에 대해 말이지. 완벽하게 할 필요 없어. 그냥 시작해. 시작하면 반은 된 거야.',
+        '💀 "{worry}"라. 해골은 1000년 있어도 시간이 부족해. 너는 나보다 시간이 많아. 그걸 기억해.',
+        '💀 "{worry}"... 오늘 할 수 있는 가장 작은 한 가지를 골라해. 그게 내일의 너를 살려.',
+        '💀 "{worry}"... 미루는 건 게으름이 아니라, 두려움이야. 뭘 두려워하는지 알면, 방법이 보여.'
+      ]
+    },
+    self: {
+      keywords: ['자존감','자신감','자존','자신','내가','나를','나는','내 가치','가치','의미','존재','삶','인생','왜 사','왜살','죽고','죽을','무의미','공허','허무','목표','꿈','미래','비전','방향'],
+      label: '🌱 자아/삶',
+      advices: [
+        '💀 "{worry}"... 해골도 한때는 사람이었다는 걸 기억해. 너도 지금의 상태에서 영원히 머무르지 않을 거야.',
+        '💀 "{worry}"에 대해 말이지. 네 가치는 네가 결정하는 거야. 남이 매기는 값표는 네 진짜 가격이 아니야.',
+        '💀 "{worry}"라. 인생은 뼈를 깎아가며 만드는 예술품이야. 완벽할 필요 없어. 네 모양대로면 돼.',
+        '💀 "{worry}"... 오늘 하루만 살아봐. 내일은 내일의 해골이 알아서 처리해줄게.',
+        '💀 "{worry}"... 네가 여기까지 온 것만으로도 이미 대단한 거야. 그걸 잊지 마.'
+      ]
+    }
+  };
+ 
+  // 기본 조언 (매칭 실패 시)
+  const defaultAdvices = [
+    '💀 "{worry}"... 해골의 조언: 일단 자고 일어나. 자고 나서도 같은 고민이면 그때 다시 생각하자.',
+    '💀 "{worry}"라. 10년 후의 너는 이 고민을 기억도 못 할 거야. 그러니 지금 편한 쪽으로.',
+    '💀 "{worry}"에 대해 말이지. 고민이 길어진다는 건 이미 답은 정해져 있다는 뜻이야. 용기만 없는 거지.',
+    '💀 "{worry}"... 그냥 아무거나 골라. 고른 걸 정답으로 만들면 그만이야.',
+    '💀 "{worry}"... 동전을 던져봐. 앞면이 나오면 하고, 뒷면이 나오면... 동전을 다시 던져.'
+  ];
+ 
+  // 고민 텍스트 분석
+  function analyzeWorry(text) {
+    const lowerText = text.toLowerCase();
+    const matchedCategories = [];
+   
+    for (const [category, data] of Object.entries(adviceDatabase)) {
+      let matchCount = 0;
+      const matchedKeywords = [];
+     
+      for (const keyword of data.keywords) {
+        if (lowerText.includes(keyword.toLowerCase())) {
+          matchCount++;
+          matchedKeywords.push(keyword);
+        }
+      }
+     
+      if (matchCount > 0) {
+        matchedCategories.push({
+          category,
+          label: data.label,
+          advices: data.advices,
+          matchCount,
+          matchedKeywords
+        });
+      }
+    }
+   
+    // 매칭된 키워드 수 기준으로 정렬
+    matchedCategories.sort((a, b) => b.matchCount - a.matchCount);
+   
+    return matchedCategories;
+  }
+ 
+  // 조언 선택
+  function pickAdvice(text) {
+    const matched = analyzeWorry(text);
+   
+    if (matched.length === 0) {
+      // 매칭 실패 시 기본 조언
+      const advice = defaultAdvices[Math.floor(Math.random() * defaultAdvices.length)];
+      return {
+        advice: advice.replace('{worry}', text.length > 30 ? text.substring(0, 30) + '...' : text),
+        categories: [],
+        isDefault: true
+      };
+    }
+   
+    // 가장 많이 매칭된 카테고리에서 조언 선택
+    const topCategory = matched[0];
+    const advice = topCategory.advices[Math.floor(Math.random() * topCategory.advices.length)];
+   
+    return {
+      advice: advice.replace('{worry}', text.length > 30 ? text.substring(0, 30) + '...' : text),
+      categories: matched,
+      isDefault: false
+    };
+  }
+ 
+  function solveWorry() {
+    const worry = document.getElementById('worryInput').value.trim();
+    const result = document.getElementById('worryResult');
+   
+    if (!worry) { alert('고민을 적어주세요!'); return; }
+   
+    result.innerHTML = '<span class="placeholder">💀 해골이 당신의 고민을 읽고 있습니다...</span>';
+   
+    setTimeout(() => {
+      const { advice, categories, isDefault } = pickAdvice(worry);
+     
+      let html = '';
+     
+      // 감지된 카테고리 태그 표시
+      if (categories.length > 0) {
+        html += '<div class="worry-analysis">';
+        const topCategories = categories.slice(0, 3);
+        for (const cat of topCategories) {
+          html += '<span class="analysis-tag">' + cat.label + '</span>';
+        }
+        html += '</div>';
+      }
+     
+      // 조언 표시
+      html += '<span class="pop" style="font-size:15px; line-height:1.7; text-align:left; width:100%;">' + escapeHtml(advice) + '</span>';
+     
+      result.innerHTML = html;
+      result.classList.add('active');
+      setTimeout(() => result.classList.remove('active'), 3000);
+    }, 1200);
+  }
+ 
+  // ========== 6. A vs B ==========
+  function pickAB() {
+    const a = document.getElementById('optionA').value.trim();
+    const b = document.getElementById('optionB').value.trim();
+    const result = document.getElementById('abResult');
+   
+    if (!a || !b) { alert('두 옵션 모두 입력해주세요!'); return; }
+   
+    const pick = Math.random() < 0.5 ? a : b;
+    result.innerHTML = '<span class="pop">🎯 해골의 선택: <strong>' + escapeHtml(pick) + '</strong></span>';
+    result.classList.add('active');
+    setTimeout(() => result.classList.remove('active'), 2500);
+  }
+ 
+  // 초기화
+  updateRouletteColors();
+  initAddress();
+  if (kakaoApiKey) {
+    loadKakaoMaps();
+  }
+</script>
+
+</body>
+</html>
+```

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>금쪽같은 내 식사</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
+    background: #f5f5f5;
+    color: #222;
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app {
+    max-width: 430px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+  }
+
+  /* ---------- 상단 헤더 ---------- */
+  .header {
+    background: #fff;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ec1e26;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: #222; }
+  .header-icons { display: flex; gap: 14px; font-size: 20px; cursor: pointer; }
+
+  /* ---------- 화면 전환 ---------- */
+  .screen { display: none; padding: 16px; padding-bottom: 90px; animation: fadeIn 0.3s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- 로그인 ---------- */
+  .login-wrap {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #fff 0%, #fff5f5 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 24px;
+  }
+  .login-logo { font-size: 34px; font-weight: 900; margin-bottom: 8px; color: #ec1e26; }
+  .login-sub { color: #888; margin-bottom: 36px; font-size: 14px; text-align: center; }
+  .login-form { width: 100%; }
+  .login-form label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; margin-top: 14px; }
+  .login-form input, .login-form select {
+    width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px;
+    font-size: 15px; outline: none; transition: border 0.2s; background: #fff;
+    text-transform: uppercase;
+  }
+  .login-form input:focus, .login-form select:focus { border-color: #ec1e26; }
+  .login-btn {
+    width: 100%; padding: 16px; background: #ec1e26; color: #fff; border: none;
+    border-radius: 10px; font-size: 16px; font-weight: 700; margin-top: 24px; cursor: pointer;
+  }
+  .login-btn:hover { background: #d4181f; }
+  .login-info { margin-top: 16px; font-size: 12px; color: #999; text-align: center; line-height: 1.5; }
+
+  /* ---------- 메인 ---------- */
+  .banner {
+    background: linear-gradient(135deg, #ec1e26, #ff6b6b);
+    color: #fff; border-radius: 14px; padding: 20px; margin-bottom: 18px;
+    position: relative; overflow: hidden;
+  }
+  .banner h2 { font-size: 18px; margin-bottom: 6px; }
+  .banner p { font-size: 13px; opacity: 0.95; }
+  .banner .emoji { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 50px; }
+
+  .section-title {
+    font-size: 16px; font-weight: 800; margin: 18px 0 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title .more { font-size: 12px; color: #888; font-weight: 500; cursor: pointer; }
+
+  .category-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
+  .cat {
+    background: #fafafa; border-radius: 12px; padding: 14px 6px; text-align: center;
+    cursor: pointer; transition: transform 0.15s;
+  }
+  .cat:hover { transform: translateY(-2px); }
+  .cat .ico { font-size: 28px; }
+  .cat .name { font-size: 12px; margin-top: 4px; color: #555; }
+
+  .store-list { display: flex; flex-direction: column; gap: 12px; }
+  .store-card {
+    background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 14px;
+    display: flex; gap: 12px; cursor: pointer; transition: box-shadow 0.2s;
+  }
+  .store-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .store-thumb {
+    width: 70px; height: 70px; border-radius: 10px; background: #f0f0f0;
+    display: flex; align-items: center; justify-content: center; font-size: 34px; flex-shrink: 0;
+  }
+  .store-info { flex: 1; min-width: 0; }
+  .store-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .store-desc { font-size: 12px; color: #888; margin-bottom: 6px; }
+  .store-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 3px 7px; background: #fff0f0; color: #ec1e26; border-radius: 4px; font-weight: 600; }
+  .tag.gray { background: #f0f0f0; color: #555; }
+
+  /* ---------- 하단 네비 ---------- */
+  .tabbar {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px; background: #fff; border-top: 1px solid #eee;
+    display: flex; justify-content: space-around; padding: 8px 0 12px; z-index: 20;
+  }
+  .tab { flex: 1; text-align: center; cursor: pointer; color: #aaa; font-size: 11px; }
+  .tab .ico { font-size: 22px; display: block; margin-bottom: 2px; }
+  .tab.active { color: #ec1e26; }
+
+  /* ---------- 상점 상세 ---------- */
+  .back-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 4px 8px; }
+  .store-detail-header { padding: 16px; border-bottom: 1px solid #eee; }
+  .store-detail-header h1 { font-size: 20px; margin-bottom: 4px; }
+  .store-detail-header p { font-size: 13px; color: #888; }
+  .menu-list { padding: 0 16px; }
+  .menu-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid #f5f5f5;
+  }
+  .menu-left { flex: 1; }
+  .menu-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .menu-desc { font-size: 12px; color: #888; margin-bottom: 6px; }
+  .menu-price { font-size: 14px; font-weight: 700; }
+  .menu-thumb {
+    width: 80px; height: 80px; background: #f0f0f0; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 36px; margin-left: 10px;
+  }
+  .add-btn {
+    background: #ec1e26; color: #fff; border: none; padding: 6px 12px;
+    border-radius: 6px; font-size: 12px; cursor: pointer; margin-top: 6px;
+  }
+
+  /* ---------- 장바구니 / 주문 ---------- */
+  .cart-item, .order-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+  .cart-item .name { flex: 1; }
+  .cart-item .qty { color: #888; margin: 0 10px; }
+  .total-row {
+    display: flex; justify-content: space-between; padding: 16px 0;
+    font-size: 16px; font-weight: 700; border-top: 2px solid #222; margin-top: 10px;
+  }
+  .form-group { margin: 14px 0; }
+  .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 600; }
+  .form-group select, .form-group input {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+    font-size: 14px; outline: none; background: #fff;
+  }
+  .radio-group { display: flex; gap: 8px; }
+  .radio-group label {
+    flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+    text-align: center; cursor: pointer; font-size: 13px; margin: 0;
+  }
+  .radio-group input { display: none; }
+  .radio-group label:has(input:checked) { border-color: #ec1e26; background: #fff5f5; color: #ec1e26; font-weight: 700; }
+
+  /* 결제 수단 스타일 */
+  .payment-options { display: flex; flex-direction: column; gap: 10px; }
+  .payment-option {
+    display: flex; align-items: center; gap: 12px; padding: 14px !important;
+    text-align: left !important; font-size: 14px !important; transition: all 0.2s;
+  }
+  .payment-option input[type="radio"] {
+    display: inline-block !important; width: 18px; height: 18px; accent-color: #ec1e26; margin: 0;
+  }
+  .payment-option span { flex: 1; font-weight: 600; }
+
+  .order-btn {
+    width: 100%; padding: 16px; background: #ec1e26; color: #fff; border: none;
+    border-radius: 10px; font-size: 16px; font-weight: 700; margin-top: 20px; cursor: pointer;
+  }
+
+  /* ---------- 마이페이지 ---------- */
+  .my-card {
+    background: linear-gradient(135deg, #222, #444); color: #fff;
+    border-radius: 14px; padding: 18px; margin-bottom: 16px;
+  }
+  .my-card .name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .my-card .sub { font-size: 12px; opacity: 0.8; margin-bottom: 14px; }
+  .my-stats { display: flex; justify-content: space-around; }
+  .stat { text-align: center; }
+  .stat .val { font-size: 20px; font-weight: 800; color: #ffd54f; }
+  .stat .lbl { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+
+  .menu-list-item {
+    padding: 14px 0; border-bottom: 1px solid #eee; cursor: pointer;
+    font-size: 14px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .menu-list-item .arrow { color: #ccc; }
+
+  /* ---------- 배달 현황 타임라인 ---------- */
+  .delivery-header-card {
+    background: linear-gradient(135deg, #ec1e26, #ff6b6b); color: #fff;
+    border-radius: 14px; padding: 24px; text-align: center; margin-bottom: 16px;
+  }
+  .delivery-emoji-anim { font-size: 48px; display: inline-block; animation: bounce 1.2s infinite ease-in-out; margin-bottom: 8px; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  .delivery-status-text { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .delivery-sub-text { font-size: 13px; opacity: 0.9; }
+
+  .timeline-box { background: #fff; border-radius: 14px; padding: 20px; border: 1px solid #eee; }
+  .timeline-item { display: flex; gap: 14px; padding-bottom: 24px; position: relative; }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item:not(:last-child)::before {
+    content: ''; position: absolute; left: 11px; top: 28px; bottom: 0; width: 2px; background: #eee; transition: background 0.3s;
+  }
+  .timeline-item.active:not(:last-child)::before, .timeline-item.completed:not(:last-child)::before { background: #ec1e26; }
+  .timeline-dot {
+    width: 24px; height: 24px; border-radius: 50%; background: #eee; color: #999;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+    flex-shrink: 0; z-index: 1; transition: all 0.3s;
+  }
+  .timeline-item.active .timeline-dot, .timeline-item.completed .timeline-dot { background: #ec1e26; color: #fff; }
+  .timeline-item.completed .timeline-dot { font-size: 0; }
+  .timeline-item.completed .timeline-dot::after { content: '✓'; font-size: 14px; }
+  .timeline-title { font-size: 14px; font-weight: 700; color: #222; margin-bottom: 2px; }
+  .timeline-desc { font-size: 12px; color: #888; }
+  .timeline-item.active .timeline-title { color: #ec1e26; }
+
+  .order-summary-box {
+    margin-top: 20px; padding: 16px; background: #f9f9f9; border-radius: 10px;
+    font-size: 13px; color: #666; line-height: 1.6;
+  }
+
+  /* ---------- 모달 ---------- */
+  .modal-bg {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 100; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 24px; max-width: 340px;
+    width: 100%; text-align: center; animation: fadeIn 0.2s ease;
+  }
+  .modal .emoji-big { font-size: 50px; margin-bottom: 10px; }
+  .modal h3 { font-size: 18px; margin-bottom: 10px; }
+  .modal p { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 16px; }
+  .modal-btn {
+    width: 100%; padding: 12px; background: #ec1e26; color: #fff; border: none;
+    border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+
+  .coupon-item {
+    background: #fff5f5; border: 1px dashed #ec1e26; border-radius: 10px;
+    padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .coupon-item .dc { color: #ec1e26; font-weight: 800; font-size: 16px; }
+  .coupon-item .info { font-size: 12px; color: #666; margin-top: 2px; }
+  .coupon-item .expire { font-size: 11px; color: #999; }
+
+  .notice-box {
+    background: #fffbe6; border: 1px solid #ffe58f; border-radius: 10px;
+    padding: 12px; font-size: 12px; color: #7a5a00; margin-bottom: 14px; line-height: 1.5;
+  }
+
+  .toast {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: #222; color: #fff; padding: 10px 18px; border-radius: 20px;
+    font-size: 13px; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ 로그인 화면 ============ -->
+  <div id="loginScreen" class="login-wrap">
+    <div class="login-logo">🍱 금쪽같은 내 식사</div>
+    <div class="login-sub">성주여자고등학교 전용 배달앱 · 학생 본인만 이용 가능</div>
+
+    <form class="login-form" onsubmit="doLogin(event)">
+      <label>학생증 코드</label>
+      <input type="text" id="studentId" placeholder="예) 06LM" maxlength="4" required />
+
+      <label>학년</label>
+      <select id="grade" required onchange="updateClassOptions()">
+        <option value="">선택</option>
+        <option value="1">1학년</option>
+        <option value="2">2학년</option>
+        <option value="3">3학년</option>
+      </select>
+
+      <label>반</label>
+      <select id="classNo" required>
+        <option value="">학년 먼저 선택</option>
+      </select>
+
+      <button type="submit" class="login-btn">시작하기</button>
+      <div class="login-info">
+        ⚠️ 성주여자고등학교에서 정한 상점 기준 점수 이상인 학생만 주문 가능합니다.<br>
+        일정 벌점 도달 시 이용이 제한될 수 있습니다.
+      </div>
+    </form>
+  </div>
+
+  <!-- ============ 메인 화면 ============ -->
+  <div id="mainScreen" class="screen">
+    <div class="header">
+      <div class="logo">금쪽같은 <span>내 식사</span></div>
+      <div class="header-icons">
+        <span onclick="showScreen('myScreen')">🔔</span>
+        <span onclick="showScreen('myScreen')">👤</span>
+      </div>
+    </div>
+
+    <div class="banner">
+      <h2>오늘은 뭐 먹을까? 🤔</h2>
+      <p>기숙사 방 앞까지 빠르게 배달!</p>
+      <div class="emoji">🍜</div>
+    </div>
+
+    <div class="section-title">카테고리</div>
+    <div class="category-row">
+      <div class="cat" onclick="filterCategory('한식')"><div class="ico">🍚</div><div class="name">한식</div></div>
+      <div class="cat" onclick="filterCategory('중식')"><div class="ico">🥟</div><div class="name">중식</div></div>
+      <div class="cat" onclick="filterCategory('일식')"><div class="ico">🍣</div><div class="name">일식</div></div>
+      <div class="cat" onclick="filterCategory('분식')"><div class="ico">🍢</div><div class="name">분식</div></div>
+      <div class="cat" onclick="filterCategory('치킨')"><div class="ico">🍗</div><div class="name">치킨</div></div>
+      <div class="cat" onclick="filterCategory('피자')"><div class="ico">🍕</div><div class="name">피자</div></div>
+      <div class="cat" onclick="filterCategory('버거')"><div class="ico">🍔</div><div class="name">버거</div></div>
+      <div class="cat" onclick="filterCategory('전체')"><div class="ico">📋</div><div class="name">전체</div></div>
+    </div>
+
+    <div class="notice-box" id="lunchNotice" style="display:none;">
+      🍱 <b>점심 시간은 학교 급식이 제공됩니다.</b><br>
+      점심 시간대(12:00~13:00)에는 외부 배달 주문이 제한됩니다.
+    </div>
+
+    <div class="section-title">
+      <span>🔥 지금 인기 있는 가게</span>
+      <span class="more" onclick="filterCategory('전체')">더보기</span>
+    </div>
+    <div class="store-list" id="storeList"></div>
+  </div>
+
+  <!-- ============ 상점 상세 화면 ============ -->
+  <div id="storeScreen" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('mainScreen')">←</button>
+      <div class="logo" id="storeHeaderName">가게</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div class="store-detail-header">
+      <h1 id="storeDetailName"></h1>
+      <p id="storeDetailDesc"></p>
+      <div class="store-tags" id="storeDetailTags" style="margin-top:8px;"></div>
+    </div>
+    <div class="menu-list" id="menuList"></div>
+  </div>
+
+  <!-- ============ 장바구니 화면 ============ -->
+  <div id="cartScreen" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('mainScreen')">←</button>
+      <div class="logo">장바구니</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div style="padding:16px;">
+      <div id="cartItems"></div>
+      <div class="total-row">
+        <span>총 결제금액</span>
+        <span id="cartTotal">0원</span>
+      </div>
+
+      <div class="form-group">
+        <label>🏫 수령 장소</label>
+        <div class="radio-group">
+          <label><input type="radio" name="place" value="dorm" checked onchange="toggleDorm()"/><span>기숙사</span></label>
+          <label><input type="radio" name="place" value="school" onchange="toggleDorm()"/><span>학교 수령</span></label>
+        </div>
+      </div>
+
+      <div id="dormInfo">
+        <div class="form-group">
+          <label>기숙사 건물</label>
+          <select id="dormBuilding">
+            <option value="1관">1관</option>
+            <option value="2관">2관</option>
+            <option value="3관">3관</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>호실</label>
+          <select id="dormRoom" required>
+            <option value="">선택</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🎟️ 사용할 쿠폰</label>
+        <select id="couponSelect" onchange="updateTotal()">
+          <option value="0">쿠폰 사용 안함</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>요청사항</label>
+        <input type="text" placeholder="예) 덜 맵게 해주세요" />
+      </div>
+
+      <button class="order-btn" onclick="goToPayment()">결제하러 가기</button>
+    </div>
+  </div>
+
+  <!-- ============ 결제 화면 ============ -->
+  <div id="paymentScreen" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('cartScreen')">←</button>
+      <div class="logo">결제하기</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div style="padding:16px;">
+      <div class="section-title">결제 수단 선택</div>
+      <div class="payment-options">
+        <label class="payment-option">
+          <input type="radio" name="payMethod" value="cash" checked />
+          <span>💵 현금 (배달 시 결제)</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payMethod" value="naver" />
+          <span>🟢 네이버페이</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payMethod" value="kakao" />
+          <span>🟡 카카오페이</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payMethod" value="toss" />
+          <span>🔵 토스페이</span>
+        </label>
+      </div>
+
+      <div class="total-row" style="margin-top: 24px;">
+        <span>최종 결제 금액</span>
+        <span id="paymentTotal" style="color:#ec1e26; font-size:20px;">0원</span>
+      </div>
+
+      <button class="order-btn" onclick="processPayment()">결제하기</button>
+    </div>
+  </div>
+
+  <!-- ============ 배달 진행 현황 화면 ============ -->
+  <div id="deliveryScreen" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('mainScreen')">←</button>
+      <div class="logo">배달 현황</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div style="padding:16px;">
+      <div class="delivery-header-card">
+        <div class="delivery-emoji-anim" id="deliveryEmoji">📝</div>
+        <div class="delivery-status-text" id="deliveryStatusText">주문 접수</div>
+        <div class="delivery-sub-text" id="deliverySubText">주문이 정상적으로 접수되었습니다.</div>
+      </div>
+      
+      <div class="timeline-box">
+        <div class="timeline-item active" id="step1">
+          <div class="timeline-dot">1</div>
+          <div class="timeline-content">
+            <div class="timeline-title">주문 접수</div>
+            <div class="timeline-desc">주문이 정상적으로 접수되었습니다.</div>
+          </div>
+        </div>
+        <div class="timeline-item" id="step2">
+          <div class="timeline-dot">2</div>
+          <div class="timeline-content">
+            <div class="timeline-title">조리 중</div>
+            <div class="timeline-desc">가게에서 맛있는 음식을 만들고 있어요.</div>
+          </div>
+        </div>
+        <div class="timeline-item" id="step3">
+          <div class="timeline-dot">3</div>
+          <div class="timeline-content">
+            <div class="timeline-title">배달 중</div>
+            <div class="timeline-desc">배달 기사가 수령하여 이동 중입니다.</div>
+          </div>
+        </div>
+        <div class="timeline-item" id="step4">
+          <div class="timeline-dot">4</div>
+          <div class="timeline-content">
+            <div class="timeline-title">배달 완료</div>
+            <div class="timeline-desc">배달이 완료되었습니다. 맛있게 드세요!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-summary-box">
+        <div>🏪 가게: <b id="deliveryStoreName">-</b></div>
+        <div style="margin-top:6px;">📍 배달지: <b id="deliveryAddress">-</b></div>
+        <div style="margin-top:6px;">💰 결제금액: <b id="deliveryPrice" style="color:#ec1e26;">-</b></div>
+      </div>
+
+      <button class="order-btn" style="margin-top:24px; background:#222;" onclick="showScreen('mainScreen')">메인으로 돌아가기</button>
+    </div>
+  </div>
+
+  <!-- ============ 마이페이지 ============ -->
+  <div id="myScreen" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('mainScreen')">←</button>
+      <div class="logo">마이페이지</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div style="padding:16px;">
+      <div class="my-card">
+        <div class="name" id="myName">학생</div>
+        <div class="sub" id="mySub">학년 반 · 학생증 -</div>
+        <div class="my-stats">
+          <div class="stat"><div class="val" id="myMerit">0</div><div class="lbl">상점</div></div>
+          <div class="stat"><div class="val" id="myDemerit">0</div><div class="lbl">벌점</div></div>
+          <div class="stat"><div class="val" id="myCoupon">0</div><div class="lbl">쿠폰</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">내 정보</div>
+      <div class="menu-list-item" onclick="alert('주문 내역 기능은 준비 중입니다.')">
+        <span>📦 주문 내역</span><span class="arrow">›</span>
+      </div>
+      <div class="menu-list-item" onclick="showCoupons()">
+        <span>🎟️ 내 쿠폰함</span><span class="arrow">›</span>
+      </div>
+      <div class="menu-list-item" onclick="showMeritInfo()">
+        <span>⭐ 상점 · 벌점 안내</span><span class="arrow">›</span>
+      </div>
+      <div class="menu-list-item" onclick="logout()" style="color:#ec1e26;">
+        <span>🚪 로그아웃</span><span class="arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 하단 탭 ============ -->
+  <div class="tabbar" id="tabbar" style="display:none;">
+    <div class="tab active" data-tab="mainScreen" onclick="showScreen('mainScreen')">
+      <span class="ico">🏠</span>홈
+    </div>
+    <div class="tab" data-tab="cartScreen" onclick="goCart()">
+      <span class="ico">🛒</span>장바구니
+    </div>
+    <div class="tab" data-tab="myScreen" onclick="showScreen('myScreen')">
+      <span class="ico">👤</span>마이
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ 모달들 ============ -->
+<div class="modal-bg" id="meritModal">
+  <div class="modal">
+    <div class="emoji-big">🚫</div>
+    <h3>배달 서비스 이용 제한</h3>
+    <p>
+      현재 벌점이 기준을 초과하여<br>
+      배달 서비스 이용이 일시 제한됩니다.<br><br>
+      <b>사유:</b> <span id="meritReason">-</span><br>
+      <b>제한 기간:</b> <span id="meritPeriod">-</span>
+    </p>
+    <button class="modal-btn" onclick="closeModal('meritModal')">확인</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="lunchModal">
+  <div class="modal">
+    <div class="emoji-big">🍱</div>
+    <h3>점심 시간은 학교 급식!</h3>
+    <p>
+      현재 점심 시간(12:00~13:00)에는<br>
+      학교에서 급식이 제공됩니다.<br>
+      외부 배달 주문은 점심 시간 이후에<br>
+      이용 가능합니다.
+    </p>
+    <button class="modal-btn" onclick="closeModal('lunchModal')">확인</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="couponModal">
+  <div class="modal" style="text-align:left; max-width:360px;">
+    <h3 style="text-align:center;">🎟️ 내 쿠폰함</h3>
+    <div id="couponList" style="margin:14px 0;"></div>
+    <button class="modal-btn" onclick="closeModal('couponModal')">닫기</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="meritInfoModal">
+  <div class="modal" style="text-align:left; max-width:360px;">
+    <h3 style="text-align:center;">⭐ 상점 · 벌점 안내</h3>
+    <div style="font-size:13px; color:#555; line-height:1.7; margin:14px 0;">
+      <b>🟢 주문 자격</b><br>
+      · 상점 70점 이상인 학생만 주문 가능<br><br>
+      <b>🎁 상점 혜택</b><br>
+      · 상점 80점 이상: 1,000원 할인쿠폰<br>
+      · 상점 90점 이상: 2,000원 할인쿠폰<br>
+      · 상점 100점 이상: 3,000원 할인쿠폰<br><br>
+      <b>🔴 벌점 제한</b><br>
+      · 벌점 5점 이상: 3일간 이용 제한<br>
+      · 벌점 10점 이상: 7일간 이용 제한<br>
+      · 벌점 20점 이상: 30일간 이용 제한
+    </div>
+    <button class="modal-btn" onclick="closeModal('meritInfoModal')">확인</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 데이터 ============ */
+const STORES = [
+  { id:1, name:'교문 앞 떡볶이', cat:'분식', desc:'매콤달콤 학교 앞 추억의 맛', emoji:'🍢', tags:['매콤','인기'],
+    menu:[ {name:'로제 떡볶이', price:5000, desc:'크림 로제 소스', emoji:'🍢'}, {name:'치즈 떡볶이', price:5500, desc:'치즈 토핑 추가', emoji:'🧀'}, {name:'순대', price:4000, desc:'쫄깃한 수제 순대', emoji:'🍥'} ]},
+  { id:2, name:'기숙사 치킨', cat:'치킨', desc:'밤에 생각나는 바삭한 치킨', emoji:'🍗', tags:['배달빠름','베스트'],
+    menu:[ {name:'후라이드', price:18000, desc:'기본 중의 기본', emoji:'🍗'}, {name:'양념치킨', price:19000, desc:'달콤한 양념', emoji:'🍗'}, {name:'간장치킨', price:19000, desc:'달짝지름 간장 소스', emoji:'🍗'} ]},
+  { id:3, name:'서울 중식당', cat:'중식', desc:'정통 중식 셰프의 손맛', emoji:'🥟', tags:['중식'],
+    menu:[ {name:'짜장면', price:6000, desc:'진한 춘장 소스', emoji:'🍜'}, {name:'짬뽕', price:7000, desc:'얼큰한 해물 국물', emoji:'🍜'}, {name:'탕수육', price:15000, desc:'바삭한 돼지고기', emoji:'🥩'} ]},
+  { id:4, name:'스시 하루', cat:'일식', desc:'신선한 회와 초밥', emoji:'🍣', tags:['일식','고급'],
+    menu:[ {name:'연어 초밥 세트', price:12000, desc:'연어 초밥 8피스', emoji:'🍣'}, {name:'우동', price:6500, desc:'따뜻한 일본식 우동', emoji:'🍲'}, {name:'돈카츠', price:8000, desc:'바삭한 돈까스', emoji:'🍱'} ]},
+  { id:5, name:'한솥 도시락', cat:'한식', desc:'든든한 한 끼 한식', emoji:'🍚', tags:['한식','저녁'],
+    menu:[ {name:'제육 도시락', price:5500, desc:'매콤 제육볶음', emoji:'🍱'}, {name:'불고기 도시락', price:5500, desc:'달콤한 불고기', emoji:'🍱'}, {name:'치킨 도시락', price:5000, desc:'바삭한 치킨', emoji:'🍱'} ]},
+  { id:6, name:'피자스쿨', cat:'피자', desc:'친구들과 함께하는 피자', emoji:'🍕', tags:['피자','단체'],
+    menu:[ {name:'페퍼로니 피자', price:19900, desc:'클래식 페퍼로니', emoji:'🍕'}, {name:'불고기 피자', price:22900, desc:'한식풍 불고기', emoji:'🍕'}, {name:'치즈 피자', price:17900, desc:'치즈폭발', emoji:'🍕'} ]},
+  { id:7, name:'버거퀸', cat:'버거', desc:'두꺼운 패티와 신선한 야채', emoji:'🍔', tags:['버거','빠른배달'],
+    menu:[ {name:'더블 치즈버거 세트', price:8500, desc:'치즈 2장 추가', emoji:'🍔'}, {name:'치킨너겟 10피스', price:4500, desc:'바삭한 치킨너겟', emoji:'🍗'}, {name:'콜라 (M)', price:2000, desc:'시원한 콜라', emoji:'🥤'} ]},
+  { id:8, name:'초록식탁', cat:'한식', desc:'건강하고 가벼운 샐러드', emoji:'🥗', tags:['건강식','다이어트'],
+    menu:[ {name:'연어 샐러드', price:9500, desc:'신선한 연어와 채소', emoji:'🥗'}, {name:'닭가슴살 퀴노아', price:8500, desc:'고단백 저칼로리', emoji:'🥙'}, {name:'그린 스무디', price:4500, desc:'케일, 바나나, 사과', emoji:'🥤'} ]},
+  { id:9, name:'달콤 카페', cat:'분식', desc:'수제 디저트와 커피', emoji:'☕', tags:['카페','디저트'],
+    menu:[ {name:'아이스 아메리카노', price:4500, desc:'깔끔한 맛', emoji:'☕'}, {name:'수제 티라미수', price:6500, desc:'부드러운 마스카포네', emoji:'🍰'}, {name:'딸기 라떼', price:5500, desc:'달콤한 딸기 시럽', emoji:'🍓'} ]},
+  { id:10, name:'우리동네 편의점', cat:'분식', desc:'배달되는 편의점 꿀조합', emoji:'🏪', tags:['편의점','야식'],
+    menu:[ {name:'라면+계란+떡', price:4500, desc:'편의점 3대장', emoji:'🍜'}, {name:'삼각김밥 3개', price:4200, desc:'골라담기', emoji:'🍙'}, {name:'아이스크림', price:2500, desc:'메로나/월드콘', emoji:'🍦'} ]},
+  { id:11, name:'할머니 손맛', cat:'한식', desc:'푸짐한 족발과 보쌈', emoji:'🍖', tags:['족발','보쌈'],
+    menu:[ {name:'미니 족발', price:19000, desc:'1~2인용', emoji:'🍖'}, {name:'보쌈 정석', price:22000, desc:'김치, 무, 쌈 포함', emoji:'🥬'}, {name:'공기밥', price:1000, desc:'따뜻한 밥', emoji:'🍚'} ]},
+  { id:12, name:'타코야끼 킹', cat:'분식', desc:'핫한 아시안 스트리트 푸드', emoji:'🍡', tags:['아시안','분식'],
+    menu:[ {name:'타코야끼 8알', price:6000, desc:'가쓰오부시 톡톡', emoji:'🍡'}, {name:'야키소바', price:7000, desc:'일본식 볶음면', emoji:'🍝'}, {name:'크림치즈 만두', price:5000, desc:'속이 꽉 찬', emoji:'🥟'} ]}
+];
+
+// 제공해주신 최신 22명 학생 명단 데이터베이스 (학년/반/코드 매핑)
+const STUDENT_DB = [
+  { num: 1, name: '강지호', grade: '2', classNo: '1', code: '06LM' },
+  { num: 2, name: '권민재', grade: '2', classNo: '1', code: '15CE' },
+  { num: 3, name: '김서윤', grade: '2', classNo: '1', code: '01AB' },
+  { num: 4, name: '문건우', grade: '2', classNo: '1', code: '21JL' },
+  { num: 5, name: '박하린', grade: '2', classNo: '1', code: '03EF' },
+  { num: 6, name: '배소율', grade: '2', classNo: '1', code: '22KM' },
+  { num: 7, name: '서지민', grade: '2', classNo: '2', code: '13AC' },
+  { num: 8, name: '송다은', grade: '2', classNo: '2', code: '18FH' },
+  { num: 9, name: '신하윤', grade: '2', classNo: '2', code: '14BD' },
+  { num: 10, name: '안유준', grade: '2', classNo: '2', code: '17EG' },
+  { num: 11, name: '오준서', grade: '2', classNo: '2', code: '12YZ' },
+  { num: 12, name: '윤시우', grade: '2', classNo: '2', code: '08QR' },
+  { num: 13, name: '이도윤', grade: '2', classNo: '3', code: '02CD' },
+  { num: 14, name: '임도현', grade: '2', classNo: '3', code: '10UV' },
+  { num: 15, name: '장예린', grade: '2', classNo: '3', code: '09ST' },
+  { num: 16, name: '전태윤', grade: '2', classNo: '3', code: '19GJ' },
+  { num: 17, name: '정유나', grade: '2', classNo: '3', code: '05JK' },
+  { num: 18, name: '조은서', grade: '2', classNo: '3', code: '07NP' },
+  { num: 19, name: '최민준', grade: '2', classNo: '4', code: '04GH' },
+  { num: 20, name: '한채원', grade: '2', classNo: '4', code: '11WX' },
+  { num: 21, name: '홍예진', grade: '2', classNo: '4', code: '20HK' },
+  { num: 22, name: '황수아', grade: '2', classNo: '4', code: '16DF' }
+];
+
+/* ============ 사용자 상태 ============ */
+let user = null;
+let cart = [];
+let currentStore = null;
+let deliveryTimer = null;
+
+/* ============ 초기화 ============ */
+document.addEventListener('DOMContentLoaded', () => {
+  initDormRooms();
+});
+
+function updateClassOptions() {
+  const grade = document.getElementById('grade').value;
+  const classSelect = document.getElementById('classNo');
+  classSelect.innerHTML = '<option value="">선택</option>';
+  let maxClass = 5;
+  if (grade === '2') maxClass = 4; // 2학년은 4반까지
+  for (let i = 1; i <= maxClass; i++) {
+    const option = document.createElement('option');
+    option.value = i; option.textContent = i + '반';
+    classSelect.appendChild(option);
+  }
+}
+
+function initDormRooms() {
+  const roomSelect = document.getElementById('dormRoom');
+  roomSelect.innerHTML = '<option value="">선택</option>';
+  for (let i = 1; i <= 23; i++) {
+    const option = document.createElement('option');
+    option.value = i + '호'; option.textContent = i + '호';
+    roomSelect.appendChild(option);
+  }
+}
+
+/* ============ 로그인 ============ */
+function doLogin(e) {
+  e.preventDefault();
+  const inputCode = document.getElementById('studentId').value.trim().toUpperCase();
+  const inputGrade = document.getElementById('grade').value;
+  const inputClass = document.getElementById('classNo').value;
+
+  if (!inputCode || !inputGrade || !inputClass) {
+    toast('모든 정보를 입력해주세요.');
+    return;
+  }
+
+  // DB에서 학생증 코드로 학생 찾기
+  const student = STUDENT_DB.find(s => s.code === inputCode);
+
+  if (!student) {
+    toast('등록되지 않은 학생증 코드입니다.');
+    return;
+  }
+
+  // 학년/반 정보 일치 여부 검증 (보안 강화)
+  if (student.grade !== inputGrade || student.classNo !== inputClass) {
+    toast(`학년/반 정보가 일치하지 않습니다.\n(등록 정보: ${student.grade}학년 ${student.classNo}반)`);
+    return;
+  }
+
+  // 학생 번호에 기반하여 일관된 상점/벌점/쿠폰 부여 (테스트용)
+  // 예: 5번(박하린), 10번(안유준) 학생은 벌점 6점으로 설정되어 제한 화면을 확인할 수 있습니다.
+  const demerit = (student.num === 5 || student.num === 10) ? 6 : (student.num % 4); 
+  const merit = 70 + (student.num % 31); // 70 ~ 100점
+
+  const coupons = [{name:'신규가입 쿠폰', dc:1000, expire:'2026-12-31'}];
+  if (merit >= 80) coupons.push({name:'상점 80점 달성 쿠폰', dc:1000, expire:'2026-12-31'});
+  if (merit >= 90) coupons.push({name:'상점 90점 달성 쿠폰', dc:2000, expire:'2026-12-31'});
+
+  user = {
+    id: student.code,
+    num: student.num,
+    name: student.name,
+    grade: student.grade,
+    classNo: student.classNo,
+    merit: merit,
+    demerit: demerit,
+    coupons: coupons
+  };
+
+  if (user.demerit >= 5) {
+    showMeritRestriction();
+    return;
+  }
+  if (user.merit < 70) {
+    toast('상점 70점 이상인 학생만 이용 가능합니다.');
+    return;
+  }
+
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('tabbar').style.display = 'flex';
+  showScreen('mainScreen');
+  renderStores();
+  updateMyPage();
+  checkLunchTime();
+}
+
+function logout() {
+  if (!confirm('로그아웃 하시겠습니까?')) return;
+  user = null; cart = [];
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('tabbar').style.display = 'none';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+}
+
+/* ============ 화면 전환 ============ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  
+  const hideTabbarScreens = ['paymentScreen', 'deliveryScreen'];
+  document.getElementById('tabbar').style.display = hideTabbarScreens.includes(id) ? 'none' : 'flex';
+  
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === id);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ============ 상점 목록 ============ */
+function renderStores(filter='전체') {
+  const list = document.getElementById('storeList');
+  const filtered = filter === '전체' ? STORES : STORES.filter(s => s.cat === filter);
+  list.innerHTML = filtered.map(s => `
+    <div class="store-card" onclick="openStore(${s.id})">
+      <div class="store-thumb">${s.emoji}</div>
+      <div class="store-info">
+        <div class="store-name">${s.name}</div>
+        <div class="store-desc">${s.desc}</div>
+        <div class="store-tags">${s.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCategory(cat) {
+  renderStores(cat);
+  toast(`'${cat}' 카테고리`);
+}
+
+/* ============ 상점 상세 ============ */
+function openStore(id) {
+  currentStore = STORES.find(s => s.id === id);
+  document.getElementById('storeHeaderName').innerText = currentStore.name;
+  document.getElementById('storeDetailName').innerText = currentStore.name;
+  document.getElementById('storeDetailDesc').innerText = currentStore.desc;
+  document.getElementById('storeDetailTags').innerHTML = currentStore.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+  document.getElementById('menuList').innerHTML = currentStore.menu.map((m, i) => `
+    <div class="menu-item">
+      <div class="menu-left">
+        <div class="menu-name">${m.name}</div>
+        <div class="menu-desc">${m.desc}</div>
+        <div class="menu-price">${m.price.toLocaleString()}원</div>
+        <button class="add-btn" onclick="addToCart(${i})">담기</button>
+      </div>
+      <div class="menu-thumb">${m.emoji}</div>
+    </div>
+  `).join('');
+  showScreen('storeScreen');
+}
+
+/* ============ 장바구니 ============ */
+function addToCart(menuIdx) {
+  const menu = currentStore.menu[menuIdx];
+  const exist = cart.find(c => c.name === menu.name);
+  if (exist) exist.qty++;
+  else cart.push({...menu, qty:1, storeId: currentStore.id});
+  toast(`🛒 ${menu.name} 담김`);
+}
+
+function goCart() {
+  if (cart.length === 0) { toast('장바구니가 비어있습니다.'); return; }
+  renderCart();
+  showScreen('cartScreen');
+}
+
+function renderCart() {
+  const items = document.getElementById('cartItems');
+  items.innerHTML = cart.map((c, i) => `
+    <div class="cart-item">
+      <span class="name">${c.name}</span>
+      <span class="qty">x${c.qty}</span>
+      <span>${(c.price * c.qty).toLocaleString()}원</span>
+      <button onclick="removeCart(${i})" style="margin-left:8px; background:none; border:none; cursor:pointer; color:#999; font-size:16px;">✕</button>
+    </div>
+  `).join('');
+  updateTotal();
+}
+
+function removeCart(i) {
+  cart.splice(i,1);
+  renderCart();
+}
+
+function updateTotal() {
+  const subtotal = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  const couponVal = parseInt(document.getElementById('couponSelect').value || 0);
+  const total = Math.max(0, subtotal - couponVal);
+  document.getElementById('cartTotal').innerText = total.toLocaleString() + '원';
+}
+
+function toggleDorm() {
+  const place = document.querySelector('input[name="place"]:checked').value;
+  document.getElementById('dormInfo').style.display = place === 'dorm' ? 'block' : 'none';
+}
+
+/* ============ 결제 ============ */
+function goToPayment() {
+  if (cart.length === 0) { toast('장바구니가 비어있습니다.'); return; }
+  const place = document.querySelector('input[name="place"]:checked').value;
+  if (place === 'dorm') {
+    const b = document.getElementById('dormBuilding').value;
+    const r = document.getElementById('dormRoom').value;
+    if (!r) { toast('기숙사 호실을 선택해주세요.'); return; }
+    window.currentDeliveryAddress = `${b} ${r}호`;
+  } else {
+    window.currentDeliveryAddress = '학교 수령 장소';
+  }
+  
+  const subtotal = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  const couponVal = parseInt(document.getElementById('couponSelect').value || 0);
+  const total = Math.max(0, subtotal - couponVal);
+  
+  document.getElementById('paymentTotal').innerText = total.toLocaleString() + '원';
+  window.currentDeliveryPrice = total.toLocaleString() + '원';
+  window.currentDeliveryStore = currentStore ? currentStore.name : '주문한 가게';
+
+  showScreen('paymentScreen');
+}
+
+function processPayment() {
+  const method = document.querySelector('input[name="payMethod"]:checked').value;
+  const methodNames = {cash: '현금', naver: '네이버페이', kakao: '카카오페이', toss: '토스페이'};
+  
+  toast(`${methodNames[method]}로 결제 진행 중...`);
+  
+  setTimeout(() => {
+    document.getElementById('deliveryStoreName').innerText = window.currentDeliveryStore;
+    document.getElementById('deliveryAddress').innerText = window.currentDeliveryAddress;
+    document.getElementById('deliveryPrice').innerText = window.currentDeliveryPrice;
+    
+    showScreen('deliveryScreen');
+    startDeliverySimulation();
+    cart = []; 
+  }, 1200);
+}
+
+/* ============ 배달 진행 시뮬레이션 ============ */
+function startDeliverySimulation() {
+  let step = 1;
+  const steps = [
+    { id: 'step1', emoji: '📝', text: '주문 접수', sub: '주문이 정상적으로 접수되었습니다.' },
+    { id: 'step2', emoji: '🍳', text: '조리 중', sub: '가게에서 맛있는 음식을 만들고 있어요.' },
+    { id: 'step3', emoji: '🛵', text: '배달 중', sub: '배달 기사가 수령하여 이동 중입니다.' },
+    { id: 'step4', emoji: '✅', text: '배달 완료', sub: '배달이 완료되었습니다. 맛있게 드세요!' }
+  ];
+
+  function updateStep() {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`step${i}`);
+      el.classList.remove('active', 'completed');
+      if (i < step) el.classList.add('completed');
+      else if (i === step) el.classList.add('active');
+    }
+    const current = steps[step - 1];
+    document.getElementById('deliveryEmoji').innerText = current.emoji;
+    document.getElementById('deliveryStatusText').innerText = current.text;
+    document.getElementById('deliverySubText').innerText = current.sub;
+
+    if (step < 4) {
+      step++;
+      deliveryTimer = setTimeout(updateStep, 3000); 
+    }
+  }
+  
+  if (deliveryTimer) clearTimeout(deliveryTimer);
+  updateStep();
+}
+
+/* ============ 마이페이지 ============ */
+function updateMyPage() {
+  if (!user) return;
+  document.getElementById('myName').innerText = user.name + ' 학생';
+  document.getElementById('mySub').innerText = `${user.grade}학년 ${user.classNo}반 · 학생증 ${user.id}`;
+  document.getElementById('myMerit').innerText = user.merit;
+  document.getElementById('myDemerit').innerText = user.demerit;
+  document.getElementById('myCoupon').innerText = user.coupons.length;
+
+  const sel = document.getElementById('couponSelect');
+  sel.innerHTML = '<option value="0">쿠폰 사용 안함</option>' +
+    user.coupons.map(c => `<option value="${c.dc}">[${c.dc.toLocaleString()}원 할인] ${c.name}</option>`).join('');
+}
+
+function showCoupons() {
+  const list = document.getElementById('couponList');
+  if (user.coupons.length === 0) {
+    list.innerHTML = '<p style="text-align:center; color:#888; padding:20px;">사용 가능한 쿠폰이 없습니다.</p>';
+  } else {
+    list.innerHTML = user.coupons.map(c => `
+      <div class="coupon-item">
+        <div>
+          <div class="dc">${c.dc.toLocaleString()}원 할인</div>
+          <div class="info">${c.name}</div>
+        </div>
+        <div class="expire">~${c.expire}</div>
+      </div>
+    `).join('');
+  }
+  openModal('couponModal');
+}
+
+function showMeritInfo() { openModal('meritInfoModal'); }
+
+/* ============ 제한 / 차단 ============ */
+function showMeritRestriction() {
+  let reason = '', period = '';
+  if (user.demerit >= 20) { reason = '누적 벌점 20점 이상'; period = '30일'; }
+  else if (user.demerit >= 10) { reason = '누적 벌점 10점 이상'; period = '7일'; }
+  else if (user.demerit >= 5) { reason = '누적 벌점 5점 이상'; period = '3일'; }
+  document.getElementById('meritReason').innerText = reason;
+  document.getElementById('meritPeriod').innerText = period;
+  openModal('meritModal');
+}
+
+/* ============ 점심시간 차단 ============ */
+function checkLunchTime() {
+  const now = new Date();
+  const mins = now.getHours() * 60 + now.getMinutes();
+  const lunchBlock = mins >= 720 && mins < 780; // 12:00 ~ 13:00
+
+  document.getElementById('lunchNotice').style.display = lunchBlock ? 'block' : 'none';
+  if (lunchBlock) openModal('lunchModal');
+}
+setInterval(() => { if (user) checkLunchTime(); }, 60000);
+
+/* ============ 모달 & 토스트 ============ */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+</script>
+</body>
+</html>

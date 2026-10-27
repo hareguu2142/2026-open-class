@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌳 나의 삶 체크리스트 (다크 모드)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 60%, #14532d 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #e2e8f0;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-size: 2.2rem;
+    color: #86efac;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+  }
+  header p { 
+    color: #a7f3d0; 
+    margin-top: 6px; 
+  }
+
+  .tree-section {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .tree-stage {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #86efac;
+    margin-bottom: 10px;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 18px;
+    background: #334155;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ade80, #22c55e, #16a34a);
+    transition: width 0.6s ease;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+  }
+  .progress-text {
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: #94a3b8;
+  }
+
+  svg.tree-svg {
+    max-width: 320px;
+    width: 100%;
+    height: 320px;
+    margin: 10px auto;
+    display: block;
+  }
+
+  .decades {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .decade-card {
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .decade-card:hover { 
+    transform: translateY(-3px); 
+    border-color: rgba(134, 239, 172, 0.3);
+  }
+  .decade-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #86efac;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .decade-subtitle {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 12px;
+  }
+  .checklist { list-style: none; }
+  .checklist li {
+    padding: 8px 10px;
+    margin: 4px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+    color: #cbd5e1;
+  }
+  .checklist li:hover { background: rgba(255,255,255,0.05); }
+  .checklist li.checked {
+    background: rgba(76, 175, 80, 0.15);
+    text-decoration: line-through;
+    color: #86efac;
+  }
+  .check-box {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #4ade80;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #1e293b;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .checklist li.checked .check-box {
+    background: #22c55e;
+    border-color: #16a34a;
+    color: #ffffff;
+  }
+  .check-text { font-size: 0.95rem; }
+
+  .reset-btn {
+    display: block;
+    margin: 30px auto 10px;
+    padding: 10px 24px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    transition: background 0.2s, transform 0.1s;
+  }
+  .reset-btn:hover { background: #dc2626; transform: scale(1.02); }
+  .reset-btn:active { transform: scale(0.98); }
+
+  footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #64748b;
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🌳 나의 삶 체크리스트</h1>
+    <p>10세부터 100세까지, 한 걸음씩 체크할 때마다 나무가 자라나요</p>
+  </header>
+
+  <section class="tree-section">
+    <div class="tree-stage" id="treeStage">🌰 씨앗</div>
+    <svg class="tree-svg" id="treeSvg" viewBox="0 0 300 300"></svg>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">0 / 0 완료</div>
+  </section>
+
+  <section class="decades" id="decades"></section>
+
+  <button class="reset-btn" onclick="resetAll()">🔄 전체 초기화</button>
+
+  <footer>💾 진행 상황은 브라우저에 자동 저장됩니다</footer>
+</div>
+
+<script>
+const data = [
+  { age: 10, emoji: '🧒', title: '10대', subtitle: '꿈을 키우는 시기',
+    goals: ['좋은 독서 습관 들이기', '운동 하나 마스터하기', '친구와 깊은 우정 쌓기', '취미 하나 발견하기', '감사 일기 쓰기'] },
+  { age: 20, emoji: '🎓', title: '20대', subtitle: '도전과 성장의 시기',
+    goals: ['진로/전공 결정하기', '배낭여행 떠나기', '첫 재테크 시작하기', '건강 관리 루틴 만들기', '좋아하는 사람 만나기'] },
+  { age: 30, emoji: '💼', title: '30대', subtitle: '뿌리를 내리는 시기',
+    goals: ['커리어에서 인정받기', '내 집 마련 계획 세우기', '결혼 또는 평생 동반자 만나기', '전문 자격/기술 하나 얻기', '부모님께 효도 여행'] },
+  { age: 40, emoji: '🌟', title: '40대', subtitle: '꽃을 피우는 시기',
+    goals: ['후배/다음 세대 멘토링', '제2의 취미 발견하기', '건강 검진 정기화', '가족과 연간 여행 전통 만들기', '사회에 기여하기 시작'] },
+  { age: 50, emoji: '🏡', title: '50대', subtitle: '열매를 맺는 시기',
+    goals: ['은퇴 계획 구체화', '자녀의 독립 응원하기', '인생 회고록 한 편 쓰기', '오래된 친구 reconnect', '건강 100세 설계'] },
+  { age: 60, emoji: '🌅', title: '60대', subtitle: '자유를 즐기는 시기',
+    goals: ['꿈꿔왔던 여행 완수', '손주와 특별한 추억 만들기', '봉사 활동 시작', '새로운 언어/악기 배우기', '인생 2막 취미 즐기기'] },
+  { age: 70, emoji: '📚', title: '70대', subtitle: '지혜를 나누는 시기',
+    goals: ['가족에게 지혜 전수하기', '매일 산책 루틴', '손주에게 이야기 들려주기', '고마운 분께 편지 쓰기', '작은 정원 가꾸기'] },
+  { age: 80, emoji: '🕊️', title: '80대', subtitle: '평온의 시기',
+    goals: ['매일 감사 한 가지 찾기', '가족 모임 주도하기', '젊은 날의 사진 정리', '건강 유지에 성공하기', '사랑하는 사람에게 고백'] },
+  { age: 90, emoji: '🌸', title: '90대', subtitle: '축복의 시기',
+    goals: ['90년 인생 이야기 기록', '후손에게 유산(정신적) 남기기', '매일 햇볕 쬐기', '좋아하는 음악 듣기', '주변에 감사 표현'] },
+  { age: 100, emoji: '👑', title: '100대', subtitle: '전설이 되는 시기',
+    goals: ['백수연(白壽宴) 치르기', '가족 모두에게 사랑한다고 말하기', '인생 후회 없이 웃기', '다음 세대에 축복 남기기', '완벽한 한 인생 완성하기 🎉'] }
+];
+
+const STORAGE_KEY = 'life-checklist-v1-dark';
+let state = loadState();
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    return s ? JSON.parse(s) : {};
+  } catch { return {}; }
+}
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function totalGoals() {
+  return data.reduce((a, d) => a + d.goals.length, 0);
+}
+function checkedCount() {
+  return Object.values(state).filter(v => v).length;
+}
+
+function renderDecades() {
+  const container = document.getElementById('decades');
+  container.innerHTML = '';
+  data.forEach(decade => {
+    const card = document.createElement('div');
+    card.className = 'decade-card';
+    const checkedInDecade = decade.goals.filter((_, i) => state[`${decade.age}-${i}`]).length;
+    card.innerHTML = `
+      <div class="decade-title">${decade.emoji} ${decade.title}</div>
+      <div class="decade-subtitle">${decade.subtitle} · ${checkedInDecade}/${decade.goals.length}</div>
+      <ul class="checklist">
+        ${decade.goals.map((g, i) => {
+          const key = `${decade.age}-${i}`;
+          const checked = state[key];
+          return `<li class="${checked ? 'checked' : ''}" data-key="${key}">
+            <div class="check-box">${checked ? '✓' : ''}</div>
+            <span class="check-text">${g}</span>
+          </li>`;
+        }).join('')}
+      </ul>
+    `;
+    container.appendChild(card);
+  });
+
+  container.querySelectorAll('.checklist li').forEach(li => {
+    li.addEventListener('click', () => {
+      const key = li.dataset.key;
+      state[key] = !state[key];
+      saveState();
+      renderAll();
+    });
+  });
+}
+
+function renderProgress() {
+  const total = totalGoals();
+  const done = checkedCount();
+  const pct = total ? (done / total) * 100 : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} / ${total} 완료 (${pct.toFixed(1)}%)`;
+}
+
+function getStage(pct) {
+  if (pct === 0) return { name: '🌰 씨앗', level: 0 };
+  if (pct < 10) return { name: '🌱 새싹', level: 1 };
+  if (pct < 25) return { name: '🌿 묘목', level: 2 };
+  if (pct < 40) return { name: '🪴 어린 나무', level: 3 };
+  if (pct < 60) return { name: '🌳 나무', level: 4 };
+  if (pct < 80) return { name: '🌲 거목', level: 5 };
+  if (pct < 95) return { name: '🌳✨ 꽃 피는 나무', level: 6 };
+  return { name: '👑 전설의 신목', level: 7 };
+}
+
+function renderTree() {
+  const pct = (checkedCount() / totalGoals()) * 100;
+  const stage = getStage(pct);
+  document.getElementById('treeStage').textContent = stage.name;
+
+  const svg = document.getElementById('treeSvg');
+  // 다크 모드 배경: 밤하늘 + 어두운 땅
+  let html = `
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0f172a"/>
+        <stop offset="100%" stop-color="#1e293b"/>
+      </linearGradient>
+      <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#14532d"/>
+        <stop offset="100%" stop-color="#052e16"/>
+      </linearGradient>
+      <radialGradient id="leafGrad">
+        <stop offset="0%" stop-color="#4ade80"/>
+        <stop offset="100%" stop-color="#166534"/>
+      </radialGradient>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+    <rect x="0" y="0" width="300" height="240" fill="url(#sky)"/>
+    <rect x="0" y="240" width="300" height="60" fill="url(#ground)"/>
+    <!-- 별들 -->
+    <circle cx="40" cy="40" r="1.5" fill="#FFF" opacity="0.8"/>
+    <circle cx="80" cy="70" r="1" fill="#FFF" opacity="0.6"/>
+    <circle cx="200" cy="30" r="1.5" fill="#FFF" opacity="0.7"/>
+    <circle cx="260" cy="80" r="1" fill="#FFF" opacity="0.5"/>
+    <circle cx="120" cy="50" r="1.2" fill="#FFF" opacity="0.6"/>
+    <!-- 달 -->
+    <circle cx="240" cy="50" r="22" fill="#e2e8f0" opacity="0.9" filter="url(#glow)"/>
+    <circle cx="248" cy="42" r="18" fill="#0f172a" opacity="0.8"/>
+  `;
+
+  const L = stage.level;
+
+  if (L === 0) {
+    html += `<ellipse cx="150" cy="250" rx="12" ry="8" fill="#5D4037"/>
+             <ellipse cx="150" cy="247" rx="10" ry="6" fill="#795548"/>`;
+  } else if (L === 1) {
+    html += `<path d="M150 250 Q148 230 150 215" stroke="#4ade80" stroke-width="3" fill="none"/>
+             <ellipse cx="140" cy="215" rx="10" ry="5" fill="#4ade80" transform="rotate(-30 140 215)"/>
+             <ellipse cx="160" cy="215" rx="10" ry="5" fill="#4ade80" transform="rotate(30 160 215)"/>`;
+  } else if (L === 2) {
+    html += `<rect x="146" y="180" width="8" height="70" fill="#5D4037"/>
+             <circle cx="150" cy="170" r="25" fill="url(#leafGrad)"/>
+             <circle cx="135" cy="180" r="18" fill="url(#leafGrad)"/>
+             <circle cx="165" cy="180" r="18" fill="url(#leafGrad)"/>`;
+  } else if (L === 3) {
+    html += `<rect x="143" y="150" width="14" height="100" fill="#4E342E"/>
+             <circle cx="150" cy="140" r="40" fill="url(#leafGrad)"/>
+             <circle cx="120" cy="160" r="28" fill="url(#leafGrad)"/>
+             <circle cx="180" cy="160" r="28" fill="url(#leafGrad)"/>`;
+  } else if (L === 4) {
+    html += `<rect x="140" y="120" width="20" height="130" fill="#3E2723"/>
+             <path d="M140 200 Q110 210 100 230" stroke="#3E2723" stroke-width="6" fill="none"/>
+             <path d="M160 200 Q190 210 200 230" stroke="#3E2723" stroke-width="6" fill="none"/>
+             <circle cx="150" cy="110" r="55" fill="url(#leafGrad)"/>
+             <circle cx="105" cy="140" r="38" fill="url(#leafGrad)"/>
+             <circle cx="195" cy="140" r="38" fill="url(#leafGrad)"/>
+             <circle cx="150" cy="70" r="35" fill="url(#leafGrad)"/>`;
+  } else if (L === 5) {
+    html += `<rect x="135" y="100" width="30" height="150" fill="#281815"/>
+             <path d="M135 180 Q90 190 75 220" stroke="#281815" stroke-width="8" fill="none"/>
+             <path d="M165 180 Q210 190 225 220" stroke="#281815" stroke-width="8" fill="none"/>
+             <circle cx="150" cy="90" r="70" fill="url(#leafGrad)"/>
+             <circle cx="85" cy="130" r="45" fill="url(#leafGrad)"/>
+             <circle cx="215" cy="130" r="45" fill="url(#leafGrad)"/>
+             <circle cx="150" cy="40" r="40" fill="url(#leafGrad)"/>`;
+  } else if (L === 6) {
+    html += `<rect x="135" y="100" width="30" height="150" fill="#281815"/>
+             <path d="M135 180 Q90 190 75 220" stroke="#281815" stroke-width="8" fill="none"/>
+             <path d="M165 180 Q210 190 225 220" stroke="#281815" stroke-width="8" fill="none"/>
+             <circle cx="150" cy="90" r="70" fill="url(#leafGrad)"/>
+             <circle cx="85" cy="130" r="45" fill="url(#leafGrad)"/>
+             <circle cx="215" cy="130" r="45" fill="url(#leafGrad)"/>
+             <circle cx="150" cy="40" r="40" fill="url(#leafGrad)"/>`;
+    const flowers = [[120,70],[180,70],[100,120],[200,120],[150,50],[130,140],[170,140]];
+    flowers.forEach(([x,y]) => {
+      html += `<circle cx="${x}" cy="${y}" r="6" fill="#F472B6" filter="url(#glow)"/>
+               <circle cx="${x}" cy="${y}" r="2.5" fill="#FEF08A"/>`;
+    });
+  } else {
+    html += `<rect x="130" y="90" width="40" height="160" fill="#1a0f0d"/>
+             <path d="M130 180 Q70 190 55 230" stroke="#1a0f0d" stroke-width="10" fill="none"/>
+             <path d="M170 180 Q230 190 245 230" stroke="#1a0f0d" stroke-width="10" fill="none"/>
+             <circle cx="150" cy="80" r="80" fill="url(#leafGrad)"/>
+             <circle cx="70" cy="120" r="55" fill="url(#leafGrad)"/>
+             <circle cx="230" cy="120" r="55" fill="url(#leafGrad)"/>
+             <circle cx="150" cy="25" r="45" fill="url(#leafGrad)"/>`;
+    html += `<circle cx="150" cy="100" r="130" fill="none" stroke="#FDE047" stroke-width="2" opacity="0.4" filter="url(#glow)"/>
+             <circle cx="150" cy="100" r="145" fill="none" stroke="#FDE047" stroke-width="1" opacity="0.2"/>`;
+    const flowers = [[110,60],[190,60],[80,110],[220,110],[150,30],[120,130],[180,130],[150,90]];
+    flowers.forEach(([x,y]) => {
+      html += `<circle cx="${x}" cy="${y}" r="7" fill="#F472B6" filter="url(#glow)"/>
+               <circle cx="${x}" cy="${y}" r="3" fill="#FEF08A"/>`;
+    });
+    const fruits = [[100,150],[200,150],[140,160],[160,160]];
+    fruits.forEach(([x,y]) => {
+      html += `<circle cx="${x}" cy="${y}" r="6" fill="#EF4444" filter="url(#glow)"/>
+               <circle cx="${x-1}" cy="${y-1}" r="2" fill="#FCA5A5"/>`;
+    });
+  }
+
+  svg.innerHTML = html;
+}
+
+function renderAll() {
+  renderDecades();
+  renderProgress();
+  renderTree();
+}
+
+function resetAll() {
+  if (confirm('정말 모든 체크를 초기화할까요? 🌱 다시 씨앗부터 시작해요')) {
+    state = {};
+    saveState();
+    renderAll();
+  }
+}
+
+renderAll();
+</script>
+</body>
+</html>

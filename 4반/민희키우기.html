@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>민희 키우기 🍼</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f8eafa;color:#392b43;font-family:monospace}
+main{max-width:760px;margin:auto;padding:16px}
+h1{text-align:center;font-size:30px}
+h2{font-size:18px}
+.card{background:#fff;border:3px solid #493650;border-radius:14px;padding:15px;margin:12px 0;box-shadow:4px 4px #ddc4e5}
+button,select{font:inherit;border:2px solid #493650;border-radius:9px;padding:10px;background:#ffe2f1;color:#392b43;cursor:pointer}
+button:active{transform:translateY(2px)}
+button:hover{background:#f6c8e4}
+.buttons{display:flex;flex-wrap:wrap;gap:8px}
+.scene{height:190px;border:3px solid #493650;border-radius:12px;background:linear-gradient(#d9e9ff 65%,#a6dcac 65%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+#avatar{font-size:70px;position:absolute;left:calc(50% - 35px);top:48px;transition:left .15s,top .15s}
+#hair{position:absolute;top:32px;font-size:48px;pointer-events:none}
+#speech{position:absolute;bottom:7px;background:#fff;padding:6px 10px;border-radius:10px;font-size:12px}
+.stat{margin:10px 0}
+.statline{display:flex;justify-content:space-between;font-size:13px}
+.bar{height:12px;background:#eee;border:1px solid #493650;border-radius:9px;overflow:hidden}
+.fill{height:100%;background:#e98ec0;width:50%;transition:width .2s}
+#log{height:130px;overflow:auto;font-size:12px;line-height:1.7;background:#fff7fc;padding:8px;border-radius:8px}
+#choices button{flex:1;min-width:130px}
+.joystick{display:grid;grid-template-columns:50px 50px 50px;justify-content:center;gap:5px;margin:10px}
+.joystick button{height:45px;padding:4px}
+.small{font-size:12px;color:#76657d}
+</style>
+</head>
+<body>
+<main>
+<h1>🍼 민희 키우기</h1>
+<p style="text-align:center">응애에서 장발 레전드까지! 민희의 인생을 책임져라.</p>
+
+<section class="card">
+<h2>🎚️ 난이도</h2>
+<div class="buttons">
+<button onclick="setDifficulty('easy')">🧸 순한맛</button>
+<button onclick="setDifficulty('normal')">😵 보통맛</button>
+<button onclick="setDifficulty('hard')">💀 하드 모드</button>
+</div>
+<p id="difficultyLabel">현재 난이도: 순한맛</p>
+</section>
+
+<section class="card">
+<div class="scene" id="scene">
+<div id="hair"></div>
+<div id="avatar">👶🏻</div>
+<div id="speech">민희: 응애! 코인부터 내놔.</div>
+</div>
+<p id="ageLabel"><b>나이:</b> 0세 · 신생아</p>
+<div class="buttons">
+<button onclick="move(0,-1)">⬆️</button>
+<button onclick="move(-1,0)">⬅️</button>
+<button onclick="move(1,0)">➡️</button>
+<button onclick="move(0,1)">⬇️</button>
+</div>
+<p class="small">버튼을 눌러 민희를 움직여 봐!</p>
+</section>
+
+<section class="card">
+<h2>📊 민희 상태</h2>
+<div id="stats"></div>
+<p>🪙 코인: <b id="coins">100</b> · ⭐ 경험치: <b id="xp">0</b></p>
+<p>🎒 분유: <span id="food">10</span> · 기저귀: <span id="diaper">10</span></p>
+<div class="buttons">
+<button onclick="act('food')">🍼 밥 먹이기</button>
+<button onclick="act('diaper')">🧷 기저귀 갈기</button>
+<button onclick="act('play')">🧸 놀아주기</button>
+<button onclick="act('sleep')">💤 재우기</button>
+<button onclick="act('work')">🪙 용돈 벌기</button>
+<button onclick="act('grow')">🎂 나이 먹기</button>
+</div>
+</section>
+
+<section class="card">
+<h2>💇 민희의 스타일</h2>
+<p id="hairLabel">머리카락: 솜털</p>
+<button onclick="longHair()">💇 장발녀 선언!</button>
+</section>
+
+<section class="card">
+<h2>🫂 인간관계</h2>
+<div id="relations"></div>
+<div class="buttons">
+<button onclick="relationship('friend')">🧋 친구에게 연락</button>
+<button onclick="relationship('family')">🏠 가족과 대화</button>
+<button onclick="relationship('rival')">⚔️ 라이벌과 대결</button>
+<button onclick="relationship('date')">💌 호감도 이벤트</button>
+</div>
+</section>
+
+<section class="card">
+<h2>📖 나이별 스토리</h2>
+<b id="storyTitle">프롤로그: 응애의 탄생</b>
+<p id="story">민희가 태어났다. 가족들은 감동했고 민희는 분유 가격을 확인했다.</p>
+</section>
+
+<section class="card">
+<h2>🎲 랜덤 사건</h2>
+<p id="eventText">아직 아무 일도 일어나지 않았다. 이상하게 불안하다.</p>
+<button onclick="randomEvent()">랜덤 사건 발생!</button>
+<div id="choices" class="buttons" style="margin-top:10px"></div>
+</section>
+
+<section class="card">
+<h2>🌪️ 인생 사건</h2>
+<div class="buttons">
+<button onclick="runaway()">🏃 가출 이벤트</button>
+<button onclick="schoolEvent()">🏫 학교 사건</button>
+<button onclick="therapy()">🫶 마음 돌보기</button>
+<button onclick="nextDay()">🌙 하루 보내기</button>
+</div>
+<p id="mental"></p>
+</section>
+
+<section class="card">
+<h2>📜 민희의 일지</h2>
+<div id="log"></div>
+<div class="buttons" style="margin-top:10px">
+<button onclick="saveGame()">💾 저장</button>
+<button onclick="loadGame()">📂 불러오기</button>
+<button onclick="resetGame()">🔄 새 게임</button>
+</div>
+</section>
+<p class="small" style="text-align:center">MINHEE LIFE SIMULATOR · 픽셀 감성 인생 대환장판</p>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=n=>Math.max(0,Math.min(100,n));
+
+let s={
+ age:0,day:1,coins:100,xp:0,food:10,diaper:10,
+ hunger:15,clean:90,energy:85,happy:85,health:100,
+ stress:0,mood:80,longHair:false,x:0,y:0,
+ friend:50,family:70,rival:20,romance:0
+};
+let difficulty='easy';
+
+function log(t){
+ const box=$('log');
+ box.innerHTML='<div>Day '+s.day+' · '+t.replace(/</g,'&lt;')+'</div>'+box.innerHTML;
+}
+function say(t){$('speech').textContent=t}
+function change(key,n){s[key]=clamp(s[key]+n)}
+function setDifficulty(d){
+ difficulty=d;
+ const names={easy:'순한맛 🧸',normal:'보통맛 😵',hard:'하드 모드 💀'};
+ $('difficultyLabel').textContent='현재 난이도: '+names[d];
+ log('난이도를 '+names[d]+'으로 변경했다.');
+ render();
+}
+function act(a){
+ if(a==='food'){
+  if(s.food<=0){if(s.coins>=5){s.coins-=5;s.food+=3;log('분유 3개 긴급 구매! -5코인')}else{return say('분유가 없어! 용돈을 벌어 와!')}}
+  s.food--;change('hunger',-35);change('happy',5);s.xp+=3;
+  say('민희: 캬~ 이 맛이지.');log('분유를 먹었다.');
+ }
+ if(a==='diaper'){
+  if(s.diaper<=0){if(s.coins>=5){s.coins-=5;s.diaper+=3}else return say('기저귀가 없다!')}
+  s.diaper--;change('clean',30);change('happy',3);s.xp+=2;
+  log('기저귀 교체 완료. 민희: 리브랜딩 성공.');
+ }
+ if(a==='play'){
+  change('happy',15);change('energy',-8);change('stress',-5);s.xp+=5;
+  say('민희: 놀이는 역시 세상을 구해.');log('민희와 놀았다.');
+ }
+ if(a==='sleep'){
+  change('energy',25);change('stress',-12);change('hunger',5);
+  log('민희가 잠들었다. 꿈에서 코인 부자가 됐다.');
+ }
+ if(a==='work'){
+  s.coins+=20;change('energy',-8);change('hunger',5);s.xp+=5;
+  log('민희가 용돈 +20코인을 벌었다. 노동의 신.');
+ }
+ if(a==='grow'){
+  if(s.xp<10)return say('경험치 10이 필요해! 민희도 날먹은 안 된대.');
+  s.xp-=10;s.age++;s.coins+=10;
+  log('민희가 '+s.age+'세가 됐다! 성장 축하금 +10코인.');
+  randomEvent(true);
+ }
+ render();saveGame(false);
+}
+function move(dx,dy){
+ s.x=Math.max(-100,Math.min(100,s.x+dx*20));
+ s.y=Math.max(-35,Math.min(35,s.y+dy*15));
+ $('avatar').style.left='calc(50% - 35px + '+s.x+'px)';
+ $('avatar').style.top='calc(48px + '+s.y+'px)';
+ const lines=[
+  '민희가 벽과 하이파이브했다.',
+  '민희: 방금 운동했으니까 간식 줘.',
+  '민희가 코인 3개를 발견했다.',
+  '민희가 자기 발에 놀랐다.'
+ ];
+ const msg=lines[Math.floor(Math.random()*lines.length)];
+ if(msg.includes('코인'))s.coins+=3;
+ say(msg);log('🕹️ '+msg);render();saveGame(false);
+}
+function longHair(){
+ s.longHair=!s.longHair;
+ $('hairLabel').textContent=s.longHair?'머리카락: 허리까지 오는 장발 💇‍♀️':'머리카락: 다시 기르는 중 🌱';
+ $('hair').textContent=s.longHair?'〰️〰️':'';
+ log(s.longHair?'민희가 장발녀로 전직했다. 간지 +300%.':'민희가 헤어스타일을 바꿨다.');
+ render();saveGame(false);
+}
+function relationship(type){
+ const events={
+ friend:{q:'친구가 단톡방에 민희의 오타를 올렸다!',opts:[
+ ['😂 같이 웃기',()=>{s.friend+=8;s.mood+=4},'분위기가 풀렸다. 친구 +8'],
+ ['🗣️ 싫다고 말하기',()=>{s.friend+=2;s.stress-=5},'경계를 표현했다. 스트레스 감소'],
+ ['👻 알림 끄기',()=>{s.stress-=8;s.friend-=2},'잠시 쉬었다.']
+ ]},
+ family:{q:'가족이 오늘 하루 어땠냐고 물었다.',opts:[
+ ['🗣️ 솔직하게 말하기',()=>{s.family+=8;s.stress-=5},'가족과 대화했다. 가족 +8'],
+ ['🍜 간식 이야기',()=>{s.family+=3;s.coins+=2},'간식 지원금 +2코인'],
+ ['🙃 비밀로 하기',()=>{},'민희의 비밀은 안전하다.']
+ ]},
+ rival:{q:'라이벌이 대결을 신청했다.',opts:[
+ ['🏆 실력으로 승부',()=>{if(Math.random()<.6)s.rival+=8;else s.stress+=8},'승부 결과는 운에 달렸다!'],
+ ['🤝 화해하기',()=>{s.rival+=10;s.friend+=2},'라이벌과 화해했다.'],
+ ['🧋 간식 먹으러 가기',()=>{s.stress-=5;s.coins=Math.max(0,s.coins-2)},'간식이 이겼다.']
+ ]},
+ date:{q:'민희에게 호감이 있는 사람이 메시지를 보냈다.',opts:[
+ ['💌 답장하기',()=>{s.romance+=10;s.happy+=5},'호감도 상승!'],
+ ['🧐 천천히 알아가기',()=>{s.romance+=4;s.stress-=2},'서로 천천히 알아가기로 했다.'],
+ ['🙅 지금은 친구로',()=>{s.friend+=2},'서로의 마음과 경계를 존중했다.']
+ ]}
+ };
+ const e=events[type];
+ showChoices(e.q,e.opts);
+}
+function showChoices(q,opts){
+ $('eventText').textContent=q;
+ const box=$('choices');box.innerHTML='';
+ opts.forEach(([label,fn,result])=>{
+  const b=document.createElement('button');b.textContent=label;
+  b.onclick=()=>{fn();for(const k of ['friend','family','rival','romance','stress','mood','happy'])s[k]=Math.max(0,Math.min(100,s[k]));log(result);$('eventText').textContent=result;box.innerHTML='';render();saveGame(false)};
+  box.appendChild(b);
+ });
+}
+function randomEvent(auto=false){
+ const events=[
+  {q:'📱 단톡방 대참사! 민희의 오타가 밈이 됐다.',o:[
+   ['😂 같이 웃기',()=>{s.friend+=5;s.happy+=8},'친구 +5, 행복 +8'],
+   ['🗣️ 삭제 요청하기',()=>{s.friend+=2;s.stress-=4},'문제를 차분하게 해결했다.'],
+   ['💰 밈 굿즈 판매',()=>{s.coins+=15;s.popularity=0},'굿즈 대박! 코인 +15']
+  ]},
+  {q:'🍮 푸딩이 눈앞에 나타났다. 누가 놓고 간 걸까?',o:[
+   ['🍮 먹기',()=>{s.hunger-=15;s.happy+=8},'푸딩을 맛있게 먹었다.'],
+   ['🤝 친구와 나누기',()=>{s.friend+=8;s.happy+=5},'우정이 깊어졌다.'],
+   ['🔍 주인 찾아주기',()=>{s.family+=3;s.xp+=5},'정직함 경험치 +5']
+  ]},
+  {q:'🏫 선생님이 민희에게 발표를 부탁했다.',o:[
+   ['🎤 도전하기',()=>{s.xp+=10;s.stress+=5;s.coins+=5},'발표 완료! 경험치 +10, 코인 +5'],
+   ['🤝 친구와 같이 하기',()=>{s.friend+=5;s.xp+=5},'협동 발표 성공!'],
+   ['🧘 다음 기회에',()=>{s.stress-=5},'무리하지 않고 쉬었다.']
+  ]},
+  {q:'📦 택배가 도착했다. 주문한 기억은 없다.',o:[
+   ['📦 열어 보기',()=>{if(Math.random()<.5)s.coins+=20;else s.stress+=5},'택배 결과는 랜덤!'],
+   ['📞 주문 확인',()=>{s.xp+=3;s.family+=2},'확인 습관 +3 경험치'],
+   ['🎁 친구에게 주기',()=>{s.friend+=7},'친구가 감동했다.']
+  ]},
+  {q:'🕊️ 비둘기가 민희를 동네 대표로 선출했다.',o:[
+   ['👑 취임하기',()=>{s.coins+=10;s.stress+=8},'대표 수당 +10코인'],
+   ['🧋 비둘기와 협상',()=>{s.happy+=10;s.rival+=3},'비둘기와 휴전했다.'],
+   ['🏃 도망가기',()=>{s.stress-=3},'민희는 자유를 선택했다.']
+  ]}
+ ];
+ if(difficulty==='hard')events.push({q:'🌧️ 하드 모드: 스트레스가 쌓였다. 어떻게 할까?',o:[
+  ['🫶 믿을 만한 사람과 대화',()=>{s.stress-=15;s.family+=3},'도움을 요청했다. 스트레스 감소'],
+  ['🛌 휴식하기',()=>{s.stress-=10;s.energy+=8},'충분히 쉬었다.'],
+  ['🎮 좋아하는 활동 하기',()=>{s.stress-=8;s.happy+=8},'좋아하는 활동으로 기분을 회복했다.']
+ ]});
+ const e=events[Math.floor(Math.random()*events.length)];
+ showChoices(e.q,e.o);
+ if(auto)log('성장 이벤트가 발생했다!');
+}
+function runaway(){
+ if(s.age<10){
+  showChoices('🏃 민희가 가출을 선언했지만 현관 앞에서 간식을 발견했다!',[
+   ['🍪 간식 먹고 귀가',()=>{s.happy+=10;s.family+=5},'간식으로 협상 타결.'],
+   ['🗣️ 가족과 이야기하기',()=>{s.family+=8;s.stress-=5},'안전하게 대화하고 해결했다.']
+  ]);
+ }else{
+  showChoices('🏃 독립하고 싶은 민희! 안전과 계획을 생각해 보자.',[
+   ['📞 믿을 만한 어른에게 연락',()=>{s.family+=3;s.stress-=8;s.xp+=5},'도움을 요청하고 안전한 계획을 세웠다.'],
+   ['🏠 독립 계획표 만들기',()=>{s.xp+=10;s.coins+=5},'예산과 주거 계획을 세웠다. 경험치 +10'],
+   ['🧋 친구와 상의하기',()=>{s.friend+=5;s.stress-=5},'친구와 고민을 나눴다.']
+  ]);
+ }
+}
+function schoolEvent(){
+ showChoices('🏫 민희가 숙제를 제출했더니 선생님이 “이건 철학인가?”라고 물었다.',[
+  ['📚 차분히 설명하기',()=>{s.xp+=8;s.stress-=3},'설명 성공! 경험치 +8'],
+  ['😂 밈으로 발표하기',()=>{s.happy+=8;s.coins+=3},'발표가 밈이 됐다. 코인 +3'],
+  ['🤝 친구와 함께 수정',()=>{s.friend+=5;s.xp+=5},'협업으로 과제를 개선했다.']
+ ]);
+}
+function therapy(){
+ s.stress=Math.max(0,s.stress-20);s.mood=Math.min(100,s.mood+15);s.happy=Math.min(100,s.happy+5);
+ log('민희가 쉬고 좋아하는 일을 하며 마음을 돌봤다.');
+ say('민희: 오늘은 나를 챙기는 날.');
+ render();saveGame(false);
+}
+function nextDay(){
+ s.day++;
+ const r=difficulty==='hard'?{h:20,c:12,e:12,ha:8,stress:12}:
+ difficulty==='normal'?{h:12,c:7,e:7,ha:4,stress:5}:
+ {h:6,c:3,e:3,ha:1,stress:2};
+ change('hunger',r.h);change('clean',-r.c);change('energy',-r.e);
+ change('happy',-r.ha);change('stress',r.stress);
+ if(s.hunger>85||s.clean<10||s.energy<5){
+  change('health',difficulty==='hard'?-8:-2);
+ }
+ if(s.health<30)say('민희: 쉬고 돌봐 줘…');
+ else say('민희: 하루 더 살아남았다 ㅋㅋ');
+ log('하루가 지났다.');
+ if(Math.random()<(difficulty==='hard'?.5:difficulty==='normal'?.3:.15))randomEvent();
+ render();saveGame(false);
+}
+function render(){
+ const stages=[
+ [0,'신생아','👶🏻'],[1,'아기','🍼'],[3,'걸음마','🚼'],
+ [6,'유아','🧒🏻'],[10,'어린이','👧🏻'],[13,'사춘기','🧑🏻‍🎤'],
+ [19,'청년','🧑🏻'],[35,'장년','🧑🏻‍💼'],[45,'갱년기','🧑🏻‍🦳'],[60,'노년','👵🏻']
+ ];
+ let stage=stages[0];
+ stages.forEach(v=>{if(s.age>=v[0])stage=v});
+ $('ageLabel').innerHTML='<b>나이:</b> '+s.age+'세 · '+stage[1];
+ $('avatar').textContent=stage[2];
+ $('hair').textContent=s.longHair?'〰️〰️':'';
+ $('hairLabel').textContent=s.longHair?'머리카락: 허리까지 오는 장발녀 💇‍♀️':'머리카락: 솜털/성장 중 🌱';
+ $('coins').textContent=s.coins;$('xp').textContent=s.xp;
+ $('food').textContent=s.food;$('diaper').textContent=s.diaper;
+ const stats=[['배고픔',s.hunger],['청결',s.clean],['에너지',s.energy],['행복',s.happy],['건강',s.health]];
+ $('stats').innerHTML=stats.map(([name,val])=>'<div class="stat"><div class="statline"><span>'+name+'</span><b>'+Math.round(val)+'/100</b></div><div class="bar"><div class="fill" style="width:'+clamp(val)+'%"></div></div></div>').join('');
+ $('relations').innerHTML='🧋 친구 '+clamp(s.friend)+' · 🏠 가족 '+clamp(s.family)+' · ⚔️ 라이벌 '+clamp(s.rival)+' · 💌 호감도 '+clamp(s.romance);
+ $('mental').textContent='스트레스 '+clamp(s.stress)+' · 기분 '+clamp(s.mood)+' · '+(s.stress>70?'마음 돌봄이 필요해!':'마음 상태를 잘 살펴보자.');
+ const stories=[
+ [0,'프롤로그: 응애의 탄생','민희가 태어났다. 가족들은 감동했고 민희는 분유 가격을 확인했다.'],
+ [3,'유치원 최종 보스','민희가 낮잠 시간에 원장 선생님 흉내를 내며 레전드를 찍었다.'],
+ [6,'급식 공약의 시대','민희는 학급 회장 선거에 출마했다. 공약은 푸딩 추가 하나였다.'],
+ [13,'사춘기와 장발의 시대','민희는 “나 이제 어른이야”라고 선언했다. 10분 뒤 양말을 잃어버렸다.'],
+ [19,'청춘 대환장','민희는 월세를 검색했다가 관리비를 보고 깊은 생각에 빠졌다.'],
+ [35,'사회생활 생존기','민희는 회의에서 “좋은 의견입니다”를 17번 말했다.'],
+ [45,'갱년기 보스전','선풍기와 담요를 동시에 켰다. 가족은 기후 정상회담이라 불렀다.'],
+ [60,'레전드 할머니','민희는 손주들에게 밈의 역사를 강의했다.']
+ ];
+ let story=stories[0];stories.forEach(v=>{if(s.age>=v[0])story=v});
+ $('storyTitle').textContent=story[1];$('story').textContent=story[2];
+}
+function saveGame(show=true){
+ try{localStorage.setItem('minheeSave',JSON.stringify({s,difficulty}))}
+ catch(e){log('저장할 수 없습니다. 브라우저 설정을 확인해 주세요.');return}
+ if(show)say('저장 완료! 민희의 인생은 안전하다. 🫡');
+}
+function loadGame(){
+ try{
+  const data=JSON.parse(localStorage.getItem('minheeSave'));
+  if(!data){say('저장 파일이 없어!');return}
+  s=data.s;difficulty=data.difficulty||'easy';
+  setDifficulty(difficulty);log('저장된 게임을 불러왔다.');
+  render();
+ }catch(e){say('저장 파일을 읽지 못했어.')}
+}
+function resetGame(){
+ if(!confirm('민희의 인생을 처음부터 다시 시작할까?'))return;
+ localStorage.removeItem('minheeSave');
+ location.reload();
+}
+render();
+</script>
+</body>
+</html>
