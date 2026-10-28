@@ -45,7 +45,7 @@
   <div id="list"></div>
 </main>
 <script>
-// 작품이 추가되면 해당 모둠에 title과 file을 채워 주세요. (file은 반 폴더 안의 파일 이름)
+// 작품이 추가되면 해당 모둠에 title과 file을 채워 주세요. (file은 반 폴더 안의 파일 이름, 외부 링크면 file 대신 url)
 const classes = [
   { name: '1반', teams: [
     { leader: '신연재', members: ['한성윤','김도연','노민아','이지원','정아연'], title: '과학실 예약 시스템', file: '신연재.html' },
@@ -60,10 +60,10 @@ const classes = [
     { leader: '임현지', members: ['박나현','이수민'] },
   ]},
   { name: '3반', teams: [
-    { leader: '김채윤', members: ['김민서','김미정','송예진','이다현','최다경'] },
+    { leader: '김채윤', members: ['김민서','김미정','송예진','이다현','최다경'], title: '학급관리 상벌점 관리자', url: 'https://app.baze.co/public/artifacts/yPyG2HiIVVL_' },
     { leader: '서예슬', members: ['권민송','배서현','김연서','정윤주','이채윤'] },
-    { leader: '노하윤', members: ['이채원','정세진','강연선','디아나'] },
-    { leader: '주민서', members: ['구예은','권미진','서은우','여채원','정예지'] },
+    { leader: '노하윤', members: ['이채원','정세진','강연선','디아나'], title: '나만의 비밀친구', url: 'https://ais-pre-4dh5exotjyaxqxinne6pr2-172995917119.asia-east1.run.app/' },
+    { leader: '주민서', members: ['구예은','권미진','서은우','여채원','정예지'], title: '학교 분실물 & 과제 관리 시스템', file: '주민서조.html' },
   ]},
   { name: '4반', teams: [
     { leader: '장수민', members: ['도혜련','박다혜','김민주','황가은','구하린'], title: '나의 삶 체크리스트', file: '구하린.html' },
@@ -83,6 +83,7 @@ list.innerHTML = classes.map(c => `
     <ul>${c.teams.map((t, i) => {
       const body = `<div><div class="team">${i + 1}모둠</div><div class="title">${t.title || '작품 준비 중'}</div>`
                  + `<div class="name"><b>${t.leader}</b> · ${t.members.join(' · ')}</div></div>`;
+      if (t.url) return `<li><a class="card" href="${t.url}" target="_blank" rel="noopener">${body}<span class="arrow">↗</span></a></li>`;
       return t.file
         ? `<li><a class="card" href="${encodeURI(c.name + '/' + t.file)}">${body}<span class="arrow">→</span></a></li>`
         : `<li><div class="card wip">${body}<span class="badge">준비 중</span></div></li>`;

@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<!-- saved from url=(0120)file:///C:/Users/user/Desktop/%EB%B6%84%EC%8B%A4%EB%AC%BC&%EC%83%81%EC%A0%90%20%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학교 분실물 &amp; 과제 관리 시스템</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+    /* 베이비 블루 그라데이션 배경으로 변경 */
+    background: linear-gradient(135deg, #d6eaf8 0%, #a9cce3 100%);
+    color: #1e293b;
+    min-height: 100vh;
+  }
+  header {
+    /* 헤더도 배경과 어울리도록 부드러운 블루 톤으로 조정 (선택 사항, 기존 유지 가능) */
+    background: linear-gradient(90deg, #5dade2, #85c1e9);
+    color: white;
+    padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header h1 { font-size: 24px; }
+  header p { font-size: 13px; opacity: 0.95; margin-top: 4px; }
+  .header-btn {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+  }
+  .header-btn:hover { background: rgba(255,255,255,0.4); }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    background: #ffffff;
+    border-bottom: 2px solid #d4e6f1;
+    padding: 0 20px;
+  }
+  nav button {
+    padding: 14px 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #5d6d7e;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  nav button:hover { color: #2e86c1; background: #ebf5fb; }
+  nav button.active {
+    color: #2e86c1;
+    border-bottom-color: #5dade2;
+    background: #ebf5fb;
+  }
+
+  main { padding: 24px; max-width: 1300px; margin: 0 auto; }
+  .tab { display: none; }
+  .tab.active { display: block; }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #2874a6;
+    border-left: 4px solid #5dade2;
+    padding-left: 10px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #d4e6f1;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(93, 173, 226, 0.15);
+  }
+  .card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #ebf5fb;
+    margin-bottom: 10px;
+  }
+  .card .no-img {
+    width: 100%;
+    height: 160px;
+    background: #ebf5fb;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #85c1e9;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .card h3 { font-size: 16px; margin-bottom: 6px; color: #1b4f72; }
+  .card p { font-size: 13px; color: #5d6d7e; line-height: 1.5; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .badge-lost { background: #fdedec; color: #943126; }
+  .badge-found { background: #e9f7ef; color: #1e8449; }
+  .badge-returned { background: #ebf5fb; color: #2874a6; }
+  .badge-pending { background: #fef9e7; color: #9a7d0a; }
+
+  form {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    max-width: 700px;
+    border: 1px solid #d4e6f1;
+  }
+  form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #34495e;
+  }
+  form input[type="text"],
+  form input[type="password"],
+  form input[type="date"],
+  form input[type="number"],
+  form select,
+  form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #aed6f1;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 14px;
+    font-family: inherit;
+    background: #fdfefe;
+  }
+  form input:focus, form select:focus, form textarea:focus {
+    outline: none;
+    border-color: #5dade2;
+    box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.15);
+  }
+  form textarea { resize: vertical; min-height: 80px; }
+  form input[type="file"] { margin-bottom: 14px; }
+  form button {
+    background: linear-gradient(90deg, #5dade2, #85c1e9);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  form button:hover { opacity: 0.9; }
+
+  .radio-group {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: normal;
+    cursor: pointer;
+    margin-bottom: 0;
+  }
+
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(52, 73, 94, 0.4);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid #d4e6f1;
+  }
+  .modal h2 { margin-bottom: 12px; color: #2874a6; }
+  .modal img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #ebf5fb;
+    margin-bottom: 12px;
+  }
+  .modal .info { font-size: 14px; line-height: 1.8; color: #34495e; }
+  .modal .info strong { color: #1b4f72; }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .modal-actions button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .btn-close { background: #eaecee; color: #34495e; }
+  .btn-delete { background: #fdedec; color: #943126; }
+  .btn-status { background: #ebf5fb; color: #2874a6; }
+
+  .empty {
+    text-align: center;
+    padding: 40px;
+    color: #85c1e9;
+    background: white;
+    border-radius: 12px;
+    border: 1px dashed #aed6f1;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: white;
+    padding: 16px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    border: 1px solid #d4e6f1;
+  }
+  .stat-box .num { font-size: 28px; font-weight: 700; color: #2e86c1; }
+  .stat-box .lbl { font-size: 12px; color: #5d6d7e; margin-top: 4px; }
+
+  .auth-box {
+    background: linear-gradient(135deg, #fef9e7, #fcf3cf);
+    border: 2px solid #f9e79f;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 450px;
+    margin: 40px auto;
+    text-align: center;
+  }
+  .auth-box h3 {
+    color: #9a7d0a;
+    margin-bottom: 10px;
+    font-size: 20px;
+  }
+  .auth-box p {
+    color: #7d6608;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .auth-box input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #f9e79f;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+  .auth-box button {
+    background: linear-gradient(90deg, #f1c40f, #f9e79f);
+    color: #7d6608;
+    width: 100%;
+  }
+  .auth-error {
+    color: #943126;
+    background: #fdedec;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .auth-success {
+    background: #e9f7ef;
+    border: 2px solid #82e0aa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 700px;
+  }
+  .auth-success span { color: #1e8449; font-weight: 600; font-size: 14px; }
+  .auth-success button {
+    background: #fef9e7;
+    color: #9a7d0a;
+    padding: 6px 14px;
+    font-size: 13px;
+    border: 1px solid #f9e79f;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .preview-img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-top: 8px;
+    display: none;
+    border: 1px solid #aed6f1;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🏫 학교 분실물 &amp; 과제 관리 시스템</h1>
+    <p>분실물 등록/조회 및 교사 심부름·과제 상점 관리</p>
+  </div>
+  <button class="header-btn" onclick="openCodeSettings()">⚙️ 인증코드 설정</button>
+</header>
+
+<nav>
+  <button class="tab-btn" data-tab="dashboard">📊 전체 대시보드</button>
+  <button class="tab-btn" data-tab="lost-list">🔍 잃어버린 분실물</button>
+  <button class="tab-btn" data-tab="found-list">📦 습득한 분실물</button>
+  <button class="tab-btn" data-tab="register">✏️ 분실물 등록</button>
+  <button class="tab-btn active" data-tab="task-list">📚 과제/심부름 목록</button>
+  <button class="tab-btn" data-tab="task-register">👨‍🏫 교사 과제 등록</button>
+</nav>
+
+<main>
+
+  <section id="dashboard" class="tab">
+    <div class="stats" id="stats">
+    <div class="stat-box"><div class="num">1</div><div class="lbl">잃어버린 물건</div></div>
+    <div class="stat-box"><div class="num">1</div><div class="lbl">습득 물건</div></div>
+    <div class="stat-box"><div class="num">0</div><div class="lbl">해결됨</div></div>
+    <div class="stat-box"><div class="num">1</div><div class="lbl">진행중 과제</div></div>
+  </div>
+    <h2 class="section-title">최근 분실물</h2>
+    <div class="grid" id="dash-items">
+    <div class="card" onclick="openItem(1793081884821)">
+      <div class="no-img">📷 사진 없음</div>
+      <h3>아날로그 시계</h3>
+      <p>습득 · 주민서(2-3)</p>
+      <p>📅 2026-10-24</p>
+      <span class="badge badge-pending">주인 찾는 중</span>
+    </div>
+  
+    <div class="card" onclick="openItem(1793081758629)">
+      <div class="no-img">📷 사진 없음</div>
+      <h3>에어팟</h3>
+      <p>잃어버림 · 최다경(2-3)</p>
+      <p>📅 2026-10-27</p>
+      <span class="badge badge-lost">아직 잃어버린 상태</span>
+    </div>
+  </div>
+    <h2 class="section-title" style="margin-top:24px;">최근 과제/심부름</h2>
+    <div class="grid" id="dash-tasks">
+    <div class="card" onclick="openTask(1793082003284)">
+      <div class="no-img" style="background:linear-gradient(135deg,#fef9e7,#fcf3cf);color:#9a7d0a;font-size:32px;">📋</div>
+      <h3>도서관 책 정리</h3>
+      <p>과제 · 서은우(도서부 차장)</p>
+      <p>💰 상점 <strong style="color:#f39c12;">2p</strong></p>
+      <p>⏰ 마감: 2026-10-30</p>
+      <span class="badge badge-pending">진행 중</span>
+    </div>
+  </div>
+  </section>
+
+  <section id="lost-list" class="tab">
+    <h2 class="section-title">잃어버린 분실물</h2>
+    <div class="grid" id="lost-grid">
+    <div class="card" onclick="openItem(1793081758629)">
+      <div class="no-img">📷 사진 없음</div>
+      <h3>에어팟</h3>
+      <p>잃어버림 · 최다경(2-3)</p>
+      <p>📅 2026-10-27</p>
+      <span class="badge badge-lost">아직 잃어버린 상태</span>
+    </div>
+  </div>
+  </section>
+
+  <section id="found-list" class="tab">
+    <h2 class="section-title">습득한 분실물</h2>
+    <div class="grid" id="found-grid">
+    <div class="card" onclick="openItem(1793081884821)">
+      <div class="no-img">📷 사진 없음</div>
+      <h3>아날로그 시계</h3>
+      <p>습득 · 주민서(2-3)</p>
+      <p>📅 2026-10-24</p>
+      <span class="badge badge-pending">주인 찾는 중</span>
+    </div>
+  </div>
+  </section>
+
+  <section id="register" class="tab">
+    <h2 class="section-title">분실물 등록</h2>
+    <form id="item-form">
+      <label>구분</label>
+      <div class="radio-group">
+        <label><input type="radio" name="itemType" value="lost" checked=""> 잃어버렸어요</label>
+        <label><input type="radio" name="itemType" value="found"> 습득했어요</label>
+      </div>
+
+      <label>물건 이름</label>
+      <input type="text" name="name" required="" placeholder="예: 검은색 지갑">
+
+      <label>상세 설명</label>
+      <textarea name="desc" placeholder="특징, 색상, 내용물 등"></textarea>
+
+      <label id="location-label">어디서 습득했나요?</label>
+      <input type="text" name="location" required="" placeholder="예: 3층 복도, 체육관">
+
+      <label id="dropoff-label" style="">어디에 맡겨뒀나요?</label>
+      <input type="text" name="dropoff" style="" placeholder="예: 교무실, 분실물함" required="">
+
+      <label>분실/습득 날짜</label>
+      <input type="date" name="date" required="">
+
+      <label>등록자 이름</label>
+      <input type="text" name="owner" required="" placeholder="예: 홍길동 (3-2)">
+
+      <label>사진 첨부 (자동으로 압축됩니다)</label>
+      <input type="file" name="photo" accept="image/*" id="photo-input">
+      <img id="photo-preview" class="preview-img" alt="미리보기" style="display: none;">
+
+      <label>현재 상태</label>
+      <div class="radio-group">
+        <label><input type="radio" name="status" value="pending" checked=""> 아직 잃어버린 상태</label>
+        <label><input type="radio" name="status" value="resolved"> 찾음 / 주인이 찾아감</label>
+      </div>
+
+      <button type="submit">등록하기</button>
+    </form>
+  </section>
+
+  <section id="task-list" class="tab active">
+    <h2 class="section-title">교사 등록 과제 / 심부름</h2>
+    <div class="grid" id="task-grid">
+    <div class="card" onclick="openTask(1793082003284)">
+      <div class="no-img" style="background:linear-gradient(135deg,#fef9e7,#fcf3cf);color:#9a7d0a;font-size:32px;">📋</div>
+      <h3>도서관 책 정리</h3>
+      <p>과제 · 서은우(도서부 차장)</p>
+      <p>💰 상점 <strong style="color:#f39c12;">2p</strong></p>
+      <p>⏰ 마감: 2026-10-30</p>
+      <span class="badge badge-pending">진행 중</span>
+    </div>
+  </div>
+  </section>
+
+  <section id="task-register" class="tab">
+    <h2 class="section-title">교사: 과제/심부름 등록</h2>
+
+    <div id="auth-required" style="display: none;">
+      <div class="auth-box">
+        <h3>🔒 교사 인증이 필요합니다</h3>
+        <p>과제/심부름을 등록하려면 교사 인증코드를 입력해주세요.</p>
+        <div class="auth-error" id="auth-error" style="display: none;">❌ 인증코드가 올바르지 않습니다.</div>
+        <input type="password" id="auth-code-input" placeholder="인증코드 입력">
+        <button onclick="submitAuth()">인증하기</button>
+      </div>
+    </div>
+
+    <div id="auth-success-box" style="display: block;">
+      <div class="auth-success">
+        <span>✅ 교사 인증 완료 — 과제 등록이 가능합니다.</span>
+        <button onclick="logoutTeacher()">인증 해제</button>
+      </div>
+      <form id="task-form">
+        <label>제목</label>
+        <input type="text" name="title" required="" placeholder="예: 교실 청소, 도서실 책 정리">
+
+        <label>종류</label>
+        <select name="category" required="">
+          <option value="심부름">심부름</option>
+          <option value="과제">과제</option>
+          <option value="봉사">봉사</option>
+          <option value="기타">기타</option>
+        </select>
+
+        <label>상세 내용</label>
+        <textarea name="desc" required="" placeholder="무엇을 해야 하는지 자세히 적어주세요."></textarea>
+
+        <label>부여 상점</label>
+        <input type="number" name="points" required="" min="1" placeholder="예: 10">
+
+        <label>마감일</label>
+        <input type="date" name="deadline">
+
+        <label>등록 교사</label>
+        <input type="text" name="teacher" required="" placeholder="예: 김철수 선생님">
+
+        <label>상태</label>
+        <div class="radio-group">
+          <label><input type="radio" name="status" value="open" checked=""> 진행 중</label>
+          <label><input type="radio" name="status" value="done"> 완료 (상점 지급됨)</label>
+        </div>
+
+        <button type="submit">등록하기</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal-bg" id="modal">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<div class="modal-bg" id="code-modal">
+  <div class="modal">
+    <h2>⚙️ 교사 인증코드 설정</h2>
+    <p style="color:#5d6d7e; font-size:13px; margin-bottom:16px;">
+      교사가 과제 등록 시 사용할 인증코드를 변경할 수 있습니다.
+    </p>
+    <label style="display:block; font-weight:600; margin-bottom:6px;">현재 인증코드</label>
+    <input type="text" id="current-code-display" readonly="" style="width:100%; padding:10px; background:#ebf5fb; border:1px solid #aed6f1; border-radius:8px; margin-bottom:14px; font-family:monospace; letter-spacing:2px; color:#2874a6;">
+    <label style="display:block; font-weight:600; margin-bottom:6px;">새 인증코드</label>
+    <input type="text" id="new-code-input" placeholder="새 인증코드 입력" style="width:100%; padding:10px; border:1px solid #aed6f1; border-radius:8px; margin-bottom:14px;">
+    <div class="modal-actions">
+      <button class="btn-status" onclick="saveNewCode()">저장</button>
+      <button class="btn-close" onclick="closeCodeSettings()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== 데이터 저장소 ===== */
+const DB = {
+  get items() { return JSON.parse(localStorage.getItem('schoolItems') || '[]'); },
+  set items(v) {
+    try {
+      localStorage.setItem('schoolItems', JSON.stringify(v));
+      return true;
+    } catch (e) {
+      console.error('localStorage 저장 실패:', e);
+      return false;
+    }
+  },
+  get tasks() { return JSON.parse(localStorage.getItem('schoolTasks') || '[]'); },
+  set tasks(v) {
+    try {
+      localStorage.setItem('schoolTasks', JSON.stringify(v));
+      return true;
+    } catch (e) {
+      console.error('localStorage 저장 실패:', e);
+      return false;
+    }
+  },
+  get code() { return localStorage.getItem('teacherCode') || 'TEACHER2026'; },
+  set code(v) { localStorage.setItem('teacherCode', v); },
+};
+
+/* ===== 인증 상태 (세션 단위) ===== */
+function isTeacherAuthed() {
+  return sessionStorage.getItem('teacherAuthed') === 'true';
+}
+function setTeacherAuthed(v) {
+  sessionStorage.setItem('teacherAuthed', v ? 'true' : 'false');
+}
+
+/* ===== 탭 전환 ===== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    if (tab === 'task-register' && !isTeacherAuthed()) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('task-register').classList.add('active');
+      showAuthScreen();
+      renderAll();
+      return;
+    }
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(tab).classList.add('active');
+    renderAll();
+  });
+});
+
+/* ===== 인증 화면 ===== */
+function showAuthScreen() {
+  document.getElementById('auth-required').style.display = 'block';
+  document.getElementById('auth-success-box').style.display = 'none';
+  document.getElementById('auth-code-input').value = '';
+  document.getElementById('auth-error').style.display = 'none';
+}
+function showSuccessScreen() {
+  document.getElementById('auth-required').style.display = 'none';
+  document.getElementById('auth-success-box').style.display = 'block';
+}
+function submitAuth() {
+  const input = document.getElementById('auth-code-input').value.trim();
+  if (input === DB.code) {
+    setTeacherAuthed(true);
+    showSuccessScreen();
+  } else {
+    document.getElementById('auth-error').style.display = 'block';
+  }
+}
+function logoutTeacher() {
+  if (!confirm('교사 인증을 해제하시겠습니까?')) return;
+  setTeacherAuthed(false);
+  showAuthScreen();
+}
+document.getElementById('auth-code-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') { e.preventDefault(); submitAuth(); }
+});
+
+/* ===== 인증코드 설정 ===== */
+function openCodeSettings() {
+  document.getElementById('current-code-display').value = DB.code;
+  document.getElementById('new-code-input').value = '';
+  document.getElementById('code-modal').classList.add('show');
+}
+function closeCodeSettings() {
+  document.getElementById('code-modal').classList.remove('show');
+}
+function saveNewCode() {
+  const newCode = document.getElementById('new-code-input').value.trim();
+  if (!newCode) { alert('새 인증코드를 입력해주세요.'); return; }
+  if (!confirm('인증코드를 변경하시겠습니까?\n기존에 알고 있던 코드는 무효화됩니다.')) return;
+  DB.code = newCode;
+  setTeacherAuthed(false);
+  alert('✅ 인증코드가 변경되었습니다.\n새 코드: ' + newCode);
+  closeCodeSettings();
+}
+document.getElementById('code-modal').addEventListener('click', e => {
+  if (e.target.id === 'code-modal') closeCodeSettings();
+});
+
+/* ===== 이미지 리사이징 ===== */
+function resizeImage(file, maxSize = 800, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height) {
+          if (width > maxSize) {
+            height = Math.round(height * maxSize / width);
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = Math.round(width * maxSize / height);
+            height = maxSize;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ===== 사진 미리보기 ===== */
+const photoInput = document.getElementById('photo-input');
+const photoPreview = document.getElementById('photo-preview');
+photoInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) {
+    photoPreview.style.display = 'none';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    photoPreview.src = ev.target.result;
+    photoPreview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ===== 분실물 등록 폼 동적 라벨 ===== */
+const itemForm = document.getElementById('item-form');
+const locationLabel = document.getElementById('location-label');
+const dropoffLabel = document.getElementById('dropoff-label');
+const dropoffInput = itemForm.dropoff;
+const locationInput = itemForm.location;
+
+document.querySelectorAll('input[name="itemType"]').forEach(radio => {
+  radio.addEventListener('change', e => {
+    const v = e.target.value;
+    if (v === 'lost') {
+      locationLabel.textContent = '어디서 잃어버렸나요?';
+      locationLabel.style.display = '';
+      locationInput.style.display = '';
+      locationInput.required = true;
+      dropoffLabel.style.display = 'none';
+      dropoffInput.style.display = 'none';
+      dropoffInput.required = false;
+    } else {
+      locationLabel.textContent = '어디서 습득했나요?';
+      dropoffLabel.style.display = '';
+      dropoffInput.style.display = '';
+      dropoffInput.required = true;
+    }
+  });
+});
+
+/* ===== 분실물 등록 ===== */
+itemForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  try {
+    const fd = new FormData(itemForm);
+    const photoFile = fd.get('photo');
+    let photo = null;
+    if (photoFile && photoFile.size > 0) {
+      photo = await resizeImage(photoFile, 800, 0.75);
+    }
+
+    const itemType = document.querySelector('input[name="itemType"]:checked')?.value || 'lost';
+    const status = document.querySelector('input[name="status"]:checked')?.value || 'pending';
+
+    const item = {
+      id: Date.now(),
+      type: itemType,
+      name: fd.get('name'),
+      desc: fd.get('desc'),
+      location: fd.get('location'),
+      dropoff: fd.get('dropoff'),
+      date: fd.get('date'),
+      owner: fd.get('owner'),
+      photo,
+      status,
+      createdAt: new Date().toISOString(),
+    };
+
+    const list = DB.items;
+    list.unshift(item);
+    const ok = DB.items = list;
+    if (!ok) {
+      alert('❌ 저장 용량이 부족합니다. 이전 분실물을 삭제하거나 사진을 줄여주세요.');
+      return;
+    }
+
+    itemForm.reset();
+    photoPreview.style.display = 'none';
+    document.querySelector('input[name="itemType"][value="lost"]').checked = true;
+    document.querySelector('input[name="status"][value="pending"]').checked = true;
+    locationLabel.textContent = '어디서 잃어버렸나요?';
+    dropoffLabel.style.display = 'none';
+    dropoffInput.style.display = 'none';
+
+    alert('✅ 등록이 완료되었습니다!');
+    renderAll();
+  } catch (err) {
+    console.error(err);
+    alert('❌ 등록 중 오류가 발생했습니다: ' + err.message);
+  }
+});
+
+/* ===== 과제 등록 ===== */
+document.getElementById('task-form').addEventListener('submit', e => {
+  e.preventDefault();
+  if (!isTeacherAuthed()) {
+    alert('❌ 교사 인증이 필요합니다.');
+    showAuthScreen();
+    return;
+  }
+  try {
+    const fd = new FormData(e.target);
+    const status = document.querySelector('#task-form input[name="status"]:checked')?.value || 'open';
+    const task = {
+      id: Date.now(),
+      title: fd.get('title'),
+      category: fd.get('category'),
+      desc: fd.get('desc'),
+      points: Number(fd.get('points')),
+      deadline: fd.get('deadline'),
+      teacher: fd.get('teacher'),
+      status,
+      createdAt: new Date().toISOString(),
+    };
+    const list = DB.tasks;
+    list.unshift(task);
+    const ok = DB.tasks = list;
+    if (!ok) {
+      alert('❌ 저장 용량이 부족합니다.');
+      return;
+    }
+    e.target.reset();
+    document.querySelector('#task-form input[name="status"][value="open"]').checked = true;
+    alert('✅ 과제가 등록되었습니다!');
+    renderAll();
+  } catch (err) {
+    console.error(err);
+    alert('❌ 등록 중 오류가 발생했습니다: ' + err.message);
+  }
+});
+
+/* ===== 렌더링 ===== */
+function itemCardHTML(it) {
+  const typeLabel = it.type === 'lost' ? '잃어버림' : '습득';
+  let statusBadge = '';
+  if (it.type === 'lost') {
+    statusBadge = it.status === 'pending'
+      ? '<span class="badge badge-lost">아직 잃어버린 상태</span>'
+      : '<span class="badge badge-found">찾음</span>';
+  } else {
+    statusBadge = it.status === 'pending'
+      ? '<span class="badge badge-pending">주인 찾는 중</span>'
+      : '<span class="badge badge-returned">주인 찾아감</span>';
+  }
+  const img = it.photo
+    ? `<img src="${it.photo}" alt="${escapeHTML(it.name)}" />`
+    : `<div class="no-img">📷 사진 없음</div>`;
+  return `
+    <div class="card" onclick="openItem(${it.id})">
+      ${img}
+      <h3>${escapeHTML(it.name)}</h3>
+      <p>${typeLabel} · ${escapeHTML(it.owner)}</p>
+      <p>📅 ${it.date}</p>
+      ${statusBadge}
+    </div>
+  `;
+}
+
+function taskCardHTML(t) {
+  const statusBadge = t.status === 'open'
+    ? '<span class="badge badge-pending">진행 중</span>'
+    : '<span class="badge badge-returned">완료</span>';
+  return `
+    <div class="card" onclick="openTask(${t.id})">
+      <div class="no-img" style="background:linear-gradient(135deg,#fef9e7,#fcf3cf);color:#9a7d0a;font-size:32px;">📋</div>
+      <h3>${escapeHTML(t.title)}</h3>
+      <p>${escapeHTML(t.category)} · ${escapeHTML(t.teacher)}</p>
+      <p>💰 상점 <strong style="color:#f39c12;">${t.points}p</strong></p>
+      ${t.deadline ? `<p>⏰ 마감: ${t.deadline}</p>` : ''}
+      ${statusBadge}
+    </div>
+  `;
+}
+
+function renderAll() {
+  const items = DB.items;
+  const tasks = DB.tasks;
+
+  const lostPending = items.filter(i => i.type === 'lost' && i.status === 'pending').length;
+  const foundPending = items.filter(i => i.type === 'found' && i.status === 'pending').length;
+  const resolved = items.filter(i => i.status === 'resolved').length;
+  const openTasks = tasks.filter(t => t.status === 'open').length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-box"><div class="num">${lostPending}</div><div class="lbl">잃어버린 물건</div></div>
+    <div class="stat-box"><div class="num">${foundPending}</div><div class="lbl">습득 물건</div></div>
+    <div class="stat-box"><div class="num">${resolved}</div><div class="lbl">해결됨</div></div>
+    <div class="stat-box"><div class="num">${openTasks}</div><div class="lbl">진행중 과제</div></div>
+  `;
+
+  const lost = items.filter(i => i.type === 'lost');
+  const found = items.filter(i => i.type === 'found');
+  document.getElementById('lost-grid').innerHTML = lost.length
+    ? lost.map(itemCardHTML).join('')
+    : '<div class="empty">등록된 잃어버린 분실물이 없습니다.</div>';
+  document.getElementById('found-grid').innerHTML = found.length
+    ? found.map(itemCardHTML).join('')
+    : '<div class="empty">등록된 습득 분실물이 없습니다.</div>';
+
+  document.getElementById('task-grid').innerHTML = tasks.length
+    ? tasks.map(taskCardHTML).join('')
+    : '<div class="empty">등록된 과제/심부름이 없습니다.</div>';
+
+  document.getElementById('dash-items').innerHTML = items.slice(0, 6).map(itemCardHTML).join('')
+    || '<div class="empty">아직 등록된 분실물이 없습니다.</div>';
+  document.getElementById('dash-tasks').innerHTML = tasks.slice(0, 6).map(taskCardHTML).join('')
+    || '<div class="empty">아직 등록된 과제가 없습니다.</div>';
+
+  if (isTeacherAuthed() && document.getElementById('task-register').classList.contains('active')) {
+    showSuccessScreen();
+  }
+}
+
+/* ===== 상세 모달 ===== */
+function openItem(id) {
+  const it = DB.items.find(i => i.id === id);
+  if (!it) return;
+  const typeText = it.type === 'lost' ? '잃어버린 분실물' : '습득한 분실물';
+  let statusLabel = '';
+  if (it.type === 'lost') {
+    statusLabel = it.status === 'pending' ? '아직 잃어버린 상태' : '찾은 상태';
+  } else {
+    statusLabel = it.status === 'pending' ? '주인 찾는 중' : '주인 찾아감';
+  }
+  const img = it.photo ? `<img src="${it.photo}" />` : '';
+  document.getElementById('modal-content').innerHTML = `
+    <h2>${escapeHTML(it.name)}</h2>
+    ${img}
+    <div class="info">
+      <p><strong>구분:</strong> ${typeText}</p>
+      <p><strong>등록자:</strong> ${escapeHTML(it.owner)}</p>
+      <p><strong>날짜:</strong> ${it.date}</p>
+      <p><strong>${it.type === 'lost' ? '분실 장소' : '습득 장소'}:</strong> ${escapeHTML(it.location)}</p>
+      ${it.type === 'found' && it.dropoff ? `<p><strong>맡긴 곳:</strong> ${escapeHTML(it.dropoff)}</p>` : ''}
+      ${it.desc ? `<p><strong>상세:</strong> ${escapeHTML(it.desc)}</p>` : ''}
+      <p><strong>현재 상태:</strong> ${statusLabel}</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-status" onclick="toggleItemStatus(${it.id})">상태 변경</button>
+      <button class="btn-delete" onclick="deleteItem(${it.id})">삭제</button>
+      <button class="btn-close" onclick="closeModal()">닫기</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+function openTask(id) {
+  const t = DB.tasks.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('modal-content').innerHTML = `
+    <h2>${escapeHTML(t.title)}</h2>
+    <div class="info">
+      <p><strong>종류:</strong> ${escapeHTML(t.category)}</p>
+      <p><strong>등록 교사:</strong> ${escapeHTML(t.teacher)}</p>
+      <p><strong>부여 상점:</strong> ${t.points}p 💰</p>
+      ${t.deadline ? `<p><strong>마감일:</strong> ${t.deadline}</p>` : ''}
+      <p><strong>내용:</strong> ${escapeHTML(t.desc)}</p>
+      <p><strong>상태:</strong> ${t.status === 'open' ? '진행 중' : '완료 (상점 지급됨)'}</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-status" onclick="toggleTaskStatus(${t.id})">상태 변경</button>
+      <button class="btn-delete" onclick="deleteTask(${t.id})">삭제</button>
+      <button class="btn-close" onclick="closeModal()">닫기</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+/* ===== 상태 변경 / 삭제 ===== */
+function toggleItemStatus(id) {
+  const list = DB.items;
+  const it = list.find(i => i.id === id);
+  if (!it) return;
+  it.status = it.status === 'pending' ? 'resolved' : 'pending';
+  DB.items = list;
+  closeModal();
+  renderAll();
+}
+function deleteItem(id) {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  DB.items = DB.items.filter(i => i.id !== id);
+  closeModal();
+  renderAll();
+}
+function toggleTaskStatus(id) {
+  const list = DB.tasks;
+  const t = list.find(x => x.id === id);
+  if (!t) return;
+  t.status = t.status === 'open' ? 'done' : 'open';
+  DB.tasks = list;
+  closeModal();
+  renderAll();
+}
+function deleteTask(id) {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  DB.tasks = DB.tasks.filter(x => x.id !== id);
+  closeModal();
+  renderAll();
+}
+
+/* ===== 유틸 ===== */
+function escapeHTML(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+renderAll();
+</script>
+
+</body></html>
