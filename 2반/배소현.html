@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리반.zip - 학교생활 커뮤니티</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        :root {
+            --bg-color: #FDFBF7;
+            --card-bg: #FFFFFF;
+            --primary: #9D84ED;
+            --primary-hover: #866BD8;
+            --mint: #4ECDC4;
+            --text-main: #2C3E50;
+            --text-sub: #7F8C8D;
+            --border-color: #E2E8F0;
+            --danger: #FF6B6B;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 50px;
+        }
+
+        .site-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-area h1 { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
+        .badge { background-color: #EDE9FE; color: var(--primary-hover); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .date-clock { font-size: 0.95rem; color: var(--text-sub); font-weight: 500; }
+
+        .main-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid #F1F5F9;
+            overflow-x: auto;
+        }
+
+        .nav-btn {
+            background: none; border: none; padding: 12px 16px; font-size: 0.95rem; font-weight: 600;
+            color: var(--text-sub); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s;
+        }
+        .nav-btn:hover { color: var(--primary); }
+        .nav-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .notice-banner { max-width: 1200px; margin: 20px auto 0; padding: 0 20px; }
+        .notice-content {
+            background: linear-gradient(135deg, #EDE9FE 0%, #E6FFFA 100%);
+            border: 1px solid #DDD6FE; padding: 14px 20px; border-radius: var(--radius);
+            display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 500; box-shadow: var(--shadow);
+        }
+        .notice-tag { background-color: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+
+        .main-container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media(max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+
+        .left-column, .right-column { display: flex; flex-direction: column; gap: 20px; }
+
+        .card {
+            background-color: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow);
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .card h2 { font-size: 1.15rem; font-weight: 700; }
+        .sub-desc { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 16px; }
+
+        .primary-btn {
+            background-color: var(--primary); color: white; border: none; padding: 8px 16px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+        }
+        .primary-btn:hover { background-color: var(--primary-hover); }
+
+        .small-btn {
+            background-color: #F1F5F9; border: 1px solid var(--border-color); padding: 4px 10px;
+            border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: var(--text-main);
+        }
+        .small-btn:hover { background-color: #E2E8F0; }
+        .text-btn { background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+        .danger-btn { background-color: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .full-width { width: 100%; margin-top: 10px; }
+
+        .compact-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .compact-item {
+            padding: 10px 14px; background-color: #F8FAFC; border-radius: 8px; border-left: 4px solid var(--primary);
+            display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
+        }
+        .d-day-tag { font-size: 0.8rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background-color: #FEE2E2; color: #991B1B; }
+        .d-day-tag.normal { background-color: #E0E7FF; color: #3730A3; }
+        .demo-badge { font-size: 0.75rem; background-color: #FEF3C7; color: #92400E; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+        .meal-content, .fortune-content { min-height: 100px; font-size: 0.95rem; display: flex; flex-direction: column; justify-content: center; }
+        .guide-text { color: var(--text-sub); text-align: center; font-size: 0.9rem; }
+        .meal-footer, .fortune-footer {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px;
+            border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-sub);
+        }
+        .fortune-selector select { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; font-size: 0.95rem; }
+
+        /* 게시판 */
+        .board-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .board-filters { display: flex; gap: 10px; margin-bottom: 14px; }
+        .board-filters select, .board-filters input { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; }
+        .board-filters input { flex: 1; }
+        .safety-notice { background-color: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; }
+        .board-list, .mini-board-list { display: flex; flex-direction: column; gap: 10px; }
+        .board-item { padding: 14px; border: 1px solid var(--border-color); border-radius: 8px; background: #FAFAFA; cursor: pointer; transition: background 0.2s; }
+        .board-item:hover { background: #F1F5F9; }
+        .board-item-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub); margin-bottom: 6px; }
+        .board-item-title { font-weight: 600; font-size: 1rem; color: var(--text-main); }
+
+        /* 일정 */
+        .schedule-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-tab { background: #F1F5F9; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; color: var(--text-sub); }
+        .filter-tab.active { background: var(--text-main); color: white; }
+        .schedule-table-container { display: flex; flex-direction: column; gap: 10px; }
+        .schedule-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 8px; }
+
+        /* 게임·도구방 서브탭 */
+        .sub-tab-bar { display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .sub-tab-btn { background: #F1F5F9; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; color: var(--text-sub); }
+        .sub-tab-btn.active { background: var(--primary); color: white; }
+        .sub-section { display: none; }
+        .sub-section.active { display: block; }
+
+        /* 오목 */
+        .game-container { display: flex; flex-direction: column; align-items: center; gap: 14px; margin: 10px 0; }
+        .game-info-bar { width: 100%; max-width: 450px; display: flex; justify-content: space-between; align-items: center; }
+        .turn-badge { padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+        .turn-badge.black { background: #2C3E50; color: white; }
+        .turn-badge.white { background: #E2E8F0; color: #2C3E50; border: 1px solid #CBD5E1; }
+        .omok-board-wrapper { background: #DEB887; padding: 12px; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .omok-board { display: grid; grid-template-columns: repeat(15, 26px); grid-template-rows: repeat(15, 26px); background: #DEB887; }
+        @media(max-width: 500px) { .omok-board { grid-template-columns: repeat(15, 22px); grid-template-rows: repeat(15, 22px); } }
+        .omok-cell { width: 100%; height: 100%; position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .omok-cell::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #5c4033; }
+        .omok-cell::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: #5c4033; }
+        .stone { width: 22px; height: 22px; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        @media(max-width: 500px) { .stone { width: 18px; height: 18px; } }
+        .stone.black { background: radial-gradient(circle at 30% 30%, #555, #000); }
+        .stone.white { background: radial-gradient(circle at 30% 30%, #fff, #ccc); border: 1px solid #999; }
+
+        /* BGM & 퀴즈 & 룰렛 스타일 */
+        .tool-box { background: #F8FAFC; border: 1px solid var(--border-color); padding: 16px; border-radius: 8px; margin-top: 10px; }
+        .roulette-board { font-size: 2rem; font-weight: 800; text-align: center; padding: 30px; background: #EDE9FE; border-radius: 12px; color: var(--primary-hover); margin: 15px 0; }
+
+        /* 설정 폼 */
+        .settings-card { max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem;
+        }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; }
+        .checkbox-group label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal; }
+        .checkbox-group input { width: auto; }
+        .divider { border: none; border-top: 1px solid var(--border-color); margin: 20px 0; }
+        .form-actions { display: flex; justify-content: flex-end; }
+
+        /* 모달 팝업 */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal.open { display: flex; }
+        .modal-content {
+            background: white; padding: 24px; border-radius: var(--radius); width: 100%; max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; max-height: 90vh; overflow-y: auto;
+        }
+        .modal-content.large-modal { max-width: 700px; }
+        .modal-content.small-modal { max-width: 380px; }
+        .close-btn { position: absolute; top: 16px; right: 20px; font-size: 1.4rem; cursor: pointer; color: var(--text-sub); }
+        .modal-btn-row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 헤더 -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="logo-area">
+                <h1 id="appTitle">우리반.zip</h1>
+                <span id="classNameTag" class="badge">2학년 3반</span>
+            </div>
+            <div class="date-clock">
+                <span id="currentDateStr">날짜 계산 중...</span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <button class="nav-btn active" data-target="home-view">홈</button>
+            <button class="nav-btn" data-target="board-view">익명 게시판</button>
+            <button class="nav-btn" data-target="schedule-view">전체 일정</button>
+            <button class="nav-btn" data-target="game-view">게임·도구방</button>
+            <button class="nav-btn" data-target="settings-view">설정</button>
+        </nav>
+    </header>
+
+    <!-- 공지 배너 -->
+    <section class="notice-banner" id="noticeBanner">
+        <div class="notice-content">
+            <span class="notice-tag">오늘 꼭 확인!</span>
+            <span id="bannerText">불러오는 중...</span>
+        </div>
+    </section>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="main-container">
+
+        <!-- [1. 홈 뷰] -->
+        <section id="home-view" class="view-section active">
+            <div class="grid-layout">
+                <div class="left-column">
+                    <div class="card">
+                        <h2>📌 오늘 꼭 챙길 일</h2>
+                        <ul id="todaySummaryList" class="compact-list" style="margin-top:12px;"></ul>
+                    </div>
+                    <!-- 오늘의 BGM 위젯 (신규 추가) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>🎵 오늘 우리 반 BGM</h2>
+                            <span class="demo-badge">신청곡</span>
+                        </div>
+                        <div id="todayBgmBox" style="background:#F8FAFC; padding:12px; border-radius:8px; font-size:0.95rem;">
+                            <!-- JS 동적 로드 -->
+                        </div>
+                        <div style="margin-top:10px; text-align:right;">
+                            <button class="small-btn" onclick="switchView('game-view'); switchSubTab('bgm');">곡 신청하기</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>💬 실시간 익명 게시판</h2>
+                            <button class="text-btn" onclick="switchView('board-view')">더보기</button>
+                        </div>
+                        <div id="homeBoardList" class="mini-board-list"></div>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>🍱 오늘의 급식</h2>
+                            <span class="demo-badge">나이스 API 연동 대기</span>
+                        </div>
+                        <div id="mealBox" class="meal-content"></div>
+                        <div class="meal-footer">
+                            <span id="mealTimeTag">마지막 확인: -</span>
+                            <button class="small-btn" onclick="fetchMealData()">새로고침</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>✨ 오하아사 별자리 운세</h2>
+                            <span class="demo-badge">재미로 보는 운세</span>
+                        </div>
+                        <div class="fortune-selector">
+                            <select id="constellationSelect" onchange="onConstellationChange()">
+                                <option value="aries">양자리 (3/21~4/19)</option>
+                                <option value="taurus">황소자리 (4/20~5/20)</option>
+                                <option value="gemini">쌍둥이자리 (5/21~6/21)</option>
+                                <option value="cancer">게자리 (6/22~7/22)</option>
+                                <option value="leo">사자자리 (7/23~8/22)</option>
+                                <option value="virgo">처녀자리 (8/23~9/22)</option>
+                                <option value="libra" selected>천칭자리 (9/23~10/22)</option>
+                                <option value="scorpio">전갈자리 (10/23~11/22)</option>
+                                <option value="sagittarius">사수자리 (11/23~12/21)</option>
+                                <option value="capricorn">염소자리 (12/22~1/19)</option>
+                                <option value="aquarius">물병자리 (1/20~2/18)</option>
+                                <option value="pisces">물고기자리 (2/19~3/20)</option>
+                            </select>
+                        </div>
+                        <div id="fortuneBox" class="fortune-content"></div>
+                        <div class="fortune-footer">
+                            <a href="https://ohaasa.thekipa.com/" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:none;">오하아사 원문 보기 ↗</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [2. 익명 게시판 뷰] -->
+        <section id="board-view" class="view-section">
+            <div class="card">
+                <div class="board-top-bar">
+                    <h2>💬 익명 게시판</h2>
+                    <button class="primary-btn" onclick="openWriteModal()">글쓰기</button>
+                </div>
+                <div class="board-filters">
+                    <select id="categoryFilter" onchange="renderBoardList()">
+                        <option value="all">전체 카테고리</option>
+                        <option value="잡담">잡담</option>
+                        <option value="질문">질문</option>
+                        <option value="분실물">분실물</option>
+                        <option value="정보">정보</option>
+                    </select>
+                    <input type="text" id="boardSearchInput" placeholder="검색어를 입력하세요..." oninput="renderBoardList()">
+                </div>
+                <div class="safety-notice">
+                    ⚠️ 실명, 연락처, 타인의 개인정보를 올리지 마세요. (시제품은 동일 브라우저 내 LocalStorage에만 저장됩니다.)
+                </div>
+                <div id="boardListContainer" class="board-list"></div>
+            </div>
+        </section>
+
+        <!-- [3. 전체 일정 뷰] -->
+        <section id="schedule-view" class="view-section">
+            <div class="card">
+                <div class="board-top-bar">
+                    <h2>📅 전체 일정 및 수행평가 관리</h2>
+                    <button class="primary-btn" onclick="openScheduleModal()">[데모 편집] 일정 추가</button>
+                </div>
+                <p class="sub-desc">오늘 기준 남은 일정을 자동으로 계산하여 표시합니다.</p>
+                <div class="schedule-tabs">
+                    <button class="filter-tab active" onclick="filterSchedule('all', this)">전체 보기</button>
+                    <button class="filter-tab" onclick="filterSchedule('active', this)">진행 중</button>
+                    <button class="filter-tab" onclick="filterSchedule('done', this)">완료됨</button>
+                </div>
+                <div id="fullScheduleList" class="schedule-table-container"></div>
+            </div>
+        </section>
+
+        <!-- [4. 게임·도구방 뷰 (오목 + BGM + 퀴즈 + 룰렛)] -->
+        <section id="game-view" class="view-section">
+            <div class="card">
+                <h2>🎮 게임 & 센스 도구방</h2>
+                <p class="sub-desc">친구들과 함께 즐기는 로컬 오목, 초성 퀴즈, 룰렛, 그리고 BGM 신청방!</p>
+                
+                <!-- 서브 탭 메뉴 -->
+                <div class="sub-tab-bar">
+                    <button class="sub-tab-btn active" onclick="switchSubTab('omok')">♟️ 로컬 오목</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('quiz')">🧠 학교 초성 퀴즈</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('roulette')">🎯 행운의 룰렛</button>
+                    <button class="sub-tab-btn" onclick="switchSubTab('bgm')">🎵 우리반 BGM</button>
+                </div>
+
+                <!-- 서브 1: 오목 -->
+                <div id="sub-omok" class="sub-section active">
+                    <div class="game-container">
+                        <div class="game-info-bar">
+                            <span id="omokTurnIndicator" class="turn-badge black">흑돌 차례</span>
+                            <button class="small-btn" onclick="resetOmokGame()">다시 시작</button>
+                        </div>
+                        <div class="omok-board-wrapper">
+                            <div id="omokBoard" class="omok-board"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 서브 2: 학교 초성 퀴즈 (신기한 기능) -->
+                <div id="sub-quiz" class="sub-section">
+                    <div class="tool-box">
+                        <h3>🧠 오늘의 학교생활 초성 퀴즈</h3>
+                        <p class="sub-desc" style="margin-top:6px;">제시된 초성을 보고 알맞은 단어를 맞춰보세요!</p>
+                        <div style="font-size: 2.2rem; font-weight: 800; text-align: center; color: var(--primary-hover); margin: 20px 0;" id="chosungDisplay">ㅈㄱㅅ</div>
+                        <div class="form-group">
+                            <input type="text" id="quizAnswerInput" placeholder="정답을 입력하세요 (예: 점심시간)">
+                        </div>
+                        <button class="primary-btn full-width" onclick="checkQuizAnswer()">정답 확인하기</button>
+                        <p id="quizResultText" style="text-align:center; margin-top:12px; font-weight:bold;"></p>
+                    </div>
+                </div>
+
+                <!-- 서브 3: 행운의 룰렛 (자리배치/당번 뽑기) -->
+                <div id="sub-roulette" class="sub-section">
+                    <div class="tool-box">
+                        <h3>🎯 자리 뽑기 & 청소 구역 룰렛</h3>
+                        <p class="sub-desc" style="margin-top:6px;">이름이나 항목을 콤마(,)로 구분해서 입력하고 돌려보세요!</p>
+                        <div class="form-group">
+                            <textarea id="rouletteInput" rows="3">김철수, 이영희, 박민수, 정수진, 홍길동, 최유리</textarea>
+                        </div>
+                        <button class="primary-btn full-width" onclick="spinRoulette()">룰렛 돌리기! 🎲</button>
+                        <div id="rouletteResult" class="roulette-board">당첨을 기다리는 중...</div>
+                    </div>
+                </div>
+
+                <!-- 서브 4: BGM 신청방 (신청곡) -->
+                <div id="sub-bgm" class="sub-section">
+                    <div class="tool-box">
+                        <h3>🎵 오늘 우리 반 BGM 신청</h3>
+                        <p class="sub-desc" style="margin-top:6px;">쉬는 시간에 듣고 싶은 노래와 가수/유튜브 제목을 남겨주세요!</p>
+                        <div class="form-group">
+                            <input type="text" id="bgmSongInput" placeholder="노래 제목 및 가수 (예: 네가 있던 아파트 - 로이킴)">
+                        </div>
+                        <button class="primary-btn full-width" onclick="submitBgm()">신청곡 등록하기</button>
+                        
+                        <h4 style="margin-top:20px; margin-bottom:10px;">📋 신청된 노래 목록</h4>
+                        <ul id="bgmListContainer" class="compact-list"></ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- [5. 설정 뷰] -->
+        <section id="settings-view" class="view-section">
+            <div class="card settings-card">
+                <h2>⚙️ 서비스 환경 설정</h2>
+                <p class="sub-desc">서비스 이름, 반 이름, 급식 연동을 위한 교육청 코드를 설정합니다. (브라우저 LocalStorage에 저장)</p>
+                
+                <div class="form-group">
+                    <label for="settingAppName">서비스 이름</label>
+                    <input type="text" id="settingAppName" value="우리반.zip">
+                </div>
+                <div class="form-group">
+                    <label for="settingClassName">반 이름</label>
+                    <input type="text" id="settingClassName" value="2학년 3반">
+                </div>
+
+                <hr class="divider">
+                <h3>🍱 나이스(NEIS) 급식 API 설정</h3>
+                <div class="form-group" style="margin-top:10px;">
+                    <label for="settingAtptCode">시도교육청 코드 (예: 경북교육청 R10)</label>
+                    <input type="text" id="settingAtptCode" placeholder="교육청 코드 입력">
+                </div>
+                <div class="form-group">
+                    <label for="settingSchoolCode">표준학교코드 (예: 7240393)</label>
+                    <input type="text" id="settingSchoolCode" placeholder="학교 코드 입력">
+                </div>
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="settingDemoMeal"> 급식 정보 없을 때 데모 급식 모드 사용</label>
+                </div>
+
+                <div class="form-actions">
+                    <button class="primary-btn" onclick="saveSettings()">설정 저장</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 모달 팝업들 -->
+    <div id="writeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeWriteModal()">&times;</span>
+            <h2>💬 익명 게시글 작성</h2>
+            <div class="form-group" style="margin-top:14px;">
+                <label>카테고리</label>
+                <select id="writeCategory">
+                    <option value="잡담">잡담</option>
+                    <option value="질문">질문</option>
+                    <option value="분실물">분실물</option>
+                    <option value="정보">정보</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>제목</label>
+                <input type="text" id="writeTitle" placeholder="제목을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label>본문</label>
+                <textarea id="writeContent" rows="5" placeholder="내용을 입력하세요 (개인정보 노출 금지)"></textarea>
+            </div>
+            <button class="primary-btn full-width" onclick="submitPost()">등록하기</button>
+        </div>
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+            <div id="detailContentArea"></div>
+        </div>
+    </div>
+
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeScheduleModal()">&times;</span>
+            <h2>📅 [데모 편집] 일정 관리</h2>
+            <input type="hidden" id="schIndex" value="-1">
+            <div class="form-group" style="margin-top:14px;">
+                <label>제목</label>
+                <input type="text" id="schTitle" placeholder="예: 정보 수행평가 제출">
+            </div>
+            <div class="form-group">
+                <label>과목</label>
+                <input type="text" id="schSubject" placeholder="예: 정보">
+            </div>
+            <div class="form-group">
+                <label>날짜 (마감일)</label>
+                <input type="date" id="schDate">
+            </div>
+            <div class="form-group">
+                <label>준비물 / 상세 설명</label>
+                <input type="text" id="schPrep" placeholder="예: 노트북 지참">
+            </div>
+            <div class="form-group checkbox-group">
+                <label><input type="checkbox" id="schIsImportant"> 상단 공지 배너에 우선 표시</label>
+            </div>
+            <div class="modal-btn-row">
+                <button class="danger-btn" id="schDeleteBtn" onclick="deleteScheduleItem()" style="display:none;">삭제</button>
+                <button class="primary-btn" onclick="saveScheduleItem()">저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal">
+        <div class="modal-content small-modal">
+            <span class="close-btn" onclick="closeReportModal()">&times;</span>
+            <h2>🚨 게시글 신고</h2>
+            <p class="sub-desc" style="margin-top:6px;">신고 사유를 선택해주세요. (로컬 데모 기록)</p>
+            <div class="form-group">
+                <select id="reportReason">
+                    <option value="개인정보 노출">개인정보 노출</option>
+                    <option value="욕설 및 비방">욕설 및 비방</option>
+                    <option value="홍보 및 스팸">홍보 및 스팸</option>
+                    <option value="기타 사유">기타 사유</option>
+                </select>
+            </div>
+            <button class="primary-btn full-width" onclick="confirmReport()">신고 접수</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let settings = JSON.parse(localStorage.getItem('ourclass_settings')) || {
+            appName: "우리반.zip",
+            className: "2학년 3반",
+            atptCode: "",
+            schoolCode: "",
+            demoMeal: true
+        };
+
+        function initDefaultData() {
+            if (!localStorage.getItem('ourclass_schedules')) {
+                const defaultSchedules = [
+                    { id: 1, title: "정보 수행평가 코딩 제출", subject: "정보", date: getFutureDateStr(1), prep: "Colab 링크 확인", important: true, done: false },
+                    { id: 2, title: "문학 조별 발표 준비", subject: "문학", date: getFutureDateStr(3), prep: "대본 및 PPT 완성", important: false, done: false },
+                    { id: 3, title: "체육 실기 평가", subject: "체육", date: getFutureDateStr(5), prep: "체육복 지참", important: false, done: false }
+                ];
+                localStorage.setItem('ourclass_schedules', JSON.stringify(defaultSchedules));
+            }
+
+            if (!localStorage.getItem('ourclass_posts')) {
+                const defaultPosts = [
+                    {
+                        id: 1,
+                        title: "체육관에 파란색 텀블러 두고 오신 분?",
+                        content: "점심시간 끝나고 체육관 스탠드 쪽에서 발견해서 매점에 맡겨뒀어요! 주인 찾으세요~",
+                        category: "분실물",
+                        author: "익명 고양이",
+                        date: getTodayStr(),
+                        likes: 3,
+                        comments: [
+                            { author: "글쓴이", content: "와 진짜 감사합니다ㅠㅠ", date: getTodayStr() },
+                            { author: "익명 다람쥐", content: "착한 일추!", date: getTodayStr() }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        title: "다음 주 정보 수행평가 파이썬 콜라브 제출인가요?",
+                        content: "선생님이 주소 공지해주신 거 맞죠? 헷갈려서 그럽니다.",
+                        category: "질문",
+                        author: "익명 여우",
+                        date: getTodayStr(),
+                        likes: 1,
+                        comments: []
+                    }
+                ];
+                localStorage.setItem('ourclass_posts', JSON.stringify(defaultPosts));
+            }
+
+            if (!localStorage.getItem('ourclass_bgms')) {
+                const defaultBgms = [
+                    { id: 1, title: "캐롤 - Last Christmas", author: "익명 토끼" },
+                    { id: 2, title: "잔나비 - 주저하는 연인들을 위해", author: "익명 판다" }
+                ];
+                localStorage.setItem('ourclass_bgms', JSON.stringify(defaultBgms));
+            }
+        }
+
+        function getKoreaDate() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+            const kstGap = 9 * 60 * 60 * 1000;
+            return new Date(utc + kstGap);
+        }
+
+        function getTodayStr() {
+            const d = getKoreaDate();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function getFutureDateStr(daysAhead) {
+            const d = getKoreaDate();
+            d.setDate(d.getDate() + daysAhead);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDefaultData();
+            applySettingsToUI();
+            setupNavigation();
+            renderHeaderDate();
+            renderHomeSummary();
+            renderHomeMiniBoard();
+            renderBoardList();
+            renderScheduleList();
+            fetchMealData();
+            onConstellationChange();
+            initOmokGame();
+            renderBgmList();
+            initChosungQuiz();
+        });
+
+        function applySettingsToUI() {
+            document.getElementById('appTitle').textContent = settings.appName;
+            document.getElementById('classNameTag').textContent = settings.className;
+            document.getElementById('settingAppName').value = settings.appName;
+            document.getElementById('settingClassName').value = settings.className;
+            document.getElementById('settingAtptCode').value = settings.atptCode || '';
+            document.getElementById('settingSchoolCode').value = settings.schoolCode || '';
+            document.getElementById('settingDemoMeal').checked = settings.demoMeal;
+        }
+
+        function renderHeaderDate() {
+            const d = getKoreaDate();
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            document.getElementById('currentDateStr').textContent = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} (${days[d.getDay()]})`;
+        }
+
+        function setupNavigation() {
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    navBtns.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    const targetId = e.target.getAttribute('data-target');
+                    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        }
+
+        function switchView(targetId) {
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                if(b.getAttribute('data-target') === targetId) b.click();
+            });
+        }
+
+        function switchSubTab(subName) {
+            document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.sub-section').forEach(s => s.classList.remove('active'));
+            
+            if(subName === 'omok') {
+                document.querySelectorAll('.sub-tab-btn')[0].classList.add('active');
+                document.getElementById('sub-omok').classList.add('active');
+            } else if(subName === 'quiz') {
+                document.querySelectorAll('.sub-tab-btn')[1].classList.add('active');
+                document.getElementById('sub-quiz').classList.add('active');
+            } else if(subName === 'roulette') {
+                document.querySelectorAll('.sub-tab-btn')[2].classList.add('active');
+                document.getElementById('sub-roulette').classList.add('active');
+            } else if(subName === 'bgm') {
+                document.querySelectorAll('.sub-tab-btn')[3].classList.add('active');
+                document.getElementById('sub-bgm').classList.add('active');
+            }
+        }
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // 일정 및 공지 로직
+        function renderHomeSummary() {
+            const schedules = JSON.parse(localStorage.getItem('ourclass_schedules')) || [];
+            const summaryList = document.getElementById('todaySummaryList');
+            summaryList.innerHTML = '';
+
+            const importantItem = schedules.find(s => s.important && !s.done);
+            if(importantItem) {
+                document.getElementById('bannerText').textContent = `[중요] ${importantItem.title} (${importantItem.subject}) - 마감일: ${importantItem.date}`;
+            } else {
+                document.getElementById('bannerText').textContent = `오늘도 활기찬 하루 보내세요! 우리반.zip에 오신 것을 환영합니다.`;
+            }
+
+            const activeSchedules = schedules.filter(s => !s.done).sort((a,b) => a.date.localeCompare(b.date)).slice(0, 3);
+            if(activeSchedules.length === 0) {
+                summaryList.innerHTML = `<li class="compact-item">등록된 주요 일정이 없습니다.</li>`;
+                return;
+            }
+
+            activeSchedules.forEach(item => {
+                const dDayText = calculateDDay(item.date);
+                const li = document.createElement('li');
+                li.className = 'compact-item';
+                li.innerHTML = `
+                    <div>
+                        <strong>[${escapeHTML(item.subject)}]</strong> ${escapeHTML(item.title)}
+                        <br><small style="color:var(--text-sub)">준비물: ${escapeHTML(item.prep || '없음')}</small>
+                    </div>
+                    <span class="d-day-tag ${dDayText === '오늘' ? '' : 'normal'}">${dDayText}</span>
+                `;
+                summaryList.appendChild(li);
+            });
+        }
+
+        function calculateDDay(targetDateStr) {
+            const today = new Date(getTodayStr());
+            const target = new Date(targetDateStr);
+            const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+            if (diffDays === 0) return '오늘';
+            if (diffDays > 0) return `D-${diffDays}`;
+            return `마감됨`;
+        }
+
+        let scheduleFilterMode = 'all';
+        function filterSchedule(mode, btn) {
+            scheduleFilterMode = mode;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderScheduleList();
+        }
+
+        function renderScheduleList() {
+            const schedules = JSON.parse(localStorage.getItem('ourclass_schedules')) || [];
+            const container = document.getElementById('fullScheduleList');
+            container.innerHTML = '';
+
+            let filtered = schedules;
+            if(scheduleFilterMode === 'active') filtered = schedules.filter(s => !s.done);
+            if(scheduleFilterMode === 'done') filtered = schedules.filter(s => s.done);
+
+            filtered.sort((a,b) => a.date.localeCompare(b.date));
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p class="guide-text">일정이 없습니다.</p>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'schedule-row';
+                row.innerHTML = `
+                    <div>
+                        <span class="badge">${escapeHTML(item.subject)}</span>
+                        <strong style="margin-left: 8px; ${item.done ? 'text-decoration:line-through; color:var(--text-sub);':''}">${escapeHTML(item.title)}</strong>
+                        <div style="font-size:0.85rem; color:var(--text-sub); margin-top:4px;">마감일: ${item.date} | 준비물: ${escapeHTML(item.prep || '없음')}</div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="small-btn" onclick="toggleScheduleDone(${item.id})">${item.done ? '진행중으로' : '완료'}</button>
+                        <button class="small-btn" onclick="openScheduleModal(${item.id})">편집</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function toggleScheduleDone(id) {
+            let schedules = JSON.parse(localStorage.getItem('ourclass_schedules')) || [];
+            schedules = schedules.map(s => s.id === id ? {...s, done: !s.done} : s);
+            localStorage.setItem('ourclass_schedules', JSON.stringify(schedules));
+            renderScheduleList();
+            renderHomeSummary();
+        }
+
+        function openScheduleModal(id = null) {
+            document.getElementById('scheduleModal').classList.add('open');
+            if(id !== null) {
+                const schedules = JSON.parse(localStorage.getItem('ourclass_schedules')) || [];
+                const item = schedules.find(s => s.id === id);
+                if(item) {
+                    document.getElementById('schIndex').value = item.id;
+                    document.getElementById('schTitle').value = item.title;
+                    document.getElementById('schSubject').value = item.subject;
+                    document.getElementById('schDate').value = item.date;
+                    document.getElementById('schPrep').value = item.prep;
+                    document.getElementById('schIsImportant').checked = item.important;
+                    document.getElementById('schDeleteBtn').style.display = 'inline-block';
+                }
+            } else {
+                document.getElementById('schIndex').value = '-1';
+                document.getElementById('schTitle').value = '';
+                document.getElementById('schSubject').value = '';
+                document.getElementById('schDate').value = getTodayStr();
+                document.getElementById('schPrep').value = '';
+                document.getElementById('schIsImportant').checked = false;
+                document.getElementById('schDeleteBtn').style.display = 'none';
+            }
+        }
+
+        function closeScheduleModal() { document.getElementById('scheduleModal').classList.remove('open'); }
+
+        function saveScheduleItem() {
+            const id = parseInt(document.getElementById('schIndex').value);
+            const title = document.getElementById('schTitle').value.trim();
+            const subject = document.getElementById('schSubject').value.trim();
+            const date = document.getElementById('schDate').value;
+            const prep = document.getElementById('schPrep').value.trim();
+            const important = document.getElementById('schIsImportant').checked;
+
+            if(!title || !subject || !date) {
+                alert('제목, 과목, 날짜를 모두 입력해주세요.');
+                return;
+            }
+
+            let schedules = JSON.parse(localStorage.getItem('ourclass_schedules')) || [];
+            if(id === -1) {
+                schedules.push({ id: Date.now(), title, subject, date, prep, important, done: false });
+            } else {
+                schedules = schedules.map(s => s.id === id ? {...s, title, subject, date, prep, important} : s);
+            }
+
+            localStorage.setItem('ourclass_schedules', JSON.stringify(schedules));
+            closeScheduleModal();
+            renderScheduleList();
+            renderHomeSummary();
+        }
+
+        function deleteScheduleItem() {
+            const id = parseInt(document.getElementById('schIndex').value);
+            if(confirm('정말 이 일정을 삭제하시겠습니까?')) {
+                let schedules = JSON.parse(localStorage.getItem('ourclass_schedules')) || [];
+                schedules = schedules.filter(s => s.id !== id);
+                localStorage.setItem('ourclass_schedules', JSON.stringify(schedules));
+                closeScheduleModal();
+                renderScheduleList();
+                renderHomeSummary();
+            }
+        }
+
+        // 게시판 로직
+        const randomNicknames = ["익명 고양이", "익명 구름", "익명 다람쥐", "익명 여우", "익명 토끼"];
+        function getRandomNickname() { return randomNicknames[Math.floor(Math.random() * randomNicknames.length)]; }
+
+        function renderHomeMiniBoard() {
+            const posts = JSON.parse(localStorage.getItem('ourclass_posts')) || [];
+            const container = document.getElementById('homeBoardList');
+            container.innerHTML = '';
+            posts.slice(0, 3).forEach(post => {
+                const div = document.createElement('div');
+                div.className = 'board-item';
+                div.onclick = () => openDetailModal(post.id);
+                div.innerHTML = `
+                    <div class="board-item-header">
+                        <span>[${escapeHTML(post.category)}] ${escapeHTML(post.author)}</span>
+                        <span>👍 ${post.likes}</span>
+                    </div>
+                    <div class="board-item-title">${escapeHTML(post.title)}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderBoardList() {
+            const posts = JSON.parse(localStorage.getItem('ourclass_posts')) || [];
+            const category = document.getElementById('categoryFilter').value;
+            const keyword = document.getElementById('boardSearchInput').value.toLowerCase();
+            const container = document.getElementById('boardListContainer');
+            container.innerHTML = '';
+
+            let filtered = posts.filter(p => {
+                const matchCat = (category === 'all' || p.category === category);
+                const matchKw = p.title.toLowerCase().includes(keyword) || p.content.toLowerCase().includes(keyword);
+                return matchCat && matchKw;
+            }).sort((a,b) => b.id - a.id);
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p class="guide-text">등록된 게시글이 없습니다.</p>`;
+                return;
+            }
+
+            filtered.forEach(post => {
+                const div = document.createElement('div');
+                div.className = 'board-item';
+                div.onclick = () => openDetailModal(post.id);
+                div.innerHTML = `
+                    <div class="board-item-header">
+                        <span>[${escapeHTML(post.category)}] ${escapeHTML(post.author)} | ${post.date}</span>
+                        <span>👍 ${post.likes} · 💬 ${post.comments ? post.comments.length : 0}</span>
+                    </div>
+                    <div class="board-item-title">${escapeHTML(post.title)}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openWriteModal() {
+            document.getElementById('writeTitle').value = '';
+            document.getElementById('writeContent').value = '';
+            document.getElementById('writeModal').classList.add('open');
+        }
+        function closeWriteModal() { document.getElementById('writeModal').classList.remove('open'); }
+
+        function submitPost() {
+            const category = document.getElementById('writeCategory').value;
+            const title = document.getElementById('writeTitle').value.trim();
+            const content = document.getElementById('writeContent').value.trim();
+
+            if(!title || !content) {
+                alert('제목과 본문을 모두 입력해주세요.');
+                return;
+            }
+
+            const posts = JSON.parse(localStorage.getItem('ourclass_posts')) || [];
+            posts.push({
+                id: Date.now(), title, content, category,
+                author: getRandomNickname(), date: getTodayStr(), likes: 0, comments: []
+            });
+
+            localStorage.setItem('ourclass_posts', JSON.stringify(posts));
+            closeWriteModal();
+            renderBoardList();
+            renderHomeMiniBoard();
+        }
+
+        function openDetailModal(postId) {
+            const posts = JSON.parse(localStorage.getItem('ourclass_posts')) || [];
+            const post = posts.find(p => p.id === postId);
+            if(!post) return;
+
+            const area = document.getElementById('detailContentArea');
+            area.innerHTML = `
+                <div class="board-item-header" style="margin-bottom:10px;">
+                    <span>[${escapeHTML(post.category)}] <strong>${escapeHTML(post.author)}</strong> | ${post.date}</span>
+                    <button class="small-btn" onclick="openReportModal(${post.id})">🚨 신고</button>
+                </div>
+                <h2 style="margin-bottom:12px;">${escapeHTML(post.title)}</h2>
+                <p style="white-space: pre-wrap; margin-bottom:20px; font-size:0.95rem; line-height:1.6;">${escapeHTML(post.content)}</p>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <button class="primary-btn" onclick="likePost(${post.id})">👍 공감 (${post.likes})</button>
+                    <button class="small-btn" onclick="deletePost(${post.id})">삭제</button>
+                </div>
+                <hr class="divider">
+                <h3>댓글</h3>
+                <div style="margin:12px 0; display:flex; flex-direction:column; gap:8px;">
+                    ${(post.comments || []).map(c => `
+                        <div style="background:#F8FAFC; padding:10px; border-radius:6px; font-size:0.9rem;">
+                            <strong>${escapeHTML(c.author)}</strong>: ${escapeHTML(c.content)} <span style="font-size:0.75rem; color:var(--text-sub); float:right;">${c.date}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                    <input type="text" id="commentInput" placeholder="댓글을 입력하세요" style="flex:1; padding:8px; border:1px solid var(--border-color); border-radius:6px;">
+                    <button class="primary-btn" onclick="addComment(${post.id})">등록</button>
+                </div>
+            `;
+            document.getElementById('detailModal').classList.add('open');
+        }
+
+        function closeDetailModal() { document.getElementById('detailModal').classList.remove('open'); }
+
+        function likePost(postId) {
+            let posts = JSON.parse(localStorage.getItem('ourclass_posts')) || [];
+            posts = posts.map(p => p.id === postId ? {...p, likes: p.likes + 1} : p);
+            localStorage.setItem('ourclass_posts', JSON.stringify(posts));
+            openDetailModal(postId);
+            renderBoardList();
+            renderHomeMiniBoard();
+        }
+
+        function deletePost(postId) {
+            if(confirm('정말 삭제하시겠습니까?')) {
+                let posts = JSON.parse(localStorage.getItem('ourclass_posts')) || [];
+                posts = posts.filter(p => p.id !== postId);
+                localStorage.setItem('ourclass_posts', JSON.stringify(posts));
+                closeDetailModal();
+                renderBoardList();
+                renderHomeMiniBoard();
+            }
+        }
+
+        function addComment(postId) {
+            const text = document.getElementById('commentInput').value.trim();
+            if(!text) return;
+            let posts = JSON.parse(localStorage.getItem('ourclass_posts')) || [];
+            posts = posts.map(p => {
+                if(p.id === postId) {
+                    const comments = p.comments || [];
+                    comments.push({ author: "글쓴이", content: text, date: getTodayStr() });
+                    return {...p, comments};
+                }
+                return p;
+            });
+            localStorage.setItem('ourclass_posts', JSON.stringify(posts));
+            openDetailModal(postId);
+            renderBoardList();
+        }
+
+        function openReportModal(postId) { document.getElementById('reportModal').classList.add('open'); }
+        function closeReportModal() { document.getElementById('reportModal').classList.remove('open'); }
+        function confirmReport() {
+            alert(`[시제품 데모] 신고가 접수되었습니다.\n(로컬 저장소 기록 완료)`);
+            closeReportModal();
+        }
+
+        // [신규 기능 1] BGM 신청 로직
+        function renderBgmList() {
+            const bgms = JSON.parse(localStorage.getItem('ourclass_bgms')) || [];
+            const container = document.getElementById('bgmListContainer');
+            const homeBox = document.getElementById('todayBgmBox');
+            
+            container.innerHTML = '';
+            if(bgms.length > 0) {
+                homeBox.innerHTML = `🎵 <strong>현재 1위 추천곡:</strong> ${escapeHTML(bgms[0].title)} <br><small style="color:var(--text-sub)">신청자: ${escapeHTML(bgms[0].author)}</small>`;
+            } else {
+                homeBox.innerHTML = `신청된 BGM이 없습니다. 노래를 신청해주세요!`;
+            }
+
+            bgms.forEach((b, idx) => {
+                const li = document.createElement('li');
+                li.className = 'compact-item';
+                li.innerHTML = `
+                    <div><strong>${idx+1}. ${escapeHTML(b.title)}</strong> <br><small style="color:var(--text-sub)">신청: ${escapeHTML(b.author)}</small></div>
+                    <button class="small-btn" onclick="deleteBgm(${b.id})">삭제</button>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        function submitBgm() {
+            const val = document.getElementById('bgmSongInput').value.trim();
+            if(!val) { alert('노래 제목을 입력해주세요.'); return; }
+            let bgms = JSON.parse(localStorage.getItem('ourclass_bgms')) || [];
+            bgms.push({ id: Date.now(), title: val, author: getRandomNickname() });
+            localStorage.setItem('ourclass_bgms', JSON.stringify(bgms));
+            document.getElementById('bgmSongInput').value = '';
+            renderBgmList();
+            alert('신청곡이 등록되었습니다!');
+        }
+
+        function deleteBgm(id) {
+            let bgms = JSON.parse(localStorage.getItem('ourclass_bgms')) || [];
+            bgms = bgms.filter(b => b.id !== id);
+            localStorage.setItem('ourclass_bgms', JSON.stringify(bgms));
+            renderBgmList();
+        }
+
+        // [신규 기능 2] 초성 퀴즈 로직
+        const quizList = [
+            { chosung: "ㅈㄱㅅ", answer: "점심시간" },
+            { chosung: "ㅅㅎㅍㄱ", answer: "수행평가" },
+            { chosung: "ㅂㄱㅅ", answer: "보건실" },
+            { chosung: "ㄷㅈㄱ", answer: "매점" },
+            { chosung: "ㅈㅂㅅ", answer: "정보실" }
+        ];
+        let currentQuiz = {};
+
+        function initChosungQuiz() {
+            currentQuiz = quizList[Math.floor(Math.random() * quizList.length)];
+            document.getElementById('chosungDisplay').textContent = currentQuiz.chosung;
+            document.getElementById('quizAnswerInput').value = '';
+            document.getElementById('quizResultText').textContent = '';
+        }
+
+        function checkQuizAnswer() {
+            const userAns = document.getElementById('quizAnswerInput').value.trim();
+            const resEl = document.getElementById('quizResultText');
+            if(userAns === currentQuiz.answer) {
+                resEl.style.color = "#166534";
+                resEl.textContent = "🎉 정답입니다! 대단해요!";
+                setTimeout(initChosungQuiz, 2500); // 2.5초 후 다음 퀴즈
+            } else {
+                resEl.style.color = "#991B1B";
+                resEl.textContent = "❌ 틀렸어요! 다시 도전해보세요.";
+            }
+        }
+
+        // [신규 기능 3] 행운의 룰렛 로직
+        function spinRoulette() {
+            const rawText = document.getElementById('rouletteInput').value;
+            const items = rawText.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            const resultBox = document.getElementById('rouletteResult');
+
+            if(items.length === 0) {
+                alert('추첨할 항목을 하나 이상 입력해주세요.');
+                return;
+            }
+
+            resultBox.style.color = varPrimaryHover = "#9D84ED";
+            resultBox.textContent = "룰렛 돌리는 중... 🎲";
+
+            let count = 0;
+            const interval = setInterval(() => {
+                const randomItem = items[Math.floor(Math.random() * items.length)];
+                resultBox.textContent = randomItem;
+                count++;
+                if(count > 12) {
+                    clearInterval(interval);
+                    const winner = items[Math.floor(Math.random() * items.length)];
+                    resultBox.textContent = `🎉 당첨: [ ${winner} ] !`;
+                }
+            }, 80);
+        }
+
+        // 급식 및 운세 연동 로직
+        function fetchMealData() {
+            const mealBox = document.getElementById('mealBox');
+            document.getElementById('mealTimeTag').textContent = `마지막 확인: ${new Date().toLocaleTimeString()}`;
+
+            if(!settings.atptCode || !settings.schoolCode) {
+                if(settings.demoMeal) {
+                    mealBox.innerHTML = `
+                        <div style="background:#F0FDF4; padding:12px; border-radius:8px; border:1px solid #BBF7D0;">
+                            <strong style="color:#166534;">[데모 급식 모드]</strong>
+                            <p style="margin-top:6px; font-size:0.9rem;">현미밥, 차돌된장찌개, 불닭치즈닭갈비, 배추김치, 샤인머스캣</p>
+                            <small style="color:#15803d; display:block; margin-top:6px;">알레르기: 1, 5, 6, 10, 13 함유</small>
+                        </div>
+                    `;
+                } else {
+                    mealBox.innerHTML = `<p class="guide-text">학교 설정(교육청/학교코드)이 필요해요.<br>설정 탭에서 코드를 입력하거나 데모 모드를 켜주세요.</p>`;
+                }
+                return;
+            }
+
+            const todayYmd = getTodayStr().replace(/-/g, '');
+            const apiUrl = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&ATPT_OFCDC_SC_CODE=${settings.atptCode}&SD_SCHUL_CODE=${settings.schoolCode}&MLSV_YMD=${todayYmd}`;
+
+            mealBox.innerHTML = `<p class="guide-text">나이스(NEIS) 급식 서버에서 불러오는 중...</p>`;
+
+            fetch(apiUrl)
+                .then(res => res.json())
+                .then(data => {
+                    const mealInfo = data.mealServiceDietInfo[1].row[0];
+                    mealBox.innerHTML = `
+                        <div style="font-size:0.95rem;">
+                            <p><strong>[중식]</strong></p>
+                            <p style="margin:6px 0;">${mealInfo.DDISH_NM.replace(/<br\/>/g, '<br>')}</p>
+                            <small style="color:var(--text-sub);">알레르기: ${mealInfo.NTTR_INFO}</small>
+                        </div>
+                    `;
+                })
+                .catch(() => {
+                    mealBox.innerHTML = `<p class="guide-text">오늘 급식 정보가 없거나 네트워크/CORS 제한 상태입니다.</p>`;
+                });
+        }
+
+        function onConstellationChange() {
+            const selected = document.getElementById('constellationSelect').value;
+            document.getElementById('fortuneBox').innerHTML = `
+                <div style="padding:10px 0;">
+                    <p><strong>선택된 별자리:</strong> ${selected.toUpperCase()}</p>
+                    <p style="margin-top:8px; font-size:0.9rem; color:var(--text-sub);">
+                        오하아사(Ohaasa) 원본 데이터는 보안 정책(CORS)으로 인해 브라우저 직접 요청이 제한될 수 있습니다. 아래 원문 링크에서 전체 순위와 상세 운세를 확인하세요!
+                    </p>
+                </div>
+            `;
+        }
+
+        // 로컬 2인용 오목 로직
+        const OMOK_SIZE = 15;
+        let omokBoardState = [];
+        let omokCurrentTurn = 'black';
+        let omokGameOver = false;
+
+        function initOmokGame() {
+            omokBoardState = Array(OMOK_SIZE).fill(null).map(() => Array(OMOK_SIZE).fill(null));
+            omokCurrentTurn = 'black';
+            omokGameOver = false;
+            updateOmokTurnUI();
+            renderOmokBoard();
+        }
+
+        function updateOmokTurnUI() {
+            const indicator = document.getElementById('omokTurnIndicator');
+            if(omokGameOver) return;
+            if(omokCurrentTurn === 'black') {
+                indicator.textContent = "흑돌 차례";
+                indicator.className = "turn-badge black";
+            } else {
+                indicator.textContent = "백돌 차례";
+                indicator.className = "turn-badge white";
+            }
+        }
+
+        function renderOmokBoard() {
+            const boardEl = document.getElementById('omokBoard');
+            boardEl.innerHTML = '';
+            for(let r=0; r<OMOK_SIZE; r++) {
+                for(let c=0; c<OMOK_SIZE; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'omok-cell';
+                    cell.onclick = () => handleOmokClick(r, c);
+                    if(omokBoardState[r][c]) {
+                        const stone = document.createElement('div');
+                        stone.className = `stone ${omokBoardState[r][c]}`;
+                        cell.appendChild(stone);
+                    }
+                    boardEl.appendChild(cell);
+                }
+            }
+        }
+
+        function handleOmokClick(r, c) {
+            if(omokGameOver || omokBoardState[r][c] !== null) return;
+            omokBoardState[r][c] = omokCurrentTurn;
+            renderOmokBoard();
+
+            if(checkOmokWin(r, c, omokCurrentTurn)) {
+                omokGameOver = true;
+                const winner = omokCurrentTurn === 'black' ? '흑돌' : '백돌';
+                document.getElementById('omokTurnIndicator').textContent = `🎉 승리! [${winner}] 축하합니다!`;
+                return;
+            }
+
+            omokCurrentTurn = omokCurrentTurn === 'black' ? 'white' : 'black';
+            updateOmokTurnUI();
+        }
+
+        function checkOmokWin(r, c, player) {
+            const dirs = [{dr:0, dc:1}, {dr:1, dc:0}, {dr:1, dc:1}, {dr:1, dc:-1}];
+            for(let d of dirs) {
+                let count = 1;
+                let i = 1;
+                while(true) {
+                    let nr = r + d.dr * i, nc = c + d.dc * i;
+                    if(nr < 0 || nr >= OMOK_SIZE || nc < 0 || nc >= OMOK_SIZE || omokBoardState[nr][nc] !== player) break;
+                    count++; i++;
+                }
+                i = 1;
+                while(true) {
+                    let nr = r - d.dr * i, nc = c - d.dc * i;
+                    if(nr < 0 || nr >= OMOK_SIZE || nc < 0 || nc >= OMOK_SIZE || omokBoardState[nr][nc] !== player) break;
+                    count++; i++;
+                }
+                if(count >= 5) return true;
+            }
+            return false;
+        }
+
+        function resetOmokGame() {
+            if(confirm('게임을 다시 시작하시겠습니까?')) initOmokGame();
+        }
+
+        function saveSettings() {
+            settings = {
+                appName: document.getElementById('settingAppName').value.trim() || "우리반.zip",
+                className: document.getElementById('settingClassName').value.trim() || "2학년 3반",
+                atptCode: document.getElementById('settingAtptCode').value.trim(),
+                schoolCode: document.getElementById('settingSchoolCode').value.trim(),
+                demoMeal: document.getElementById('settingDemoMeal').checked
+            };
+            localStorage.setItem('ourclass_settings', JSON.stringify(settings));
+            applySettingsToUI();
+            fetchMealData();
+            alert('설정이 저장되었습니다.');
+        }
+    </script>
+</body>
+</html>

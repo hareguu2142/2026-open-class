@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>진로드 JinRoad · 익명 진로 상담소</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --primary:#6366f1;
+    --primary-dark:#4f46e5;
+    --primary-soft:#eef2ff;
+    --mint:#10b981;
+    --mint-soft:#d1fae5;
+    --coral:#f97316;
+    --coral-soft:#ffedd5;
+    --bg:#fafaf7;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+    --shadow:0 4px 20px rgba(0,0,0,.06);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:17px;line-height:1.55}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  input,textarea,select{font-family:inherit;font-size:17px}
+
+  /* Layout */
+  .app{display:flex;min-height:100vh}
+  .sidebar{
+    width:260px;background:linear-gradient(180deg,#fff 0%,#f8f7ff 100%);
+    border-right:1px solid var(--border);padding:24px 16px;position:sticky;top:0;height:100vh;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .logo{display:flex;align-items:center;gap:10px;padding:8px 10px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+  .logo-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#a78bfa);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;box-shadow:0 6px 14px rgba(99,102,241,.3)}
+  .logo-text{font-weight:800;font-size:20px;letter-spacing:-.5px}
+  .logo-sub{font-size:12px;color:var(--muted)}
+
+  .nav-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:var(--text);font-weight:500;font-size:16px;text-align:left;transition:all .15s;width:100%}
+  .nav-btn:hover{background:var(--primary-soft)}
+  .nav-btn.active{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,.3)}
+  .nav-btn .icon{font-size:20px;width:24px;text-align:center}
+  .nav-btn .badge{margin-left:auto;background:var(--coral);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700}
+
+  .main{flex:1;padding:28px 36px;max-width:100%;overflow-x:hidden}
+  .page{display:none;animation:fade .3s ease}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .page-header{margin-bottom:24px}
+  .page-title{font-size:28px;font-weight:800;letter-spacing:-.5px;margin:0 0 6px}
+  .page-desc{color:var(--muted);margin:0;font-size:15px}
+
+  .card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px;border:1px solid var(--border)}
+  .card h3{margin:0 0 14px;font-size:18px;font-weight:700}
+
+  .grid{display:grid;gap:16px}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:12px;font-weight:600;font-size:15px;transition:all .15s}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primary-dark)}
+  .btn-ghost{background:var(--primary-soft);color:var(--primary-dark)}
+  .btn-coral{background:var(--coral);color:#fff}
+  .btn-mint{background:var(--mint);color:#fff}
+  .btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text)}
+  .btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+  .btn-block{width:100%;justify-content:center}
+
+  input[type=text],input[type=number],input[type=password],textarea,select{
+    width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;background:#fff;transition:border-color .15s;outline:none
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--primary)}
+  textarea{resize:vertical;min-height:100px}
+  label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:#374151}
+
+  /* Home dashboard */
+  .welcome{background:linear-gradient(135deg,#6366f1 0%,#a78bfa 100%);color:#fff;border-radius:var(--radius);padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+  .welcome::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.1);border-radius:50%}
+  .welcome h2{margin:0 0 8px;font-size:24px;font-weight:800}
+  .welcome p{margin:0;opacity:.9}
+
+  .stat-card{background:var(--card);border-radius:var(--radius);padding:18px;border:1px solid var(--border);display:flex;align-items:center;gap:14px}
+  .stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .stat-value{font-size:22px;font-weight:800;letter-spacing:-.5px}
+  .stat-label{font-size:13px;color:var(--muted)}
+
+  /* Department search */
+  .search-bar{position:relative;margin-bottom:16px}
+  .search-bar input{padding-left:44px}
+  .search-bar::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .chip{padding:8px 14px;border-radius:20px;background:#fff;border:1.5px solid var(--border);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+  .chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+  .dept-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:18px;transition:all .15s;cursor:pointer}
+  .dept-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 8px 20px rgba(99,102,241,.12)}
+  .dept-name{font-weight:700;font-size:17px;margin-bottom:4px}
+  .dept-series{display:inline-block;font-size:12px;padding:3px 10px;background:var(--primary-soft);color:var(--primary-dark);border-radius:10px;font-weight:600;margin-bottom:10px}
+  .dept-desc{font-size:14px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+  .dept-meta{display:flex;gap:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+  .dept-meta span{display:flex;align-items:center;gap:4px}
+
+  /* Board */
+  .post{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;transition:all .15s}
+  .post:hover{border-color:var(--primary-soft)}
+  .post-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .post-avatar{width:40px;height:40px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+  .post-avatar svg{width:100%;height:100%}
+  .post-nick{font-weight:700;font-size:15px}
+  .post-time{font-size:12px;color:var(--muted)}
+  .post-tag{margin-left:auto;font-size:12px;padding:3px 10px;background:var(--mint-soft);color:#065f46;border-radius:10px;font-weight:600}
+  .post-title{font-weight:700;font-size:17px;margin-bottom:6px}
+  .post-body{color:#374151;font-size:15px;line-height:1.6;margin-bottom:10px;white-space:pre-wrap}
+  .post-actions{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+  .post-actions button{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:4px}
+  .post-actions button:hover{color:var(--primary)}
+
+  .comment{padding:12px 14px;background:#f9fafb;border-radius:12px;margin-top:10px}
+  .comment-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .comment-avatar{width:28px;height:28px;border-radius:50%;background:var(--primary-soft);overflow:hidden}
+  .comment-avatar svg{width:100%;height:100%}
+  .comment-body{font-size:14px;white-space:pre-wrap}
+
+  /* Character */
+  .char-stage{background:linear-gradient(180deg,#eef2ff 0%,#faf5ff 100%);border-radius:var(--radius);padding:30px;display:flex;align-items:center;justify-content:center;min-height:380px;position:relative}
+  .char-svg{width:240px;height:340px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.1))}
+
+  .option-group{margin-bottom:16px}
+  .option-group-title{font-weight:700;font-size:14px;margin-bottom:8px;color:#374151}
+  .option-row{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{width:44px;height:44px;border-radius:10px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;background:#fff;transition:all .15s}
+  .opt:hover{border-color:var(--primary)}
+  .opt.selected{border-color:var(--primary);background:var(--primary-soft);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+  .opt.color{width:36px;height:36px;border-radius:50%}
+
+  .trait-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .trait-tag{padding:6px 12px;background:#fff;border:1.5px solid var(--border);border-radius:20px;font-size:13px;cursor:pointer;transition:all .15s}
+  .trait-tag.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+  /* Chat */
+  .chat-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;height:calc(100vh - 160px);min-height:500px}
+  .chat-list{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow-y:auto}
+  .chat-item{padding:14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:12px;align-items:center;transition:background .15s}
+  .chat-item:hover{background:#fafafa}
+  .chat-item.active{background:var(--primary-soft)}
+  .chat-item-avatar{width:44px;height:44px;border-radius:50%;background:var(--primary-soft);overflow:hidden;flex-shrink:0}
+  .chat-item-avatar svg{width:100%;height:100%}
+  .chat-item-info{flex:1;min-width:0}
+  .chat-item-name{font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px}
+  .chat-item-preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chat-item-time{font-size:11px;color:var(--muted)}
+  .unread-dot{width:10px;height:10px;background:var(--coral);border-radius:50%;flex-shrink:0}
+
+  .chat-window{background:#fff;border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden}
+  .chat-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:#fafafa}
+  .chat-header-name{font-weight:700}
+  .chat-header-status{font-size:12px;color:var(--mint)}
+  .chat-messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px;background:#fafaf7}
+  .msg{max-width:70%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.5;word-break:break-word}
+  .msg.me{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:4px}
+  .msg.other{align-self:flex-start;background:#fff;border:1px solid var(--border);border-bottom-left-radius:4px}
+  .msg .time{display:block;font-size:10px;opacity:.7;margin-top:4px}
+  .msg.tag{background:var(--coral);color:#fff;position:relative;animation:pulse 1s ease infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.6)}50%{box-shadow:0 0 0 12px rgba(249,115,22,0)}}
+
+  .chat-input{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;background:#fff}
+  .chat-input input{flex:1}
+  .tag-btn{background:var(--coral);color:#fff;padding:0 14px;border-radius:12px;font-weight:700;font-size:14px}
+  .tag-btn:hover{background:#ea580c}
+
+  /* Condition Lab */
+  .lab-form{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .lab-field{background:#fafafa;border-radius:12px;padding:14px}
+  .lab-field label{margin-bottom:10px}
+  .mood-row{display:flex;gap:6px}
+  .mood-btn{flex:1;padding:10px;border-radius:10px;background:#fff;border:1.5px solid var(--border);font-size:22px;cursor:pointer;transition:all .15s}
+  .mood-btn:hover{border-color:var(--primary)}
+  .mood-btn.selected{border-color:var(--primary);background:var(--primary-soft);transform:scale(1.05)}
+
+  .slider-wrap{display:flex;align-items:center;gap:12px}
+  .slider-wrap input[type=range]{flex:1;accent-color:var(--primary)}
+  .slider-val{font-weight:800;font-size:18px;min-width:40px;text-align:right;color:var(--primary)}
+
+  .health-q{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .health-q-text{font-weight:500}
+  .health-q-btns{display:flex;gap:8px}
+  .yn-btn{padding:8px 18px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-weight:600;transition:all .15s}
+  .yn-btn.yes.selected{background:var(--mint);color:#fff;border-color:var(--mint)}
+  .yn-btn.no.selected{background:#ef4444;color:#fff;border-color:#ef4444}
+
+  .history-row{display:grid;grid-template-columns:80px repeat(5,1fr);gap:8px;padding:10px;border-radius:10px;font-size:14px;align-items:center}
+  .history-row.header{font-weight:700;color:var(--muted);font-size:12px}
+  .history-row:not(.header){background:#fafafa}
+  .history-cell{text-align:center}
+
+  .chart-wrap{height:280px;position:relative}
+
+  /* Alert popup */
+  .alert-overlay{position:fixed;inset:0;background:rgba(249,115,22,.95);display:none;align-items:center;justify-content:center;z-index:1000;animation:alertIn .3s ease}
+  .alert-overlay.show{display:flex}
+  @keyframes alertIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+  .alert-box{background:#fff;border-radius:24px;padding:40px;text-align:center;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:shake .5s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+  .alert-icon{font-size:64px;margin-bottom:16px;animation:ring 1s ease infinite}
+  @keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(-15deg)}75%{transform:rotate(15deg)}}
+  .alert-title{font-size:28px;font-weight:800;color:var(--coral);margin-bottom:8px}
+  .alert-msg{font-size:17px;color:var(--text);margin-bottom:24px;line-height:1.5}
+
+  /* Modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:500;padding:20px}
+  .modal-bg.show{display:flex}
+  .modal{background:#fff;border-radius:var(--radius);padding:26px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto}
+  .modal h3{margin:0 0 16px;font-size:20px}
+
+  /* Toast */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;z-index:800;opacity:0;transition:opacity .3s;pointer-events:none}
+  .toast.show{opacity:1}
+
+  /* Responsive - iPad & mobile */
+  @media (max-width:1024px){
+    .sidebar{width:72px;padding:16px 8px}
+    .logo-text,.logo-sub,.nav-btn span:not(.icon):not(.badge){display:none}
+    .nav-btn{justify-content:center;padding:12px}
+    .nav-btn .icon{margin:0}
+    .main{padding:20px}
+    .grid-4{grid-template-columns:repeat(2,1fr)}
+    .chat-layout{grid-template-columns:220px 1fr}
+    .lab-form{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .app{flex-direction:column}
+    .sidebar{width:100%;height:auto;position:relative;flex-direction:row;overflow-x:auto;padding:10px;gap:4px;border-right:none;border-bottom:1px solid var(--border)}
+    .logo{display:none}
+    .nav-btn{flex-direction:column;font-size:11px;padding:8px;gap:2px;min-width:70px}
+    .nav-btn .icon{font-size:20px}
+    .main{padding:16px}
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+    .chat-layout{grid-template-columns:1fr;height:auto}
+    .chat-list{max-height:240px}
+    .page-title{font-size:22px}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">J</div>
+      <div>
+        <div class="logo-text">진로드</div>
+        <div class="logo-sub">JinRoad · 익명 상담소</div>
+      </div>
+    </div>
+    <button class="nav-btn active" data-page="home"><span class="icon">🏠</span><span>홈</span></button>
+    <button class="nav-btn" data-page="dept"><span class="icon">🎓</span><span>학과 탐색</span></button>
+    <button class="nav-btn" data-page="board"><span class="icon">💭</span><span>고민 게시판</span></button>
+    <button class="nav-btn" data-page="char"><span class="icon">🧑</span><span>캐릭터 꾸미기</span></button>
+    <button class="nav-btn" data-page="chat"><span class="icon">💬</span><span>채팅</span><span class="badge" id="chatBadge" style="display:none">0</span></button>
+    <button class="nav-btn" data-page="lab"><span class="icon">🧪</span><span>컨디션 연구소</span></button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- HOME -->
+    <section class="page active" id="page-home">
+      <div class="welcome">
+        <h2>안녕, <span id="homeNick">익명의 탐험가</span> 👋</h2>
+        <p>오늘도 너의 진로를 찾아 떠나는 여정을 응원해. 모든 건 익명이니까 편하게 이야기해봐.</p>
+      </div>
+
+      <div class="grid grid-4" style="margin-bottom:18px">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#eef2ff;color:#6366f1">💭</div>
+          <div><div class="stat-value" id="statPosts">0</div><div class="stat-label">게시된 고민</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#d1fae5;color:#065f46">💚</div>
+          <div><div class="stat-value" id="statComments">0</div><div class="stat-label">답변 & 공감</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ffedd5;color:#c2410c">🔔</div>
+          <div><div class="stat-value" id="statTags">0</div><div class="stat-label">받은 태그 알림</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;color:#92400e">🧪</div>
+          <div><div class="stat-value" id="statLab">0</div><div class="stat-label">컨디션 기록</div></div>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>✨ 오늘의 추천 학과</h3>
+          <div id="recDept"></div>
+        </div>
+        <div class="card">
+          <h3>🔥 최근 고민</h3>
+          <div id="recPosts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPARTMENT -->
+    <section class="page" id="page-dept">
+      <div class="page-header">
+        <h1 class="page-title">🎓 학과 탐색</h1>
+        <p class="page-desc">관심 있는 학과를 검색하고, 어떤 공부를 하게 될지 알아봐.</p>
+      </div>
+      <div class="card">
+        <div class="search-bar">
+          <input type="text" id="deptSearch" placeholder="학과 이름, 계열, 관련 직업으로 검색..." />
+        </div>
+        <div class="chips" id="deptChips"></div>
+        <div class="grid grid-3" id="deptList"></div>
+      </div>
+    </section>
+
+    <!-- BOARD -->
+    <section class="page" id="page-board">
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+        <div>
+          <h1 class="page-title">💭 익명 고민 게시판</h1>
+          <p class="page-desc">진로에 대한 고민을 익명으로 털어놓아봐. 같은 진로의 친구들이 공감해줄 거야.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openWriteModal()">✏️ 고민 쓰기</button>
+      </div>
+
+      <div class="chips" id="boardFilter" style="margin-bottom:14px"></div>
+      <div id="postList"></div>
+    </section>
+
+    <!-- CHARACTER -->
+    <section class="page" id="page-char">
+      <div class="page-header">
+        <h1 class="page-title">🧑 나만의 캐릭터</h1>
+        <p class="page-desc">나의 특성을 살려 캐릭터를 꾸며봐. 이 캐릭터가 게시판과 채팅에서 너를 대표해.</p>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr 1fr;gap:20px">
+        <div class="card">
+          <div class="char-stage">
+            <svg class="char-svg" id="charSvg" viewBox="0 0 200 280"></svg>
+          </div>
+          <div style="text-align:center;margin-top:12px">
+            <input type="text" id="charNick" placeholder="익명 닉네임 (자동 생성 가능)" style="max-width:260px;text-align:center" />
+            <button class="btn btn-ghost" style="margin-left:8px" onclick="randomNick()">🎲 랜덤 닉네임</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="option-group">
+            <div class="option-group-title">🎨 피부톤</div>
+            <div class="option-row" id="optSkin"></div>
+          </div>
+          <div class="option-group">
+            <div class="option-group-title">💇 머리 스타일</div>
+            <div class="option-row" id="optHair"></div>
+          </div>
+          <div class="option-group">
+            <div class="option-group-title">🎨 머리색</div>
+            <div class="option-row" id="optHairColor"></div>
+          </div>
+          <div class="option-group">
+            <div class="option-group-title">👀 눈 모양</div>
+            <div class="option-row" id="optEye"></div>
+          </div>
+          <div class="option-group">
+            <div class="option-group-title">👕 의상 스타일</div>
+            <div class="option-row" id="optOutfit"></div>
+          </div>
+          <div class="option-group">
+            <div class="option-group-title">🎨 의상 색상</div>
+            <div class="option-row" id="optOutfitColor"></div>
+          </div>
+          <div class="option-group">
+            <div class="option-group-title">👓 악세서리</div>
+            <div class="option-row" id="optAcc"></div>
+          </div>
+          <div class="option-group">
+            <div class="option-group-title">🏷️ 나의 진로 특성 태그</div>
+            <div class="trait-tags" id="traitTags"></div>
+          </div>
+          <button class="btn btn-primary btn-block" style="margin-top:14px" onclick="saveChar()">💾 캐릭터 저장하기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="page" id="page-chat">
+      <div class="page-header">
+        <h1 class="page-title">💬 친구 채팅</h1>
+        <p class="page-desc">같은 진로의 친구들과 익명으로 대화해봐. 태그로 급한 연락도 가능!</p>
+      </div>
+
+      <div class="chat-layout">
+        <div class="chat-list" id="chatList"></div>
+        <div class="chat-window">
+          <div class="chat-header">
+            <div class="chat-item-avatar" id="chatHeadAvatar"></div>
+            <div style="flex:1">
+              <div class="chat-header-name" id="chatHeadName">친구를 선택해주세요</div>
+              <div class="chat-header-status" id="chatHeadStatus">같은 진로 친구와 익명 채팅</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div style="text-align:center;color:var(--muted);margin:auto;font-size:14px">왼쪽에서 친구를 선택하면 대화가 시작돼요 💬</div>
+          </div>
+          <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." onkeydown="if(event.key==='Enter')sendMsg()" />
+            <button class="tag-btn" onclick="sendTag()" title="친구에게 긴급 태그! 크게 알림이 울려요">🔔 태그</button>
+            <button class="btn btn-primary" onclick="sendMsg()">전송</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAB -->
+    <section class="page" id="page-lab">
+      <div class="page-header">
+        <h1 class="page-title">🧪 오늘의 컨디션 연구소</h1>
+        <p class="page-desc">오늘 나의 상태를 기록하고, 일주일 흐름을 한눈에 살펴봐.</p>
+      </div>
+
+      <div class="card">
+        <h3>📝 오늘의 상태 기록하기</h3>
+        <div class="lab-form">
+          <div class="lab-field">
+            <label>😴 오늘 몇 시간 잤나요?</label>
+            <div class="slider-wrap">
+              <input type="range" id="labSleep" min="0" max="12" step="0.5" value="7" oninput="labSleepVal.textContent=this.value+'h'"/>
+              <div class="slider-val" id="labSleepVal">7h</div>
+            </div>
+          </div>
+          <div class="lab-field">
+            <label>😊 오늘의 기분</label>
+            <div class="mood-row" id="labMood"></div>
+          </div>
+          <div class="lab-field">
+            <label>🔋 오늘의 피로도 (0: 쾌적 ~ 10: 극심)</label>
+            <div class="slider-wrap">
+              <input type="range" id="labFatigue" min="0" max="10" step="1" value="4" oninput="labFatigueVal.textContent=this.value"/>
+              <div class="slider-val" id="labFatigueVal">4</div>
+            </div>
+          </div>
+          <div class="lab-field">
+            <label>⭐ 오늘의 상태 점수 (0~100)</label>
+            <div class="slider-wrap">
+              <input type="range" id="labScore" min="0" max="100" step="1" value="70" oninput="labScoreVal.textContent=this.value"/>
+              <div class="slider-val" id="labScoreVal">70</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px">🩺 오늘의 건강 질문</h3>
+        <div id="labHealth"></div>
+
+        <button class="btn btn-mint btn-block" style="margin-top:16px" onclick="saveLab()">💾 오늘 기록 저장하기</button>
+      </div>
+
+      <div class="card">
+        <h3>📊 최근 7일 통계</h3>
+        <div class="chart-wrap"><canvas id="labChart"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h3>📅 기록 히스토리</h3>
+        <div id="labHistory"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Write modal -->
+<div class="modal-bg" id="writeModal">
+  <div class="modal">
+    <h3>✏️ 고민 쓰기</h3>
+    <label>제목</label>
+    <input type="text" id="wTitle" placeholder="무엇이 고민인가요?"/>
+    <div style="height:10px"></div>
+    <label>진로 태그</label>
+    <select id="wTag"></select>
+    <div style="height:10px"></div>
+    <label>내용</label>
+    <textarea id="wBody" placeholder="익명이니까 솔직하게 털어놓아봐..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal('writeModal')">취소</button>
+      <button class="btn btn-primary" style="flex:1" onclick="submitPost()">작성</button>
+    </div>
+  </div>
+</div>
+
+<!-- Alert popup -->
+<div class="alert-overlay" id="alertOverlay">
+  <div class="alert-box">
+    <div class="alert-icon">🔔</div>
+    <div class="alert-title">긴급 태그 도착!</div>
+    <div class="alert-msg" id="alertMsg">친구가 급하게 연락했어요!</div>
+    <button class="btn btn-coral" onclick="closeAlert()">확인</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   진로드 JinRoad - single file app
+   ========================================================= */
+
+const LS_KEY = 'jinroad_v1';
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {
+    char: defaultChar(),
+    posts: seedPosts(),
+    lab: [],
+    chats: seedChats(),
+    tagCount: 0,
+    activeChat: null
+  };
+}
+function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+/* ---------- Default character ---------- */
+function defaultChar(){
+  return {
+    nick: '',
+    skin: '#f5d0a9',
+    hairStyle: 0,
+    hairColor: '#3b2a20',
+    eye: 0,
+    outfit: 0,
+    outfitColor: '#6366f1',
+    acc: 0,
+    traits: []
+  };
+}
+
+/* ---------- Seed data ---------- */
+const DEPARTMENTS = [
+  {name:'컴퓨터공학과',series:'이공계',desc:'소프트웨어, 알고리즘, 시스템 설계를 배워. AI·웹·앱 개발의 기초를 다져.',jobs:'개발자, AI엔지니어, 보안전문가',subjects:'자료구조, 운영체제, 알고리즘'},
+  {name:'소프트웨어학과',series:'이공계',desc:'코딩과 문제 해결에 집중. 실전 프로젝트 중심으로 소프트웨어를 설계하고 만들어.',jobs:'SW개발자, PM, 데이터엔지니어',subjects:'프로그래밍, DB, 클라우드'},
+  {name:'전자공학과',series:'이공계',desc:'회로, 신호, 반도체를 다루며 하드웨어와 임베디드 시스템을 공부해.',jobs:'반도체엔지니어, 회로설계, IoT',subjects:'회로이론, 신호처리, 임베디드'},
+  {name:'기계공학과',series:'이공계',desc:'로봇, 자동차, 에너지 시스템 등 기계의 설계와 제작을 배워.',jobs:'기계설계, 자동차엔지니어, 로봇',subjects:'역학, CAD, 열유체'},
+  {name:'건축학과',series:'이공/예체능',desc:'건물의 설계와 공간 계획을 공부. 예술과 공학이 만나는 분야.',jobs:'건축가, 인테리어디자이너, 도시계획',subjects:'설계스튜디오, 건축구조, 건축역사'},
+  {name:'경영학과',series:'상경계',desc:'기업의 운영, 마케팅, 재무, 전략을 폭넓게 배워.',jobs:'마케터, 컨설턴트, 경영기획',subjects:'마케팅, 재무관리, 조직행동'},
+  {name:'경제학과',series:'상경계',desc:'시장과 자원의 흐름을 분석. 거시·미시 경제 이론과 데이터를 다뤄.',jobs:'경제분석가, 금융기획, 공기업',subjects:'미시경제, 거시경제, 계량경제'},
+  {name:'국어국문학과',series:'인문계',desc:'한국어와 문학을 깊이 있게 연구. 글쓰기와 비판적 사고를 키워.',jobs:'작가, 편집자, 출판기획',subjects:'현대문학, 언어학, 비평이론'},
+  {name:'영어영문학과',series:'인문계',desc:'영어와 영미 문학을 공부하며 글로벌 커뮤니케이션 능력을 길러.',jobs:'번역가, 통역사, 해외기획',subjects:'영미문학, 영어학, 통번역'},
+  {name:'심리학과',series:'인문계',desc:'인간의 마음과 행동을 과학적으로 연구. 상담, 임상, 산업심리 등으로 나뉘어.',jobs:'심리상담사, UX리서처, HR',subjects:'발달심리, 상담심리, 인지심리'},
+  {name:'사회학과',series:'인문계',desc:'사회 구조와 문화, 인간 관계를 분석. 현대 사회의 이슈를 깊이 들여다봐.',jobs:'사회연구員, 기획, 기자',subjects:'사회이론, 조사방법론, 문화사회학'},
+  {name:'의예과',series:'의약계',desc:'6년간의 의학적 교육을 통해 의사를 양성. 기초의학과 임상 실습을 진행.',jobs:'의사, 전문의, 연구의',subjects:'해부학, 생리학, 병리학'},
+  {name:'약학과',series:'의약계',desc:'약물의 개발, 제조, 작용 원리를 공부. 6년제 과정으로 운영돼.',jobs:'약사, 제약연구, RA',subjects:'약리학, 약제학, 임상약학'},
+  {name:'간호학과',series:'의약계',desc:'환자 돌봄과 건강 관리의 전문가를 양성. 실습 비중이 높아.',jobs:'간호사, 보건전문가',subjects:'기초간호, 성인간호, 지역사회간호'},
+  {name:'미술학과',series:'예체능',desc:'회화, 조소 등 순수미술을 탐구. 자신만의 예술 세계를 구축해.',jobs:'작가, 큐레이터, 아트디렉터',subjects:'드로잉, 미술사, 창작실기'},
+  {name:'디자인학과',series:'예체능',desc:'시각·산업·패션 등 분야별 디자인을 공부. 실기와 이론을 겸비.',jobs:'디자이너, UX/UI, 브랜딩',subjects:'기초디자인, 타이포그래피, UX'},
+  {name:'음악학과',series:'예체능',desc:'성악, 기악, 작곡 등 음악의 이론과 실기를 깊이 있게 배워.',jobs:'연주가, 작곡가, 음악교사',subjects:'악전, 화성법, 실기'},
+  {name:'영화학과',series:'예체능',desc:'영화의 기획, 연출, 촬영, 편집까지 전 과정을 공부해.',jobs:'PD, 감독, 시나리오작가',subjects:'영화이론, 연출, 촬영실기'},
+  {name:'사범대학(교육학과)',series:'사범계',desc:'교사의 자질과 교육 이론을 배워. 중등·초등 정교사 자격 취득 가능.',jobs:'교사, 교육기획, 교육연구',subjects:'교육학개론, 교육심리, 교직실무'},
+  {name:'법학과',series:'인문계',desc:'법률의 이론과 실무를 공부. 로스쿨 진학이나 사법시험을 준비하기도 해.',jobs:'변호사, 법무사, 기업법무',subjects:'민법, 형법, 헌법'},
+  {name:'정치외교학과',series:'인문계',desc:'정치 이론과 국제 관계를 연구. 외교, 정책, 행정으로 진출 가능.',jobs:'외교관, 정책분석가, 기자',subjects:'정치이론, 국제관계, 비교정치'},
+  {name:'생명공학과',series:'이공계',desc:'생물학과 공학을 결합해 바이오·의료·식품 분야 기술을 개발해.',jobs:'바이오연구員, 제약, 식품',subjects:'생화학, 유전공학, 세포공학'},
+  {name:'환경공학과',series:'이공계',desc:'환경 오염을 분석하고 지속 가능한 기술을 연구해.',jobs:'환경컨설턴트, 공공기관, 연구',subjects:'수질공학, 대기공학, 환경화학'},
+  {name:'미디어학과',series:'인문/예체능',desc:'디지털 미디어, 콘텐츠 기획, 저널리즘을 공부해.',jobs:'PD, 기자, 콘텐츠기획',subjects:'미디어이론, 콘텐츠기획, 저널리즘'}
+];
+
+const SERIES = ['전체','이공계','상경계','인문계','의약계','예체능','사범계','인문/예체능','이공/예체능','인문/예체능'];
+
+function seedPosts(){
+  return [
+    {id:1,nick:'우주먹구름',char:randomCharFor('우주먹구름'),tag:'이공계',title:'컴퓨터공학과 vs 소프트웨어학과, 뭐가 다를까요?',body:'둘 다 코딩하는 거 같은데 커리큘럼 차이가 궁금해요. 이미 코딩을 좀 하는 상태인데 어느 쪽이 더 맞을까요?',time:Date.now()-3600000*3,likes:12,comments:[
+      {nick:'코드요정',char:randomCharFor('코드요정'),body:'소프트웨어가 좀 더 실전 프로젝트 중심이고, 컴퓨터공학은 이론(운영체제, 컴파일러 등)이 더 깊어요!',time:Date.now()-3600000*2},
+      {nick:' 알고리즘사랑',char:randomCharFor('알고리즘사랑'),body:'이론 튼튼히 하고 싶으면 컴공, 바로 취업 연계 싶으면 소프 추천!',time:Date.now()-3600000}
+    ]},
+    {id:2,nick:'밤새는달',char:randomCharFor('밤새는달'),tag:'예체능',title:'미술 vs 디자인, 둘 다 좋아하는데...',body:'그림 그리는 것도 좋고, 뭔가 실용적인 결과물 만드는 것도 좋아요. 둘 중 하나만 골라야 하는데 너무 힘들어요.',time:Date.now()-3600000*8,likes:8,comments:[
+      {nick:'팔레트',char:randomCharFor('팔레트'),body:'저도 비슷했어요. 순수미술은 자기 표현, 디자인은 문제 해결에 가까워요. 본인이 어떤 쾌감을 더 느끼는지 생각해봐요!',time:Date.now()-3600000*5}
+    ]},
+    {id:3,nick:'고민구름',char:randomCharFor('고민구름'),tag:'인문계',title:'문과인데 이공계 진로 가능할까요?',body:'수학을 싫어하는 건 아닌데, 문과로 왔어요. 그래도 AI나 데이터 쪽에 관심이 있는데 늦었을까요?',time:Date.now()-3600000*24,likes:21,comments:[]}
+  ];
+}
+
+function seedChats(){
+  return [
+    {id:1,nick:'코드요정',char:randomCharFor('코드요정'),trait:'이공계',msgs:[
+      {from:'other',text:'안녕! 게시판에서 글 보고 말 걸려봤어 😊',time:Date.now()-3600000*24},
+      {from:'me',text:'안녕! 반가워~ 어떤 진로 고민 중이야?',time:Date.now()-3600000*23},
+      {from:'other',text:'나도 컴퓨터공학과 고민 중! 같이 정보 공유하자',time:Date.now()-3600000*22}
+    ],unread:0},
+    {id:2,nick:'팔레트',char:randomCharFor('팔레트'),trait:'예체능',msgs:[
+      {from:'other',text:'디자인 포트폴리오 어떻게 준비해?',time:Date.now()-3600000*4}
+    ],unread:1},
+    {id:3,nick:'법조몽상가',char:randomCharFor('법조몽상가'),trait:'인문계',msgs:[],unread:0}
+  ];
+}
+
+function randomCharFor(seed){
+  // deterministic-ish random from seed string
+  let h=0;for(let i=0;i<seed.length;i++)h=(h*31+seed.charCodeAt(i))|0;
+  const r=(n)=>{h=(h*1103515245+12345)|0;return Math.abs(h)%n;};
+  const skins=['#f5d0a9','#e8b48a','#c68b66','#a06a46','#7a4a2c','#f9d8c0'];
+  const hairs=['#3b2a20','#1a1a1a','#8b5a2b','#d4a056','#c94c4c','#4a4a4a','#f0e68c','#7b3f00'];
+  const outfits=['#6366f1','#10b981','#f97316','#ec4899','#0ea5e9','#8b5cf6','#1f2937'];
+  return {
+    skin:skins[r(skins.length)],
+    hairStyle:r(6),
+    hairColor:hairs[r(hairs.length)],
+    eye:r(4),
+    outfit:r(6),
+    outfitColor:outfits[r(outfits.length)],
+    acc:r(4),
+    traits:[]
+  };
+}
+
+/* ---------- Navigation ---------- */
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    const page = btn.dataset.page;
+    document.getElementById('page-'+page).classList.add('active');
+    if(page==='home') renderHome();
+    if(page==='dept') renderDepts();
+    if(page==='board') renderBoard();
+    if(page==='char') renderChar();
+    if(page==='chat') renderChatList();
+    if(page==='lab') renderLab();
+  });
+});
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  document.getElementById('homeNick').textContent = state.char.nick || '익명의 탐험가';
+  document.getElementById('statPosts').textContent = state.posts.length;
+  document.getElementById('statComments').textContent = state.posts.reduce((a,p)=>a+p.comments.length+p.likes,0);
+  document.getElementById('statTags').textContent = state.tagCount;
+  document.getElementById('statLab').textContent = state.lab.length;
+
+  // recommended dept
+  const rec = DEPARTMENTS[Math.floor(Math.random()*DEPARTMENTS.length)];
+  document.getElementById('recDept').innerHTML = `
+    <div class="dept-card" onclick="goDept('${rec.name}')">
+      <div class="dept-series">${rec.series}</div>
+      <div class="dept-name">${rec.name}</div>
+      <div class="dept-desc">${rec.desc}</div>
+    </div>`;
+
+  // recent posts
+  const recent = [...state.posts].sort((a,b)=>b.time-a.time).slice(0,3);
+  document.getElementById('recPosts').innerHTML = recent.map(p=>`
+    <div style="padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="goBoard()">
+      <div style="font-weight:600;font-size:15px">[${p.tag}] ${escapeHtml(p.title)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">${timeAgo(p.time)} · 💬 ${p.comments.length}</div>
+    </div>`).join('') || '<div style="color:var(--muted)">아직 고민이 없어요. 첫 글을 써볼래?</div>';
+}
+function goDept(name){
+  document.querySelector('[data-page="dept"]').click();
+  setTimeout(()=>{document.getElementById('deptSearch').value=name;renderDepts();},100);
+}
+function goBoard(){ document.querySelector('[data-page="board"]').click(); }
+
+/* ---------- DEPARTMENTS ---------- */
+let deptFilter = '전체';
+function renderDeptChips(){
+  const unique = ['전체',...new Set(DEPARTMENTS.map(d=>d.series))];
+  document.getElementById('deptChips').innerHTML = unique.map(s=>
+    `<div class="chip ${s===deptFilter?'active':''}" onclick="setDeptFilter('${s}')">${s}</div>`
+  ).join('');
+}
+function setDeptFilter(s){ deptFilter=s; renderDepts(); }
+function renderDepts(){
+  renderDeptChips();
+  const q = document.getElementById('deptSearch').value.trim().toLowerCase();
+  const list = DEPARTMENTS.filter(d=>{
+    if(deptFilter!=='전체' && d.series!==deptFilter) return false;
+    if(!q) return true;
+    return (d.name+d.series+d.desc+d.jobs+d.subjects).toLowerCase().includes(q);
+  });
+  document.getElementById('deptList').innerHTML = list.map(d=>`
+    <div class="dept-card">
+      <div class="dept-series">${d.series}</div>
+      <div class="dept-name">${d.name}</div>
+      <div class="dept-desc">${d.desc}</div>
+      <div class="dept-meta">
+        <span>💼 ${d.jobs}</span>
+        <span>📚 ${d.subjects}</span>
+      </div>
+    </div>`).join('') || '<div style="color:var(--muted);padding:20px;text-align:center;grid-column:1/-1">검색 결과가 없어요 🔍</div>';
+}
+document.getElementById('deptSearch').addEventListener('input',renderDepts);
+
+/* ---------- BOARD ---------- */
+let boardFilter = '전체';
+function renderBoardFilters(){
+  const tags = ['전체',...new Set(state.posts.map(p=>p.tag))];
+  document.getElementById('boardFilter').innerHTML = tags.map(t=>
+    `<div class="chip ${t===boardFilter?'active':''}" onclick="setBoardFilter('${t}')">${t}</div>`
+  ).join('');
+}
+function setBoardFilter(t){ boardFilter=t; renderBoard(); }
+function renderBoard(){
+  renderBoardFilters();
+  const posts = (boardFilter==='전체'?state.posts:state.posts.filter(p=>p.tag===boardFilter))
+                 .sort((a,b)=>b.time-a.time);
+  document.getElementById('postList').innerHTML = posts.map(p=>`
+    <div class="post">
+      <div class="post-head">
+        <div class="post-avatar">${renderCharSvg(p.char,40,56)}</div>
+        <div>
+          <div class="post-nick">${escapeHtml(p.nick)}</div>
+          <div class="post-time">${timeAgo(p.time)}</div>
+        </div>
+        <div class="post-tag">${p.tag}</div>
+      </div>
+      <div class="post-title">${escapeHtml(p.title)}</div>
+      <div class="post-body">${escapeHtml(p.body)}</div>
+      <div class="post-actions">
+        <button onclick="likePost(${p.id})">❤️ 좋아요 ${p.likes}</button>
+        <button onclick="toggleComments(${p.id})">💬 댓글 ${p.comments.length}</button>
+      </div>
+      <div id="comments-${p.id}" style="display:none">
+        ${p.comments.map(c=>`
+          <div class="comment">
+            <div class="comment-head">
+              <div class="comment-avatar">${renderCharSvg(c.char,28,28)}</div>
+              <div style="font-weight:600;font-size:13px">${escapeHtml(c.nick)}</div>
+              <div style="font-size:11px;color:var(--muted)">${timeAgo(c.time)}</div>
+            </div>
+            <div class="comment-body">${escapeHtml(c.body)}</div>
+          </div>`).join('')}
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input type="text" id="ci-${p.id}" placeholder="익명으로 댓글 달기..." />
+          <button class="btn btn-primary" onclick="submitComment(${p.id})">등록</button>
+        </div>
+      </div>
+    </div>`).join('') || '<div style="text-align:center;color:var(--muted);padding:40px">아직 글이 없어요 ✨</div>';
+}
+function toggleComments(id){
+  const el = document.getElementById('comments-'+id);
+  el.style.display = el.style.display==='none'?'block':'none';
+}
+function likePost(id){
+  const p = state.posts.find(x=>x.id===id);
+  p.likes++; saveState(); renderBoard();
+}
+function submitComment(id){
+  const input = document.getElementById('ci-'+id);
+  const v = input.value.trim();
+  if(!v) return;
+  const p = state.posts.find(x=>x.id===id);
+  p.comments.push({
+    nick: state.char.nick || '익명의 친구',
+    char: {...state.char},
+    body: v,
+    time: Date.now()
+  });
+  saveState(); renderBoard();
+  toast('댓글이 달렸어요 💬');
+}
+function openWriteModal(){
+  const sel = document.getElementById('wTag');
+  sel.innerHTML = ['이공계','상경계','인문계','의약계','예체능','사범계','기타'].map(t=>`<option>${t}</option>`).join('');
+  document.getElementById('wTitle').value='';
+  document.getElementById('wBody').value='';
+  document.getElementById('writeModal').classList.add('show');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function submitPost(){
+  const t = document.getElementById('wTitle').value.trim();
+  const b = document.getElementById('wBody').value.trim();
+  const tag = document.getElementById('wTag').value;
+  if(!t || !b){ toast('제목과 내용을 모두 입력해주세요'); return; }
+  state.posts.push({
+    id: Date.now(),
+    nick: state.char.nick || '익명의 탐험가',
+    char: {...state.char},
+    tag, title:t, body:b, time:Date.now(), likes:0, comments:[]
+  });
+  saveState(); closeModal('writeModal'); renderBoard();
+  toast('고민이 게시되었어요 ✨');
+}
+
+/* ---------- CHARACTER ---------- */
+const SKIN_COLORS = ['#f5d0a9','#e8b48a','#c68b66','#a06a46','#7a4a2c','#f9d8c0','#d4a373','#fef0d6'];
+const HAIR_COLORS = ['#3b2a20','#1a1a1a','#8b5a2b','#d4a056','#c94c4c','#4a4a4a','#f0e68c','#7b3f00'];
+const OUTFIT_COLORS = ['#6366f1','#10b981','#f97316','#ec4899','#0ea5e9','#8b5cf6','#1f2937','#ef4444','#f59e0b'];
+const HAIR_STYLES = ['🧑','👦','👧','🧔','👩','🧓']; // short, boy, girl, beard, long, elder
+const EYE_STYLES = ['👀','😊','😉','😎'];
+const OUTFIT_STYLES = ['👕','🧥','👔','🎽','🧣','🎓']; // 티셔츠, 코트, 정장, 운동복, 목도리, 학사복
+const ACC_STYLES = ['없음','👓','🎧','🎩'];
+
+const TRAITS = ['이공계','상경계','인문계','의약계','예체능','사범계','탐구형','창의형','사회형','모험형'];
+
+function renderChar(){
+  // skin
+  document.getElementById('optSkin').innerHTML = SKIN_COLORS.map((c,i)=>
+    `<div class="opt color ${state.char.skin===c?'selected':''}" style="background:${c}" onclick="setChar('skin','${c}')"></div>`).join('');
+  // hair
+  document.getElementById('optHair').innerHTML = HAIR_STYLES.map((e,i)=>
+    `<div class="opt ${state.char.hairStyle===i?'selected':''}" onclick="setChar('hairStyle',${i})">${e}</div>`).join('');
+  // hair color
+  document.getElementById('optHairColor').innerHTML = HAIR_COLORS.map(c=>
+    `<div class="opt color ${state.char.hairColor===c?'selected':''}" style="background:${c}" onclick="setChar('hairColor','${c}')"></div>`).join('');
+  // eye
+  document.getElementById('optEye').innerHTML = EYE_STYLES.map((e,i)=>
+    `<div class="opt ${state.char.eye===i?'selected':''}" onclick="setChar('eye',${i})">${e}</div>`).join('');
+  // outfit
+  document.getElementById('optOutfit').innerHTML = OUTFIT_STYLES.map((e,i)=>
+    `<div class="opt ${state.char.outfit===i?'selected':''}" onclick="setChar('outfit',${i})">${e}</div>`).join('');
+  // outfit color
+  document.getElementById('optOutfitColor').innerHTML = OUTFIT_COLORS.map(c=>
+    `<div class="opt color ${state.char.outfitColor===c?'selected':''}" style="background:${c}" onclick="setChar('outfitColor','${c}')"></div>`).join('');
+  // acc
+  document.getElementById('optAcc').innerHTML = ACC_STYLES.map((e,i)=>
+    `<div class="opt ${state.char.acc===i?'selected':''}" onclick="setChar('acc',${i})">${e}</div>`).join('');
+  // traits
+  document.getElementById('traitTags').innerHTML = TRAITS.map(t=>
+    `<div class="trait-tag ${state.char.traits.includes(t)?'active':''}" onclick="toggleTrait('${t}')">${t}</div>`).join('');
+
+  document.getElementById('charNick').value = state.char.nick || '';
+  drawChar();
+}
+function setChar(k,v){ state.char[k]=v; renderChar(); }
+function toggleTrait(t){
+  const i = state.char.traits.indexOf(t);
+  if(i>=0) state.char.traits.splice(i,1); else state.char.traits.push(t);
+  renderChar();
+}
+function randomNick(){
+  const adj = ['우주','밤하늘','고요한','반짝이는','따뜻한','푸른','은은한','말랑한','포근한','싱그러운'];
+  const noun = ['먹구름','달빛','바람','나무','별','고양이','파도','도토리','구름','잉크'];
+  state.char.nick = adj[Math.floor(Math.random()*adj.length)] + noun[Math.floor(Math.random()*noun.length)];
+  renderChar();
+}
+function saveChar(){
+  state.char.nick = document.getElementById('charNick').value.trim() || state.char.nick;
+  saveState();
+  toast('캐릭터가 저장되었어요 ✨');
+}
+
+/* ---------- Character SVG renderer ---------- */
+function drawChar(){
+  document.getElementById('charSvg').innerHTML = buildCharSvgInner(state.char);
+}
+function renderCharSvg(c,w,h){
+  return `<svg viewBox="0 0 200 280" width="${w}" height="${h}">${buildCharSvgInner(c)}</svg>`;
+}
+function buildCharSvgInner(c){
+  const skin = c.skin || '#f5d0a9';
+  const hair = c.hairColor || '#3b2a20';
+  const outfit = c.outfitColor || '#6366f1';
+  const hs = c.hairStyle ?? 0;
+  const eye = c.eye ?? 0;
+  const out = c.outfit ?? 0;
+  const acc = c.acc ?? 0;
+
+  let hairPath = '';
+  if(hs===0) hairPath = `<path d="M55 80 Q55 40 100 38 Q145 40 145 80 L140 95 Q135 75 100 72 Q65 75 60 95 Z" fill="${hair}"/>`;
+  else if(hs===1) hairPath = `<path d="M58 82 Q60 42 100 40 Q140 42 142 82 L138 70 Q120 55 100 55 Q80 55 62 70 Z" fill="${hair}"/>`;
+  else if(hs===2) hairPath = `<path d="M50 80 Q50 35 100 33 Q150 35 150 80 L150 130 Q145 100 140 95 Q135 75 100 72 Q65 75 60 95 Q55 100 50 130 Z" fill="${hair}"/>`;
+  else if(hs===3) hairPath = `<path d="M55 82 Q55 42 100 40 Q145 42 145 82 L142 75 Q130 60 100 58 Q70 60 58 75 Z" fill="${hair}"/><path d="M80 130 Q100 140 120 130 L118 145 Q100 152 82 145 Z" fill="${hair}"/>`;
+  else if(hs===4) hairPath = `<path d="M45 85 Q45 30 100 28 Q155 30 155 85 L158 200 Q140 170 140 120 Q135 75 100 72 Q65 75 60 120 Q60 170 42 200 Z" fill="${hair}"/>`;
+  else hairPath = `<path d="M58 80 Q58 45 100 43 Q142 45 142 80 L140 90 Q130 70 100 68 Q70 70 60 90 Z" fill="${hair}"/>`;
+
+  let eyes = '';
+  if(eye===0) eyes = `<ellipse cx="82" cy="110" rx="4" ry="5" fill="#1f2937"/><ellipse cx="118" cy="110" rx="4" ry="5" fill="#1f2937"/>`;
+  else if(eye===1) eyes = `<path d="M76 112 Q82 118 88 112" stroke="#1f2937" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M112 112 Q118 118 124 112" stroke="#1f2937" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  else if(eye===2) eyes = `<path d="M76 112 L88 112" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/><ellipse cx="118" cy="110" rx="4" ry="5" fill="#1f2937"/>`;
+  else eyes = `<rect x="72" y="104" width="22" height="12" rx="3" fill="#1f2937"/><rect x="106" y="104" width="22" height="12" rx="3" fill="#1f2937"/>`;
+
+  let outfitPath = '';
+  if(out===0) outfitPath = `<path d="M50 180 Q50 170 70 165 L130 165 Q150 170 150 180 L155 260 L45 260 Z" fill="${outfit}"/>`;
+  else if(out===1) outfitPath = `<path d="M45 180 Q45 168 70 163 L130 163 Q155 168 155 180 L160 260 L40 260 Z" fill="${outfit}"/><path d="M100 165 L100 260" stroke="${darken(outfit)}" stroke-width="2"/>`;
+  else if(out===2) outfitPath = `<path d="M55 180 Q55 170 75 165 L125 165 Q145 170 145 180 L150 260 L50 260 Z" fill="${outfit}"/><path d="M85 165 L100 185 L115 165" fill="#fff"/><path d="M100 185 L100 260" stroke="${darken(outfit)}" stroke-width="2"/>`;
+  else if(out===3) outfitPath = `<path d="M55 180 Q55 170 75 165 L125 165 Q145 170 145 180 L150 260 L50 260 Z" fill="${outfit}"/><path d="M70 190 L130 190" stroke="#fff" stroke-width="3"/>`;
+  else if(out===4) outfitPath = `<path d="M50 180 Q50 170 70 165 L130 165 Q150 170 150 180 L155 260 L45 260 Z" fill="${outfit}"/><path d="M65 165 Q100 185 135 165 L130 180 Q100 195 70 180 Z" fill="${darken(outfit)}"/>`;
+  else outfitPath = `<path d="M50 180 Q50 170 70 165 L130 165 Q150 170 150 180 L155 260 L45 260 Z" fill="#1f2937"/><path d="M70 165 L100 180 L130 165 L125 200 L100 195 L75 200 Z" fill="${outfit}"/>`;
+
+  let accPath = '';
+  if(acc===1) accPath = `<circle cx="82" cy="110" r="12" fill="none" stroke="#1f2937" stroke-width="2"/><circle cx="118" cy="110" r="12" fill="none" stroke="#1f2937" stroke-width="2"/><line x1="94" y1="110" x2="106" y2="110" stroke="#1f2937" stroke-width="2"/>`;
+  else if(acc===2) accPath = `<path d="M60 95 Q60 75 100 75 Q140 75 140 95 L140 115 Q140 125 130 125 L70 125 Q60 125 60 115 Z" fill="#1f2937"/>`;
+  else if(acc===3) accPath = `<path d="M60 60 Q60 30 100 30 Q140 30 140 60 L145 65 L55 65 Z" fill="#1f2937"/><rect x="55" y="62" width="90" height="8" fill="#1f2937"/>`;
+
+  return `
+    <!-- neck -->
+    <rect x="88" y="150" width="24" height="20" fill="${skin}"/>
+    <!-- body -->
+    ${outfitPath}
+    <!-- head -->
+    <ellipse cx="100" cy="110" rx="42" ry="48" fill="${skin}"/>
+    <!-- hair -->
+    ${hairPath}
+    <!-- eyes -->
+    ${eyes}
+    <!-- mouth -->
+    <path d="M90 132 Q100 138 110 132" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- accessory -->
+    ${accPath}
+  `;
+}
+function darken(hex){
+  const n = parseInt(hex.slice(1),16);
+  let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  r=Math.max(0,r-40);g=Math.max(0,g-40);b=Math.max(0,b-40);
+  return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');
+}
+
+/* ---------- CHAT ---------- */
+function renderChatList(){
+  const list = document.getElementById('chatList');
+  list.innerHTML = state.chats.map(c=>{
+    const last = c.msgs[c.msgs.length-1];
+    return `
+      <div class="chat-item ${state.activeChat===c.id?'active':''}" onclick="openChat(${c.id})">
+        <div class="chat-item-avatar">${renderCharSvg(c.char,44,44)}</div>
+        <div class="chat-item-info">
+          <div class="chat-item-name">${escapeHtml(c.nick)} ${c.unread?`<span class="unread-dot"></span>`:''}</div>
+          <div class="chat-item-preview">${last?escapeHtml(last.text):'대화를 시작해봐!'}</div>
+        </div>
+        <div class="chat-item-time">${last?timeShort(last.time):''}</div>
+      </div>`;
+  }).join('');
+  updateChatBadge();
+}
+function updateChatBadge(){
+  const total = state.chats.reduce((a,c)=>a+c.unread,0);
+  const b = document.getElementById('chatBadge');
+  if(total>0){b.style.display='inline-block';b.textContent=total;}
+  else b.style.display='none';
+}
+function openChat(id){
+  state.activeChat = id;
+  const c = state.chats.find(x=>x.id===id);
+  c.unread = 0;
+  saveState();
+  document.getElementById('chatHeadAvatar').innerHTML = renderCharSvg(c.char,44,44);
+  document.getElementById('chatHeadName').textContent = c.nick;
+  document.getElementById('chatHeadStatus').textContent = `${c.trait} · 같은 진로 친구`;
+  renderMessages();
+  renderChatList();
+}
+function renderMessages(){
+  const c = state.chats.find(x=>x.id===state.activeChat);
+  if(!c){ return; }
+  const box = document.getElementById('chatMessages');
+  box.innerHTML = c.msgs.map(m=>`
+    <div class="msg ${m.from} ${m.tag?'tag':''}">
+      ${escapeHtml(m.text)}
+      <span class="time">${timeShort(m.time)}</span>
+    </div>`).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function sendMsg(){
+  const input = document.getElementById('chatInput');
+  const v = input.value.trim();
+  if(!v || !state.activeChat) return;
+  const c = state.chats.find(x=>x.id===state.activeChat);
+  c.msgs.push({from:'me',text:v,time:Date.now()});
+  input.value='';
+  saveState(); renderMessages(); renderChatList();
+  // simulate reply
+  setTimeout(()=>{
+    const replies = ['오 그렇구나!','나도 비슷하게 고민 중이야','좋은 정보 고마워!','그렇구나, 한번 더 생각해볼게','응응, 같이 화이팅!'];
+    c.msgs.push({from:'other',text:replies[Math.floor(Math.random()*replies.length)],time:Date.now()});
+    saveState(); renderMessages(); renderChatList();
+  },1200+Math.random()*1500);
+}
+function sendTag(){
+  if(!state.activeChat){ toast('친구를 먼저 선택해주세요'); return; }
+  const c = state.chats.find(x=>x.id===state.activeChat);
+  c.msgs.push({from:'me',text:'🔔 [긴급 태그] 잠깐 이야기 좀 할 수 있을까?',time:Date.now(),tag:true});
+  saveState(); renderMessages(); renderChatList();
+  // simulate friend sees it -> alert back
+  setTimeout(()=>{
+    triggerAlert(c.nick+'님이 태그를 확인했어요! 곧 답장이 올 거예요.');
+    state.tagCount++;
+    saveState();
+  },1500);
+}
+
+/* ---------- ALERT ---------- */
+let audioCtx;
+function triggerAlert(msg){
+  document.getElementById('alertMsg').textContent = msg;
+  document.getElementById('alertOverlay').classList.add('show');
+  // loud beep using Web Audio
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const beep = (freq,start,dur)=>{
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type='square'; o.frequency.value=freq;
+      g.gain.setValueAtTime(0.3,audioCtx.currentTime+start);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+start+dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(audioCtx.currentTime+start); o.stop(audioCtx.currentTime+start+dur);
+    };
+    beep(880,0,.25); beep(1100,.3,.25); beep(880,.6,.25); beep(1320,.9,.4);
+  }catch(e){}
+  // vibrate if supported
+  if(navigator.vibrate) navigator.vibrate([300,100,300,100,500]);
+}
+function closeAlert(){ document.getElementById('alertOverlay').classList.remove('show'); }
+
+/* ---------- LAB ---------- */
+const MOODS = ['😢','😕','😐','🙂','😄'];
+const HEALTH_Q = [
+  '오늘 물을 1L 이상 마셨나요?',
+  '규칙적으로 밥을 먹었나요?',
+  '30분 이상 움직였나요?',
+  '스트레스가 심했나요?'
+];
+let labMood = 3;
+let labHealth = [null,null,null,null]; // null=미응답, true=예, false=아니요
+
+function renderLabMood(){
+  document.getElementById('labMood').innerHTML = MOODS.map((m,i)=>
+    `<button class="mood-btn ${labMood===i?'selected':''}" onclick="setMood(${i})">${m}</button>`).join('');
+}
+function setMood(i){ labMood=i; renderLabMood(); }
+
+function renderLabHealth(){
+  document.getElementById('labHealth').innerHTML = HEALTH_Q.map((q,i)=>`
+    <div class="health-q">
+      <div class="health-q-text">${q}</div>
+      <div class="health-q-btns">
+        <button class="yn-btn yes ${labHealth[i]===true?'selected':''}" onclick="setHealth(${i},true)">예</button>
+        <button class="yn-btn no ${labHealth[i]===false?'selected':''}" onclick="setHealth(${i},false)">아니요</button>
+      </div>
+    </div>`).join('');
+}
+function setHealth(i,v){
+  labHealth[i] = (labHealth[i]===v)?null:v;
+  renderLabHealth();
+}
+
+let labChart;
+function renderLab(){
+  renderLabMood();
+  renderLabHealth();
+  renderLabChart();
+  renderLabHistory();
+}
+function saveLab(){
+  const rec = {
+    date: new Date().toISOString().slice(0,10),
+    time: Date.now(),
+    sleep: parseFloat(document.getElementById('labSleep').value),
+    mood: labMood,
+    fatigue: parseInt(document.getElementById('labFatigue').value),
+    score: parseInt(document.getElementById('labScore').value),
+    health: [...labHealth]
+  };
+  // replace if today already exists
+  const today = rec.date;
+  state.lab = state.lab.filter(x=>x.date!==today);
+  state.lab.push(rec);
+  state.lab.sort((a,b)=>a.time-b.time);
+  saveState();
+  toast('오늘 기록이 저장되었어요 🧪');
+  renderLabChart();
+  renderLabHistory();
+}
+function renderLabChart(){
+  const ctx = document.getElementById('labChart');
+  const last7 = state.lab.slice(-7);
+  if(labChart) labChart.destroy();
+  if(last7.length===0){
+    ctx.parentElement.innerHTML = '<div style="text-align:center;color:var(--muted);padding:80px 20px">아직 기록이 없어요. 첫 기록을 남겨보세요!</div>';
+    return;
+  }
+  // ensure canvas exists
+  if(!document.getElementById('labChart')){
+    document.querySelector('.chart-wrap').innerHTML = '<canvas id="labChart"></canvas>';
+  }
+  labChart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels: last7.map(r=>r.date.slice(5)),
+      datasets:[
+        {label:'수면(h)',data:last7.map(r=>r.sleep),borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,.1)',tension:.35,yAxisID:'y'},
+        {label:'상태점수',data:last7.map(r=>r.score),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.1)',tension:.35,yAxisID:'y1'},
+        {label:'피로도',data:last7.map(r=>r.fatigue),borderColor:'#f97316',backgroundColor:'rgba(249,115,22,.1)',tension:.35,yAxisID:'y'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        y:{position:'left',title:{display:true,text:'시간 / 점수(0~12)'}},
+        y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'상태점수(0~100)'},min:0,max:100}
+      },
+      plugins:{legend:{position:'bottom'}}
+    }
+  });
+}
+function renderLabHistory(){
+  const rows = state.lab.slice(-7).reverse();
+  const el = document.getElementById('labHistory');
+  if(rows.length===0){ el.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px">아직 기록이 없어요</div>'; return; }
+  el.innerHTML = `
+    <div class="history-row header">
+      <div>날짜</div><div>수면</div><div>기분</div><div>피로도</div><div>점수</div><div>건강</div>
+    </div>
+    ${rows.map(r=>`
+      <div class="history-row">
+        <div class="history-cell">${r.date.slice(5)}</div>
+        <div class="history-cell">${r.sleep}h</div>
+        <div class="history-cell">${MOODS[r.mood]}</div>
+        <div class="history-cell">${r.fatigue}</div>
+        <div class="history-cell">${r.score}</div>
+        <div class="history-cell">${r.health.map(h=>h===null?'·':(h?'✅':'❌')).join(' ')}</div>
+      </div>`).join('')}`;
+}
+
+/* ---------- Helpers ---------- */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function timeAgo(t){
+  const d = Date.now()-t;
+  if(d<60000) return '방금 전';
+  if(d<3600000) return Math.floor(d/60000)+'분 전';
+  if(d<86400000) return Math.floor(d/3600000)+'시간 전';
+  return Math.floor(d/86400000)+'일 전';
+}
+function timeShort(t){
+  const d = new Date(t);
+  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+
+/* ---------- Init ---------- */
+renderHome();
+renderChar();
+</script>
+</body>
+</html>
